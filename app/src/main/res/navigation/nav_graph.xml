@@ -18,6 +18,16 @@
     <fragment
         android:id="@+id/languageFragment"
         android:name="com.example.lovetester.ui.language.LanguageFragment"
-        android:label="Language" />
+        android:label="Language">
+
+        <action
+            android:id="@+id/action_language_to_intro"
+            app:destination="@id/introFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/introFragment"
+        android:name="com.example.lovetester.ui.intro.IntroFragment"
+        android:label="Intro"/>
 
 </navigation>

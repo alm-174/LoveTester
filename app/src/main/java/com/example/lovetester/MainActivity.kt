@@ -15,9 +15,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
-        )
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.root.setBackgroundResource(R.drawable.bg_splash)

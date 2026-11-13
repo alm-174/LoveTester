@@ -1,20 +1,21 @@
 package com.example.lovetester.ui.language
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.R
-import com.example.lovetester.databinding.FragmentLanguageBinding
+import com.example.lovetester.databinding.ActivityLanguageBinding
+import com.example.lovetester.ui.intro.IntroActivity
+class LanguageActivity : AppCompatActivity() {
 
-class LanguageFragment : Fragment(R.layout.fragment_language){
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?
-    ) {
-        super.onViewCreated(view, savedInstanceState)
+    private lateinit var binding: ActivityLanguageBinding
 
-        val binding = FragmentLanguageBinding.bind(view)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityLanguageBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val languages = listOf(
             Language("en", R.string.language_english, R.drawable.flag_english),
@@ -27,21 +28,28 @@ class LanguageFragment : Fragment(R.layout.fragment_language){
         )
 
         val adapter = LanguageAdapter(languages) { language ->
-            // Hiện tại chỉ chọn ngôn ngữ.
-            // Chưa thay đổi Locale của ứng dụng.
+            // Hiện tại chưa thay đổi Locale
         }
 
         binding.rvLanguages.layoutManager =
-            LinearLayoutManager(requireContext())
+            LinearLayoutManager(this)
+
+        binding.rvLanguages.layoutManager =
+            LinearLayoutManager(this)
 
         binding.rvLanguages.adapter = adapter
+
+
+
 
         binding.btnConfirmLanguage.setOnClickListener {
             val selectedLanguage = adapter.getSelectedLanguage()
 
-            // Bước tiếp theo:
-            // Chuyển sang màn Intro đầu tiên.
-            // Chưa cần lưu selectedLanguage.
+            // TODO: Sau khi tạo IntroActivity,
+            // sử dụng Intent để mở màn Intro.
+
+            val intent = Intent(this, IntroActivity::class.java)
+            startActivity(intent)
         }
     }
 }

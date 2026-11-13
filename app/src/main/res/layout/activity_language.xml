@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:text="@string/language_title"
             android:textSize="20sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/plus_jakarta_sans_semibold"
             android:textColor="@color/splash_title_love"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

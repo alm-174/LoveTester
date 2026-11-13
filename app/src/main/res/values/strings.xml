@@ -14,4 +14,13 @@
     <string name="language_portuguese">Portuguese</string>
     <string name="language_indonesian">Indonesian</string>
     <string name="language_german">German</string>
+
+    <string name="intro_title_1">Test Your Relationship</string>
+    <string name="intro_description_1">Find out your love compatibility\nwith your partner</string>
+
+    <string name="intro_title_2">Love Day Counter</string>
+    <string name="intro_description_2">Keep track of how long you\nhave been together</string>
+
+    <string name="intro_title_3">Memorable Moments</string>
+    <string name="intro_description_3">Preserve cherished moments together</string>
 </resources>
