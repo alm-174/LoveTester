@@ -4,4 +4,20 @@
     <color name="white">#FFFFFFFF</color>
     <color name="splash_gradient_start">#FFFFFF</color>
     <color name="splash_gradient_end">#F9FAFF</color>
+    <color name="splash_logo_background">#FF9595</color>
+
+    <color name="splash_title_color">#202532</color>
+    <color name="splash_title_shadow">#33000000</color>
+    <color name="splash_title_love">#202532</color>
+    <color name="splash_title_counter">#FF1744</color>
+
+    <color name="splash_dot_active">#FF0845</color>
+    <color name="splash_dot_inactive">#F5C4CB</color>
+
+    <color name="splash_ads_text">#4B4F58</color>
+
+    <color name="language_item_unselected">#F7F7F7</color>
+
+    <color name="language_item_selected">#4DFF0845</color>
+    <color name="language_item_selected_stroke">#FF0845</color>
 </resources>

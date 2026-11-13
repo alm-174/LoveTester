@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_splash">
+
+    <!-- Nhóm Logo và tên ứng dụng -->
+    <LinearLayout
+        android:id="@+id/logo_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.326">
+
+
+        <View
+            android:id="@+id/logo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="@drawable/bg_splash_logo" />
+
+
+        <LinearLayout
+            android:id="@+id/title_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_24"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+
+            <TextView
+                android:id="@+id/tv_love"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/splash_love"
+                android:textColor="@color/splash_title_love"
+                android:textSize="@dimen/splash_title_size"
+                android:fontFamily="@font/pacifico_regular"
+                android:shadowColor="@color/splash_title_shadow"
+                android:shadowDx="0"
+                android:shadowDy="10"
+                android:shadowRadius="7"
+                android:includeFontPadding="false" />
+
+            <TextView
+                android:id="@+id/tv_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/splash_counter"
+                android:textColor="@color/splash_title_counter"
+                android:textSize="@dimen/splash_title_size"
+                android:fontFamily="@font/pacifico_regular"
+                android:shadowColor="@color/splash_title_shadow"
+                android:shadowDx="0"
+                android:shadowDy="10"
+                android:shadowRadius="7"
+                android:includeFontPadding="false" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="63dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/dots_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:id="@+id/dot_1"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@drawable/bg_splash_dot_inactive" />
+
+            <View
+                android:id="@+id/dot_2"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="8dp"
+
+                android:background="@drawable/bg_splash_dot_inactive" />
+
+            <View
+                android:id="@+id/dot_3"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_splash_dot_inactive" />
+
+            <View
+                android:id="@+id/dot_4"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_splash_dot" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_ads_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/splash_ads_notice"
+            android:textSize="16sp"
+            android:textColor="@color/splash_ads_text"
+            android:gravity="center"
+            android:includeFontPadding="false" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

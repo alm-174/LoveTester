@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">LoveTester</string>
+    <string name="splash_love">LOVE</string>
+    <string name="splash_counter">COUNTER</string>
+    <string name="splash_ads_notice">This action can contain ads</string>
+
+    <string name="language_title">Language</string>
+    <string name="language_confirm">Confirm language</string>
+
+    <string name="language_english">English</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_french">French</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_indonesian">Indonesian</string>
+    <string name="language_german">German</string>
 </resources>
