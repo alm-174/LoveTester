@@ -23,4 +23,5 @@
 
     <string name="intro_title_3">Memorable Moments</string>
     <string name="intro_description_3">Preserve cherished moments together</string>
+    <string name="permission_decription">This app needs permissions below to work properly</string>
 </resources>

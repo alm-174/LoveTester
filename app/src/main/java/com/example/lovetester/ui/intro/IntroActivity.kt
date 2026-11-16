@@ -1,10 +1,12 @@
 package com.example.lovetester.ui.intro
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.lovetester.R
 import com.example.lovetester.databinding.ActivityIntroBinding
+import com.example.lovetester.ui.permission.PermissionActivity
 
 class IntroActivity : AppCompatActivity() {
     private lateinit var binding: ActivityIntroBinding
@@ -63,10 +65,10 @@ class IntroActivity : AppCompatActivity() {
                 )
             } else {
                 // TODO: Chuyển sang HomeFragment
-                // findNavController().navigate(R.id.action_intro_to_home)
 
-//                val intent = Intent(this, PermissionActivity::class.java)
-//                startActivity(intent)
+
+                val intent = Intent(this, PermissionActivity::class.java)
+                startActivity(intent)
             }
         }
 

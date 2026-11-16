@@ -21,4 +21,6 @@
     <color name="language_item_selected">#4DFF0845</color>
     <color name="language_item_selected_stroke">#FF0845</color>
     <color name="color_1e232e">#1E232E</color>
+    <color name="color_ff0845">#FF0845</color>
+    <color name="color_4dff4081">#4DFF4081</color>
 </resources>
