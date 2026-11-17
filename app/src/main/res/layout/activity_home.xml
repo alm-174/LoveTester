@@ -90,13 +90,14 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivPersonOne"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:src="@drawable/avatar_sasuke"
-                android:scaleType="fitCenter"
-                android:contentDescription="Person one avatar" />
+                android:scaleType="centerCrop"
+                android:contentDescription="Person one avatar"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.LoveTester.Circle" />
 
             <TextView
                 android:id="@+id/tvPersonOneName"
@@ -190,13 +191,14 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivPersonTwo"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:src="@drawable/avatar_naruto"
-                android:scaleType="fitCenter"
-                android:contentDescription="Person two avatar" />
+                android:scaleType="centerCrop"
+                android:contentDescription="Person two avatar"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.LoveTester.Circle" />
 
             <TextView
                 android:id="@+id/tvPersonTwoName"

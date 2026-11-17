@@ -28,13 +28,16 @@
         <TextView
             android:id="@+id/tvCalendarMonth"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="December - 2023"
             android:fontFamily="@font/plus_jakarta_sans_semibold"
             android:textSize="@dimen/text_body"
-            android:textColor="#27272A"/>
+            android:textColor="#27272A"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Choose year"/>
 
         <ImageButton
             android:id="@+id/btnNextMonth"
@@ -136,6 +139,17 @@
         android:layout_marginTop="8dp"
         android:overScrollMode="never"
         app:layout_constraintTop_toBottomOf="@id/layoutWeekHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCalendarYears"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toTopOf="@id/layoutWeekHeader"
+        app:layout_constraintBottom_toBottomOf="@id/rvCalendarDays"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

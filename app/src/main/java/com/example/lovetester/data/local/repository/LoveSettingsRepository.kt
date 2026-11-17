@@ -35,6 +35,18 @@ class LoveSettingsRepository(context: Context) {
     private val PARTNER_NAME = stringPreferencesKey("partner_name")
     private val PARTNER_GENDER = stringPreferencesKey("partner_gender")
 
+    private val YOU_BIRTHDAY =
+        stringPreferencesKey("you_birthday")
+
+    private val PARTNER_BIRTHDAY =
+        stringPreferencesKey("partner_birthday")
+
+    private val YOU_AVATAR_PATH =
+        stringPreferencesKey("you_avatar_path")
+
+    private val PARTNER_AVATAR_PATH =
+        stringPreferencesKey("partner_avatar_path")
+
     val loveStartDate: Flow<LocalDate?> =
         store.data.map { preferences ->
             preferences[LOVE_START_DATE]?.let { value ->
@@ -66,7 +78,15 @@ class LoveSettingsRepository(context: Context) {
             name = preferences[YOU_NAME] ?: "You",
             gender = runCatching {
                 Gender.valueOf(preferences[YOU_GENDER] ?: "MALE")
-            }.getOrDefault(Gender.MALE)
+            }.getOrDefault(Gender.MALE),
+
+            birthday = preferences[YOU_BIRTHDAY]?.let{
+                    raw ->
+                runCatching {
+                    LocalDate.parse(raw)
+                }.getOrNull()
+            },
+            avatarPath = preferences[YOU_AVATAR_PATH]
         )
     }
 
@@ -75,7 +95,14 @@ class LoveSettingsRepository(context: Context) {
             name = preferences[PARTNER_NAME] ?: "Your partner",
             gender = runCatching {
                 Gender.valueOf(preferences[PARTNER_GENDER] ?: "FEMALE")
-            }.getOrDefault(Gender.FEMALE)
+            }.getOrDefault(Gender.FEMALE),
+            birthday = preferences[PARTNER_BIRTHDAY]?.let{
+                    raw ->
+                runCatching {
+                    LocalDate.parse(raw)
+                }.getOrNull()
+            },
+            avatarPath = preferences[PARTNER_AVATAR_PATH]
         )
     }
 
@@ -102,6 +129,17 @@ class LoveSettingsRepository(context: Context) {
         store.edit { preferences ->
             preferences[YOU_NAME] = info.name
             preferences[YOU_GENDER] = info.gender.name
+            if (info.birthday != null) {
+                preferences[YOU_BIRTHDAY] = info.birthday.toString()
+            } else {
+                preferences.remove(YOU_BIRTHDAY)
+            }
+
+            if (info.avatarPath != null) {
+                preferences[YOU_AVATAR_PATH] = info.avatarPath
+            } else {
+                preferences.remove(YOU_AVATAR_PATH)
+            }
         }
     }
 
@@ -109,6 +147,17 @@ class LoveSettingsRepository(context: Context) {
         store.edit { preferences ->
             preferences[PARTNER_NAME] = info.name
             preferences[PARTNER_GENDER] = info.gender.name
+            if (info.birthday != null) {
+                preferences[PARTNER_BIRTHDAY] = info.birthday.toString()
+            } else {
+                preferences.remove(PARTNER_BIRTHDAY)
+            }
+
+            if (info.avatarPath != null) {
+                preferences[PARTNER_AVATAR_PATH] = info.avatarPath
+            } else {
+                preferences.remove(PARTNER_AVATAR_PATH)
+            }
         }
     }
 }

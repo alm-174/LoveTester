@@ -1,6 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="570dp"
+    android:background="@drawable/bg_information_sheet">
+
+    <View
+        android:id="@+id/dragHandle"
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#DCDFE5"
+        android:background="@drawable/bg_background_placeholder"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:text="Information"
+        android:textColor="@color/color_1e232e"
+        android:textSize="16sp"
+        android:fontFamily="@font/plus_jakarta_sans_semibold"
+        app:layout_constraintTop_toBottomOf="@id/dragHandle"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivAvatar"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="24dp"
+        android:background="#1AFF0845"
+        android:contentDescription="Profile avatar"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.LoveTester.Circle"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvChangePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Tap to change photo"
+        android:textColor="#4B4F58"
+        android:textSize="14sp"
+        android:fontFamily="@font/plus_jakarta_sans_regular"
+        app:layout_constraintTop_toBottomOf="@id/ivAvatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/layoutForm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="14dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/tvChangePhoto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:text="Name"
+            android:textColor="#1E232E"
+            android:textSize="14sp"
+            android:fontFamily="@font/plus_jakarta_sans_regular"/>
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_information_field"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:singleLine="true"
+            android:inputType="textPersonName"
+            android:textSize="14sp"
+            android:fontFamily="@font/plus_jakarta_sans_medium"
+            android:textColor="#4B4F58"
+            android:hint="Enter name"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="12dp"
+            android:text="Gender"
+            android:textColor="#1E232E"
+            android:textSize="14sp"
+            android:fontFamily="@font/plus_jakarta_sans_regular"/>
+
+        <TextView
+            android:id="@+id/tvGender"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_information_field"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="Male"
+            android:textSize="14sp"
+            android:fontFamily="@font/plus_jakarta_sans_medium"
+            android:textColor="#4B4F58"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="12dp"
+            android:text="Birthday"
+            android:textColor="#1E232E"
+            android:textSize="14sp"
+            android:fontFamily="@font/plus_jakarta_sans_regular"/>
+
+        <TextView
+            android:id="@+id/tvBirthday"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_information_field"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="22/02/1997"
+            android:textSize="14sp"
+            android:fontFamily="@font/plus_jakarta_sans_medium"
+            android:textColor="#4B4F58"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="#FF0845"
+        android:text="Save"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:fontFamily="@font/plus_jakarta_sans_semibold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutForm"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,3 @@
-
 package com.example.lovetester.ui.common.dialog
 
 import android.graphics.Color
@@ -23,7 +22,6 @@ class CalendarDayAdapter(
         parent: ViewGroup,
         viewType: Int
     ): DayViewHolder {
-
         val binding = ItemCalendarDayBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
@@ -41,32 +39,29 @@ class CalendarDayAdapter(
         val dayTextView = holder.binding.tvDayNumber
 
         dayTextView.text = day.date.dayOfMonth.toString()
+        dayTextView.alpha = if (day.isEnabled) 1f else 0.35f
+        holder.binding.root.isEnabled = day.isEnabled
 
-        if (day.isSelected) {
-
+        if (day.isSelected && day.isEnabled) {
             dayTextView.setBackgroundResource(
                 R.drawable.bg_calendar_day_selected
             )
-
             dayTextView.setTextColor(Color.WHITE)
-
         } else {
-
             dayTextView.background = null
 
-            if (day.isCurrentMonth) {
-                dayTextView.setTextColor(
-                    Color.parseColor("#1E232E")
-                )
-            } else {
-                dayTextView.setTextColor(
-                    Color.parseColor("#B8BBC4")
-                )
+            val textColor = when {
+                !day.isEnabled -> Color.parseColor("#B8BBC4")
+                day.isCurrentMonth -> Color.parseColor("#1E232E")
+                else -> Color.parseColor("#B8BBC4")
             }
+            dayTextView.setTextColor(textColor)
         }
 
         holder.binding.root.setOnClickListener {
-            onDayClick(day.date)
+            if (day.isEnabled) {
+                onDayClick(day.date)
+            }
         }
     }
 

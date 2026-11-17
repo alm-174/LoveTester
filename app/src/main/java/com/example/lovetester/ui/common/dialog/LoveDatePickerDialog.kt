@@ -20,9 +20,12 @@ class LoveDatePickerDialog :
         const val RESULT_DATE = "selected_date"
 
         private const val ARG_INITIAL_DATE = "initial_date"
+        private const val STATE_SELECTED_DATE = "selected_date_state"
+        private const val STATE_DISPLAYED_MONTH = "displayed_month_state"
+        private const val STATE_YEAR_PICKER_VISIBLE = "year_picker_visible_state"
 
         fun newInstance(
-            initialDate: LocalDate = LocalDate.now()
+            initialDate: LocalDate = LocalDate.now(),
         ): LoveDatePickerDialog {
             return LoveDatePickerDialog().apply {
                 arguments = Bundle().apply {
@@ -35,10 +38,13 @@ class LoveDatePickerDialog :
     private var _binding: DialogLoveDatePickerBinding? = null
     private val binding get() = requireNotNull(_binding)
 
-    private lateinit var adapter: CalendarDayAdapter
+    private lateinit var dayAdapter: CalendarDayAdapter
+    private lateinit var yearAdapter: CalendarYearAdapter
 
+    private var maximumDate: LocalDate = LocalDate.now()
     private var selectedDate: LocalDate = LocalDate.now()
     private var displayedMonth: YearMonth = YearMonth.now()
+    private var isYearPickerVisible = false
 
     private val monthFormatter =
         DateTimeFormatter.ofPattern("MMMM - yyyy", Locale.ENGLISH)
@@ -50,21 +56,28 @@ class LoveDatePickerDialog :
         super.onViewCreated(view, savedInstanceState)
 
         _binding = DialogLoveDatePickerBinding.bind(view)
+        maximumDate = LocalDate.now()
 
         val initialDate = arguments
             ?.getString(ARG_INITIAL_DATE)
             ?.let(LocalDate::parse)
-            ?: LocalDate.now()
+            ?: maximumDate
 
         selectedDate = savedInstanceState
-            ?.getString("selected_date_state")
+            ?.getString(STATE_SELECTED_DATE)
             ?.let(LocalDate::parse)
-            ?: initialDate
+            ?.coerceAtMost(maximumDate)
+            ?: initialDate.coerceAtMost(maximumDate)
 
         displayedMonth = savedInstanceState
-            ?.getString("displayed_month_state")
+            ?.getString(STATE_DISPLAYED_MONTH)
             ?.let(YearMonth::parse)
+            ?.coerceAtMost(YearMonth.from(maximumDate))
             ?: YearMonth.from(selectedDate)
+
+        isYearPickerVisible = savedInstanceState
+            ?.getBoolean(STATE_YEAR_PICKER_VISIBLE)
+            ?: false
 
         setupCalendar()
         setupListeners()
@@ -72,27 +85,60 @@ class LoveDatePickerDialog :
     }
 
     private fun setupCalendar() {
-        adapter = CalendarDayAdapter { clickedDate ->
-            selectedDate = clickedDate
-            displayedMonth = YearMonth.from(clickedDate)
-            renderCalendar()
+        dayAdapter = CalendarDayAdapter { clickedDate ->
+            if (!clickedDate.isAfter(maximumDate)) {
+                selectedDate = clickedDate
+                displayedMonth = YearMonth.from(clickedDate)
+                renderCalendar()
+            }
         }
 
         binding.rvCalendarDays.layoutManager =
             GridLayoutManager(requireContext(), 7)
+        binding.rvCalendarDays.adapter = dayAdapter
 
-        binding.rvCalendarDays.adapter = adapter
+        yearAdapter = CalendarYearAdapter { selectedYear ->
+            val requestedMonth = YearMonth.of(
+                selectedYear,
+                displayedMonth.monthValue
+            )
+
+            displayedMonth = requestedMonth.coerceAtMost(
+                YearMonth.from(maximumDate)
+            )
+            isYearPickerVisible = false
+            renderCalendar()
+        }
+
+        binding.rvCalendarYears.layoutManager =
+            GridLayoutManager(requireContext(), 4)
+        binding.rvCalendarYears.adapter = yearAdapter
     }
 
     private fun setupListeners() {
-
         binding.btnPreviousMonth.setOnClickListener {
+            if (isYearPickerVisible) {
+                return@setOnClickListener
+            }
+
             displayedMonth = displayedMonth.minusMonths(1)
             renderCalendar()
         }
 
         binding.btnNextMonth.setOnClickListener {
+            if (
+                isYearPickerVisible ||
+                (displayedMonth >= YearMonth.from(maximumDate))
+            ) {
+                return@setOnClickListener
+            }
+
             displayedMonth = displayedMonth.plusMonths(1)
+            renderCalendar()
+        }
+
+        binding.tvCalendarMonth.setOnClickListener {
+            isYearPickerVisible = !isYearPickerVisible
             renderCalendar()
         }
 
@@ -101,10 +147,13 @@ class LoveDatePickerDialog :
         }
 
         binding.btnSaveDate.setOnClickListener {
+            val today = LocalDate.now()
+            val resultDate = selectedDate.coerceAtMost(today)
+
             parentFragmentManager.setFragmentResult(
                 REQUEST_KEY,
                 Bundle().apply {
-                    putString(RESULT_DATE, selectedDate.toString())
+                    putString(RESULT_DATE, resultDate.toString())
                 }
             )
 
@@ -113,30 +162,67 @@ class LoveDatePickerDialog :
     }
 
     private fun renderCalendar() {
+        val maximumMonth = YearMonth.from(maximumDate)
+        displayedMonth = displayedMonth.coerceAtMost(maximumMonth)
+
         binding.tvCalendarMonth.text =
             displayedMonth.format(monthFormatter)
 
-        adapter.submitDays(buildCalendarDays())
+        binding.layoutWeekHeader.visibility =
+            if (isYearPickerVisible) View.INVISIBLE else View.VISIBLE
+        binding.rvCalendarDays.visibility =
+            if (isYearPickerVisible) View.INVISIBLE else View.VISIBLE
+        binding.rvCalendarYears.visibility =
+            if (isYearPickerVisible) View.VISIBLE else View.GONE
+
+        val canGoToPreviousMonth =
+            !isYearPickerVisible && displayedMonth > YearMonth.of(1, 1)
+        val canGoToNextMonth =
+            !isYearPickerVisible && displayedMonth < maximumMonth
+
+        binding.btnPreviousMonth.isEnabled = canGoToPreviousMonth
+        binding.btnPreviousMonth.alpha =
+            if (canGoToPreviousMonth) 1f else 0.35f
+
+        binding.btnNextMonth.isEnabled = canGoToNextMonth
+        binding.btnNextMonth.alpha =
+            if (canGoToNextMonth) 1f else 0.35f
+
+        if (isYearPickerVisible) {
+            renderYears()
+        } else {
+            dayAdapter.submitDays(buildCalendarDays())
+        }
+    }
+
+    private fun renderYears() {
+        val years = (1..maximumDate.year).toList()
+
+        yearAdapter.submitYears(
+            newYears = years,
+            selectedYear = displayedMonth.year,
+            currentYear = maximumDate.year
+        )
+
+        binding.rvCalendarYears.post {
+            val position = displayedMonth.year - 1
+            binding.rvCalendarYears.scrollToPosition(position)
+        }
     }
 
     private fun buildCalendarDays(): List<CalendarDay> {
-
         val firstDay = displayedMonth.atDay(1)
 
-        // Java DayOfWeek: Monday = 1, Sunday = 7
-        // Chuyển sang Sunday = 0
+        // Java DayOfWeek: Monday = 1, Sunday = 7.
+        // Chuyển sang Sunday = 0.
         val offset = firstDay.dayOfWeek.value % 7
-
         val gridStartDate =
             firstDay.minusDays(offset.toLong())
 
         val cells = offset + displayedMonth.lengthOfMonth()
-
-        // Tạo đủ hàng, mỗi hàng có 7 ngày
         val totalCells = ((cells + 6) / 7) * 7
 
         return (0 until totalCells).map { index ->
-
             val date =
                 gridStartDate.plusDays(index.toLong())
 
@@ -144,19 +230,24 @@ class LoveDatePickerDialog :
                 date = date,
                 isCurrentMonth =
                     YearMonth.from(date) == displayedMonth,
-                isSelected = date == selectedDate
+                isSelected = date == selectedDate,
+                isEnabled = !date.isAfter(maximumDate)
             )
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(
-            "selected_date_state",
+            STATE_SELECTED_DATE,
             selectedDate.toString()
         )
         outState.putString(
-            "displayed_month_state",
+            STATE_DISPLAYED_MONTH,
             displayedMonth.toString()
+        )
+        outState.putBoolean(
+            STATE_YEAR_PICKER_VISIBLE,
+            isYearPickerVisible
         )
         super.onSaveInstanceState(outState)
     }
@@ -172,6 +263,7 @@ class LoveDatePickerDialog :
 
     override fun onDestroyView() {
         binding.rvCalendarDays.adapter = null
+        binding.rvCalendarYears.adapter = null
         _binding = null
         super.onDestroyView()
     }
