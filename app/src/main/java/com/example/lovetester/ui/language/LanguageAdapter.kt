@@ -43,7 +43,7 @@ class LanguageAdapter(
                 if (position == selectedPosition) {
                     R.drawable.bg_language_selected
                 } else {
-                    R.drawable.bg_language_unselected
+                    R.drawable.bg_rectangle_white
                 }
             )
 

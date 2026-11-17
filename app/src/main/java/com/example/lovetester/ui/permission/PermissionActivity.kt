@@ -14,10 +14,22 @@ import androidx.core.content.ContextCompat
 import com.example.lovetester.R
 import com.example.lovetester.databinding.ActivityPermissionBinding
 import android.provider.Settings
+import com.example.lovetester.ui.home.HomeActivity
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.lifecycleScope
+import com.example.lovetester.data.local.model.OnboardingStep
+import com.example.lovetester.data.local.repository.LoveSettingsRepository
+import com.example.lovetester.ui.intro.IntroActivity
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
+
 class PermissionActivity : AppCompatActivity(){
 
     private lateinit var binding: ActivityPermissionBinding
 
+    private lateinit var repository: LoveSettingsRepository
+    private var isNavigating = false
     private val cameraPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -32,6 +44,7 @@ class PermissionActivity : AppCompatActivity(){
 
         binding = ActivityPermissionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        repository = LoveSettingsRepository(applicationContext)
 
         syncCameraPermissionSwitch()
 
@@ -47,6 +60,19 @@ class PermissionActivity : AppCompatActivity(){
 
             syncCameraPermissionSwitch()
         }
+
+        binding.btnContinue.setOnClickListener {
+            navigateToHome()
+        }
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    navigateBackToIntro()
+                }
+            }
+        )
     }
 
     override fun onResume() {
@@ -131,5 +157,75 @@ class PermissionActivity : AppCompatActivity(){
         )
 
         return permissionStatus == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun navigateToHome() {
+        if (isNavigating) return
+
+        isNavigating = true
+        binding.btnContinue.isEnabled = false
+
+        lifecycleScope.launch {
+            try {
+                repository.setOnboardingStep(OnboardingStep.COMPLETED)
+
+                val intent = Intent(
+                    this@PermissionActivity,
+                    HomeActivity::class.java
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+
+                startActivity(intent)
+
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                isNavigating = false
+                binding.btnContinue.isEnabled = true
+
+                Toast.makeText(
+                    this@PermissionActivity,
+                    "Không thể lưu trạng thái. Vui lòng thử lại.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun navigateBackToIntro() {
+        if (isNavigating) return
+
+        isNavigating = true
+        binding.btnContinue.isEnabled = false
+
+        lifecycleScope.launch {
+            try {
+                repository.setOnboardingStep(OnboardingStep.INTRO)
+
+                val intent = Intent(
+                    this@PermissionActivity,
+                    IntroActivity::class.java
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+
+                startActivity(intent)
+
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                isNavigating = false
+                binding.btnContinue.isEnabled = true
+
+                Toast.makeText(
+                    this@PermissionActivity,
+                    "Không thể quay lại Intro. Vui lòng thử lại.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 }

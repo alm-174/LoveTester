@@ -12,15 +12,25 @@ import androidx.core.animation.doOnCancel
 import androidx.core.animation.doOnEnd
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.lovetester.R
+import com.example.lovetester.data.local.model.OnboardingStep
+import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.ActivitySplashBinding
+import com.example.lovetester.ui.home.HomeActivity
+import com.example.lovetester.ui.intro.IntroActivity
 import com.example.lovetester.ui.language.LanguageActivity
+import com.example.lovetester.ui.permission.PermissionActivity
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashBinding
     private var animator: ValueAnimator? = null
     private var animationFinished = false
+    private var onboardingStep: OnboardingStep? = null
     private var activityResumed = false
     private var completionHandled = false
 
@@ -43,6 +53,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(binding.root)
         ViewCompat.requestApplyInsets(binding.root)
 
+        loadOnboardingStep()
         startSplashAnimation()
     }
 
@@ -75,7 +86,7 @@ class SplashActivity : AppCompatActivity() {
             doOnEnd {
                 if (!wasCancelled) {
                     animationFinished = true
-                    navigateToLanguage()
+                    navigateIfReady()
                 }
             }
         }
@@ -85,7 +96,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onPostResume() {
         super.onPostResume()
         activityResumed = true
-        navigateToLanguage()
+        navigateIfReady()
     }
 
     override fun onPause() {
@@ -93,16 +104,38 @@ class SplashActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    private fun navigateToLanguage() {
+    private fun loadOnboardingStep() {
+        val repository = LoveSettingsRepository(applicationContext)
+
+        lifecycleScope.launch {
+            onboardingStep = try {
+                repository.onboardingStep.first()
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (_: Exception) {
+                OnboardingStep.LANGUAGE
+            }
+
+            navigateIfReady()
+        }
+    }
+
+    private fun navigateIfReady() {
+        val step = onboardingStep ?: return
+
         if (!animationFinished || !activityResumed || completionHandled || isFinishing || isDestroyed) {
             return
         }
         completionHandled = true
 
-        // TODO: Khi LanguageActivity tồn tại, thêm explicit Intent, startActivity() và finish() ở đây.
-        // Hiện tại giữ nguyên màn Splash, không mở Activity khác.
-        val intent =    Intent(this, LanguageActivity::class.java)
-        startActivity(intent)
+        val destination = when (step) {
+            OnboardingStep.LANGUAGE -> LanguageActivity::class.java
+            OnboardingStep.INTRO -> IntroActivity::class.java
+            OnboardingStep.PERMISSION -> PermissionActivity::class.java
+            OnboardingStep.COMPLETED -> HomeActivity::class.java
+        }
+
+        startActivity(Intent(this, destination))
         finish()
     }
 

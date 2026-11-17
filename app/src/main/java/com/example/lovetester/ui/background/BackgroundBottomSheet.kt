@@ -1,0 +1,165 @@
+
+package com.example.lovetester.ui.background
+
+import android.net.Uri
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.lovetester.R
+import com.example.lovetester.data.local.BackgroundImageStorage
+import com.example.lovetester.data.local.repository.LoveSettingsRepository
+import com.example.lovetester.databinding.BottomSheetBackgroundBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
+
+class BackgroundBottomSheet : BottomSheetDialogFragment() {
+
+    private var _binding: BottomSheetBackgroundBinding? = null
+
+    private val binding: BottomSheetBackgroundBinding
+        get() = requireNotNull(_binding)
+
+    private val backgrounds = listOf(
+        BackgroundItem.AddPhoto,
+        BackgroundItem.BuiltIn(
+            id = "romantic_1",
+            drawableRes = R.drawable.background_romantic_1
+        ),
+        BackgroundItem.BuiltIn(
+            id = "romantic_2",
+            drawableRes = R.drawable.background_romantic_2
+        ),
+        BackgroundItem.BuiltIn(
+            id = "romantic_3",
+            drawableRes = R.drawable.background_romantic_3
+        )
+    )
+
+    private val photoPickerLauncher = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            handleSelectedPhoto(uri)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = BottomSheetBackgroundBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+
+        return binding.root
+    }
+
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?
+    ) {
+        super.onViewCreated(view, savedInstanceState)
+        setupBackgroundList()
+    }
+
+    override fun onDestroyView() {
+        binding.rvBackgrounds.adapter = null
+        _binding = null
+        super.onDestroyView()
+    }
+
+    private fun setupBackgroundList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val storage = BackgroundImageStorage(requireContext())
+
+            val paths = storage.getSavedImages()
+
+            val customItems = paths.map { path ->
+                BackgroundItem.Custom(path)
+            }
+
+            val allItems = backgrounds + customItems
+
+            val adapter = BackgroundAdapter(allItems) { item ->
+                when (item) {
+                    BackgroundItem.AddPhoto -> {
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
+                    }
+
+                    is BackgroundItem.BuiltIn -> {
+                        saveSelectedBackground(item.id)
+                    }
+
+                    is BackgroundItem.Custom -> {
+                        saveSelectedBackground("custom:${item.path}")
+                    }
+                }
+            }
+
+            binding.rvBackgrounds.layoutManager =
+                GridLayoutManager(requireContext(), 2)
+
+            val spacing =
+                (12 * resources.displayMetrics.density + 0.5f).toInt()
+
+            if (binding.rvBackgrounds.itemDecorationCount == 0) {
+                binding.rvBackgrounds.addItemDecoration(
+                    BackgroundGridSpacing(spacing)
+                )
+            }
+
+            binding.rvBackgrounds.adapter = adapter
+        }
+    }
+
+    private fun handleSelectedPhoto(uri: Uri) {
+        lifecycleScope.launch {
+            try {
+                val context = requireContext().applicationContext
+                val storage = BackgroundImageStorage(context)
+                val path = storage.saveImage(uri)
+
+                val repository = LoveSettingsRepository(context)
+                repository.setSelectedBackgroundId("custom:$path")
+
+                dismiss()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                context?.let {
+                    Toast.makeText(
+                        it,
+                        "Không thể lưu ảnh đã chọn",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun saveSelectedBackground(id: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val repository = LoveSettingsRepository(
+                requireContext().applicationContext
+            )
+
+            repository.setSelectedBackgroundId(id)
+
+            dismiss()
+        }
+    }
+}

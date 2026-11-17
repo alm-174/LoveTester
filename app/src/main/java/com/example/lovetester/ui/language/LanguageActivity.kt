@@ -7,15 +7,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.R
 import com.example.lovetester.databinding.ActivityLanguageBinding
 import com.example.lovetester.ui.intro.IntroActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.lovetester.data.local.model.OnboardingStep
+import com.example.lovetester.data.local.repository.LoveSettingsRepository
+import kotlinx.coroutines.launch
 class LanguageActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLanguageBinding
+
+    private lateinit var repository: LoveSettingsRepository
+    private var isNavigating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityLanguageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        repository = LoveSettingsRepository(applicationContext)
 
         val languages = listOf(
             Language("en", R.string.language_english, R.drawable.flag_english),
@@ -43,13 +52,31 @@ class LanguageActivity : AppCompatActivity() {
 
 
         binding.btnConfirmLanguage.setOnClickListener {
+            if (isNavigating) return@setOnClickListener
+
             val selectedLanguage = adapter.getSelectedLanguage()
 
-            // TODO: Sau khi tạo IntroActivity,
-            // sử dụng Intent để mở màn Intro.
+            isNavigating = true
+            binding.btnConfirmLanguage.isEnabled = false
 
-            val intent = Intent(this, IntroActivity::class.java)
-            startActivity(intent)
+            lifecycleScope.launch {
+                try {
+                    repository.setOnboardingStep(OnboardingStep.INTRO)
+
+                    val intent = Intent(
+                        this@LanguageActivity,
+                        IntroActivity::class.java
+                    )
+                    startActivity(intent)
+
+                } catch (e: Exception) {
+                    if (e is kotlinx.coroutines.CancellationException) throw e
+
+                    isNavigating = false
+                    binding.btnConfirmLanguage.isEnabled = true
+                    // TODO: Hiển thị thông báo không thể lưu trạng thái
+                }
+            }
         }
     }
 }
