@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
+        android:name=".LoveTesterApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -41,12 +42,18 @@
 
         <activity
             android:name=".ui.home.HomeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.setting.SettingsActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".ui.lovetest.LoveTestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.memory.MemoryActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

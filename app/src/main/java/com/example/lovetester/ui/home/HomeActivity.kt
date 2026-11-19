@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +24,10 @@ import com.example.lovetester.databinding.ActivityHomeBinding
 import com.example.lovetester.ui.background.BackgroundBottomSheet
 import com.example.lovetester.ui.information.InformationBottomSheet
 import com.example.lovetester.ui.information.PersonType
+import com.example.lovetester.ui.lovetest.LoveTestActivity
+import com.example.lovetester.ui.memory.AddMemoryFragment
+import com.example.lovetester.ui.memory.MemoryListFragment
+import dagger.hilt.android.AndroidEntryPoint
 import com.example.lovetester.ui.setting.SettingsActivity
 import com.example.lovetester.ui.startdate.StartDateFragment
 import kotlinx.coroutines.launch
@@ -31,6 +36,7 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.temporal.ChronoUnit
 
+@AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
@@ -73,6 +79,32 @@ class HomeActivity : AppCompatActivity() {
         binding.btnSettings.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
+        }
+
+        supportFragmentManager.addOnBackStackChangedListener { renderMemoryNavigation() }
+        renderMemoryNavigation()
+
+        binding.navHome.setOnClickListener {
+            if (supportFragmentManager.findFragmentById(R.id.homeMemoryContainer) is MemoryListFragment) {
+                supportFragmentManager.popBackStack()
+            }
+        }
+
+        binding.navLoveTest.setOnClickListener {
+            startActivity(Intent(this, LoveTestActivity::class.java))
+        }
+
+        binding.navMemory.setOnClickListener {
+            val manager = supportFragmentManager
+            if (manager.isStateSaved || manager.findFragmentById(R.id.homeMemoryContainer) != null) {
+                return@setOnClickListener
+            }
+            binding.navMemory.isEnabled = false
+            manager.beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.homeMemoryContainer, MemoryListFragment())
+                .addToBackStack("home_memory")
+                .commit()
         }
 
 
@@ -167,6 +199,39 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+    private fun renderMemoryNavigation() {
+        val current = supportFragmentManager.findFragmentById(R.id.homeMemoryContainer)
+        val onMemory = current is MemoryListFragment
+        val onAdd = current is AddMemoryFragment
+        val showingMemory = current != null
+        // Home artwork reaches the window bottom behind the transparent system navigation bar.
+        // Show only the Home content or the Memory content while keeping the shared tab bar.
+        binding.ivHomeBackground.isVisible = !showingMemory
+        binding.ivHomeContentBackground.isVisible = !showingMemory
+        binding.ivCouple.isVisible = !showingMemory
+        binding.layoutCoupleInfo.isVisible = !showingMemory
+        binding.btnSettings.isVisible = !showingMemory
+        binding.btnGallery.isVisible = !showingMemory
+        binding.homeMemoryContainer.isVisible = showingMemory
+        binding.layoutBottomNav.isVisible = !onAdd
+        binding.layoutBottomNav.setBackgroundColor(if (onMemory) Color.WHITE else Color.TRANSPARENT)
+        binding.navMemory.isEnabled = true
+        binding.navMemory.isSelected = onMemory
+        binding.navHome.isSelected = current == null
+
+        val selected = getColor(R.color.color_ff0845)
+        val unselected = Color.parseColor("#454954")
+        val homeColor = if (onMemory) unselected else selected
+        val memoryColor = if (onMemory) selected else unselected
+        binding.ivNavHome.setColorFilter(homeColor)
+        binding.tvNavHome.setTextColor(homeColor)
+        binding.ivNavMemory.setColorFilter(memoryColor)
+        binding.tvNavMemory.setTextColor(memoryColor)
+        androidx.core.view.WindowCompat.getInsetsController(window, binding.root)
+            .isAppearanceLightStatusBars = current != null
+        ViewCompat.requestApplyInsets(binding.root)
+    }
+
     private fun applyWindowInsets() {
         val settingsParams =
             binding.btnSettings.layoutParams as ViewGroup.MarginLayoutParams
@@ -203,6 +268,15 @@ class HomeActivity : AppCompatActivity() {
                 topMargin = maxOf(initialGalleryTop, statusInsets.top)
                 marginEnd = initialGalleryEnd + statusInsets.right
             }
+
+            val onAdd = supportFragmentManager.findFragmentById(R.id.homeMemoryContainer) is AddMemoryFragment
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            binding.homeMemoryContainer.setPadding(
+                navigationInsets.left,
+                statusInsets.top,
+                navigationInsets.right,
+                if (onAdd) maxOf(navigationInsets.bottom, ime.bottom) else 0
+            )
 
             binding.layoutBottomNav.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = initialBottomNavBottom + navigationInsets.bottom

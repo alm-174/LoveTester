@@ -1,8 +1,11 @@
 package com.example.lovetester.ui.setting
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.lovetester.R
 import com.example.lovetester.databinding.ActivitySettingsBinding
+import com.example.lovetester.ui.language.LanguageFragment
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -14,7 +17,18 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportFragmentManager.addOnBackStackChangedListener {
+            updateScreen(
+                supportFragmentManager.backStackEntryCount > 0
+            )
+        }
+
+        updateScreen(
+            supportFragmentManager.backStackEntryCount > 0
+        )
         setupListeners()
+
+
     }
 
     private fun setupListeners() {
@@ -22,7 +36,38 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        // LanguageFragment sẽ được kết nối ở bước tiếp theo.
-        // Chưa gắn listener cho các mục chưa triển khai.
+        binding.layoutLanguage.setOnClickListener {
+            openLanguageFragment()
+        }
+
+    }
+
+    private fun openLanguageFragment() {
+
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            return
+        }
+
+        updateScreen(true)
+
+        supportFragmentManager.beginTransaction()
+            .replace(
+                R.id.settingsFragmentContainer,
+                LanguageFragment()
+            )
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun updateScreen(isLanguageOpen: Boolean) {
+
+        binding.layoutSettingsHeader.visibility =
+            if (isLanguageOpen) View.GONE else View.VISIBLE
+
+        binding.layoutSettingsOptions.visibility =
+            if (isLanguageOpen) View.GONE else View.VISIBLE
+
+        binding.settingsFragmentContainer.visibility =
+            if (isLanguageOpen) View.VISIBLE else View.GONE
     }
 }
