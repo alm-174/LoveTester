@@ -1,3 +1,4 @@
+
 package com.example.lovetester.ui.information
 
 import android.net.Uri
@@ -6,23 +7,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.lovetester.data.local.model.Gender
 import com.example.lovetester.data.local.model.PersonInfo
 import com.example.lovetester.data.local.model.validateName
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.data.local.storage.AvatarStorage
+import com.example.lovetester.databinding.BottomSheetInformationBinding
+import com.example.lovetester.ui.common.dialog.avataroption.AvatarOptionDialog
+import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlin.coroutines.cancellation.CancellationException
-import com.example.lovetester.databinding.BottomSheetInformationBinding
-import com.example.lovetester.ui.common.dialog.LoveDatePickerDialog
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 class InformationBottomSheet : BottomSheetDialogFragment() {
 
@@ -34,12 +39,24 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
     private lateinit var personType: PersonType
 
     private var selectedGender: Gender = Gender.MALE
-
     private var selectedBirthday: LocalDate? = null
 
     private var currentAvatarPath: String? = null
     private var selectedAvatarUri: Uri? = null
 
+    // Ảnh Camera đang chờ kết quả
+    private var pendingCameraUri: Uri? = null
+    private var pendingCameraPath: String? = null
+
+    // Ảnh Camera tạm đã chụp thành công
+    private var selectedCameraPath: String? = null
+
+    private val birthdayFormatter =
+        DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+    // =========================
+    // PHOTO PICKER
+    // =========================
 
     private val photoPickerLauncher =
         registerForActivityResult(
@@ -47,12 +64,46 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         ) { uri ->
 
             if (uri != null) {
+                cleanupSelectedCameraFile()
+
                 selectedAvatarUri = uri
-                binding.ivAvatar.setImageURI(uri)
+                _binding?.ivAvatar?.setImageURI(uri)
             }
         }
 
+    // =========================
+    // CAMERA
+    // =========================
 
+    private val cameraLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.TakePicture()
+        ) { success ->
+
+            val uri = pendingCameraUri
+            val path = pendingCameraPath
+
+            pendingCameraUri = null
+            pendingCameraPath = null
+
+            if (success && uri != null && path != null) {
+
+                cleanupSelectedCameraFile()
+
+                selectedCameraPath = path
+                selectedAvatarUri = uri
+
+                _binding?.ivAvatar?.setImageURI(uri)
+
+            } else {
+
+                deleteTemporaryCameraFile(path)
+            }
+        }
+
+    // =========================
+    // LIFECYCLE
+    // =========================
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +112,30 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
             ?: error("Missing person type")
 
         personType = PersonType.valueOf(raw)
+
+        pendingCameraUri = savedInstanceState
+            ?.getString(KEY_PENDING_CAMERA_URI)
+            ?.let(Uri::parse)
+
+        pendingCameraPath = savedInstanceState
+            ?.getString(KEY_PENDING_CAMERA_PATH)
+
+        selectedAvatarUri = savedInstanceState
+            ?.getString(KEY_SELECTED_AVATAR_URI)
+            ?.let(Uri::parse)
+
+        selectedCameraPath = savedInstanceState
+            ?.getString(KEY_SELECTED_CAMERA_PATH)
+
+        selectedBirthday = savedInstanceState
+            ?.getString(KEY_SELECTED_BIRTHDAY)
+            ?.let(LocalDate::parse)
+
+        savedInstanceState
+            ?.getString(KEY_SELECTED_GENDER)
+            ?.let {
+                selectedGender = Gender.valueOf(it)
+            }
     }
 
     override fun onCreateView(
@@ -68,6 +143,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = BottomSheetInformationBinding.inflate(
             inflater,
             container,
@@ -83,38 +159,63 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        childFragmentManager.setFragmentResultListener(
-            LoveDatePickerDialog.REQUEST_KEY,
-            viewLifecycleOwner
-        ) { _, bundle ->
-
-            val raw = bundle.getString(
-                LoveDatePickerDialog.RESULT_DATE
-            ) ?: return@setFragmentResultListener
-
-            selectedBirthday = LocalDate.parse(raw)
-
-            renderBirthday()
-        }
+        setupDatePickerResult()
+        setupAvatarOptionResult()
 
         setupInformation()
         setupGender()
         setupBirthday()
-        setupSave()
         setupAvatarPicker()
+        setupSave()
+
+        selectedAvatarUri?.let { uri ->
+            binding.ivAvatar.setImageURI(uri)
+        }
     }
 
-    private val birthdayFormatter =
-        DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
 
-    private fun renderBirthday() {
-        binding.tvBirthday.text =
-            selectedBirthday?.format(birthdayFormatter)
-                ?: "Select birthday"
+        outState.putString(
+            KEY_PENDING_CAMERA_URI,
+            pendingCameraUri?.toString()
+        )
+
+        outState.putString(
+            KEY_PENDING_CAMERA_PATH,
+            pendingCameraPath
+        )
+
+        outState.putString(
+            KEY_SELECTED_AVATAR_URI,
+            selectedAvatarUri?.toString()
+        )
+
+        outState.putString(
+            KEY_SELECTED_CAMERA_PATH,
+            selectedCameraPath
+        )
+
+        outState.putString(
+            KEY_SELECTED_BIRTHDAY,
+            selectedBirthday?.toString()
+        )
+
+        outState.putString(
+            KEY_SELECTED_GENDER,
+            selectedGender.name
+        )
     }
+
+    // =========================
+    // LOAD INFORMATION
+    // =========================
 
     private fun setupInformation() {
-        val repository = LoveSettingsRepository(requireContext())
+
+        val repository = LoveSettingsRepository(
+            requireContext().applicationContext
+        )
 
         val infoFlow = when (personType) {
             PersonType.YOU -> repository.youInfo
@@ -122,38 +223,45 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
+
             val info = infoFlow.first()
 
             currentAvatarPath = info.avatarPath
 
-            currentAvatarPath?.let { path ->
-                val file = File(path)
+            if (selectedAvatarUri == null) {
+                currentAvatarPath?.let { path ->
 
-                if (file.isFile && selectedAvatarUri == null) {
-                    binding.ivAvatar.setImageURI(Uri.fromFile(file))
+                    val file = File(path)
+
+                    if (file.isFile) {
+                        binding.ivAvatar.setImageURI(
+                            Uri.fromFile(file)
+                        )
+                    }
                 }
+            }
+
+            if (binding.etName.text.isNullOrEmpty()) {
+                binding.etName.setText(info.name)
+            }
+
+            if (selectedBirthday == null) {
+                selectedBirthday = info.birthday
             }
 
             selectedGender = info.gender
 
-            binding.etName.setText(info.name)
-
-            binding.tvGender.text = when (info.gender) {
-                Gender.MALE -> "Male"
-                Gender.FEMALE -> "Female"
-                Gender.OTHER -> "Other"
-            }
-
-            selectedBirthday = info.birthday
+            renderGender()
             renderBirthday()
         }
-
-
     }
 
-
+    // =========================
+    // GENDER
+    // =========================
 
     private fun setupGender() {
+
         binding.tvGender.setOnClickListener { view ->
 
             val popup = PopupMenu(requireContext(), view)
@@ -171,12 +279,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                     else -> selectedGender
                 }
 
-                binding.tvGender.text = when (selectedGender) {
-                    Gender.MALE -> "Male"
-                    Gender.FEMALE -> "Female"
-                    Gender.OTHER -> "Other"
-                }
-
+                renderGender()
                 true
             }
 
@@ -184,14 +287,184 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    private fun renderGender() {
+
+        binding.tvGender.text = when (selectedGender) {
+            Gender.MALE -> "Male"
+            Gender.FEMALE -> "Female"
+            Gender.OTHER -> "Other"
+        }
+    }
+
+    // =========================
+    // BIRTHDAY
+    // =========================
+
+    private fun setupDatePickerResult() {
+
+        childFragmentManager.setFragmentResultListener(
+            LoveDatePickerDialog.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+
+            val raw = bundle.getString(
+                LoveDatePickerDialog.RESULT_DATE
+            ) ?: return@setFragmentResultListener
+
+            selectedBirthday = LocalDate.parse(raw)
+            renderBirthday()
+        }
+    }
+
+    private fun setupBirthday() {
+
+        binding.tvBirthday.setOnClickListener {
+
+            LoveDatePickerDialog
+                .newInstance(
+                    selectedBirthday ?: LocalDate.now()
+                )
+                .show(
+                    childFragmentManager,
+                    "birthday_picker"
+                )
+        }
+    }
+
+    private fun renderBirthday() {
+
+        binding.tvBirthday.text =
+            selectedBirthday?.format(birthdayFormatter)
+                ?: "Select birthday"
+    }
+
+    // =========================
+    // AVATAR OPTION DIALOG
+    // =========================
+
+    private fun setupAvatarPicker() {
+
+        val openDialog = View.OnClickListener {
+
+            if (
+                childFragmentManager.findFragmentByTag(
+                    "avatar_option_dialog"
+                ) == null
+            ) {
+                AvatarOptionDialog().show(
+                    childFragmentManager,
+                    "avatar_option_dialog"
+                )
+            }
+        }
+
+        binding.ivAvatar.setOnClickListener(openDialog)
+        binding.tvChangePhoto.setOnClickListener(openDialog)
+    }
+
+    private fun setupAvatarOptionResult() {
+
+        childFragmentManager.setFragmentResultListener(
+            AvatarOptionDialog.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+
+            when (
+                bundle.getString(
+                    AvatarOptionDialog.RESULT_OPTION
+                )
+            ) {
+
+                AvatarOptionDialog.OPTION_CAMERA -> {
+                    openCamera()
+                }
+
+                AvatarOptionDialog.OPTION_GALLERY -> {
+                    openPhotoPicker()
+                }
+            }
+        }
+    }
+
+    private fun openPhotoPicker() {
+
+        photoPickerLauncher.launch(
+            PickVisualMediaRequest(
+                ActivityResultContracts.PickVisualMedia.ImageOnly
+            )
+        )
+    }
+
+    // =========================
+    // OPEN CAMERA
+    // =========================
+
+    private fun openCamera() {
+
+        var photoFile: File? = null
+
+        try {
+
+            val context = requireContext()
+
+            val directory = File(
+                context.cacheDir,
+                CAMERA_DIRECTORY
+            )
+
+            if (!directory.exists() && !directory.mkdirs()) {
+                throw IllegalStateException(
+                    "Cannot create camera directory"
+                )
+            }
+
+            photoFile = File(
+                directory,
+                "avatar_${UUID.randomUUID()}.jpg"
+            )
+
+            val uri = FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                photoFile
+            )
+
+            pendingCameraUri = uri
+            pendingCameraPath = photoFile.absolutePath
+
+            cameraLauncher.launch(uri)
+
+        } catch (e: Exception) {
+
+            pendingCameraUri = null
+            pendingCameraPath = null
+
+            deleteTemporaryCameraFile(
+                photoFile?.absolutePath
+            )
+
+            Toast.makeText(
+                requireContext(),
+                "Không thể mở Camera",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    // =========================
+    // SAVE INFORMATION
+    // =========================
 
     private fun setupSave() {
+
         binding.btnSave.setOnClickListener {
+
             val rawName = binding.etName.text.toString()
 
             val name = try {
                 validateName(rawName)
             } catch (e: IllegalArgumentException) {
+
                 binding.etName.error = e.message
                 return@setOnClickListener
             }
@@ -199,22 +472,23 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
             binding.btnSave.isEnabled = false
 
             viewLifecycleOwner.lifecycleScope.launch {
-                val repository = LoveSettingsRepository(
-                    requireContext().applicationContext
-                )
 
-                val avatarStorage = AvatarStorage(
-                    requireContext().applicationContext
-                )
+                val context = requireContext().applicationContext
+
+                val repository = LoveSettingsRepository(context)
+                val avatarStorage = AvatarStorage(context)
 
                 var newAvatarPath: String? = null
                 var savedToDataStore = false
 
                 try {
+
                     val avatarPath = selectedAvatarUri?.let { uri ->
+
                         avatarStorage.saveAvatar(uri).also {
                             newAvatarPath = it
                         }
+
                     } ?: currentAvatarPath
 
                     val info = PersonInfo(
@@ -225,45 +499,68 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                     )
 
                     when (personType) {
-                        PersonType.YOU -> repository.saveYouInfo(info)
-                        PersonType.PARTNER -> repository.savePartnerInfo(info)
+
+                        PersonType.YOU -> {
+                            repository.saveYouInfo(info)
+                        }
+
+                        PersonType.PARTNER -> {
+                            repository.savePartnerInfo(info)
+                        }
                     }
 
                     savedToDataStore = true
 
-                    // Dọn ảnh cũ sau khi DataStore đã lưu thành công.
+                    // Chỉ xóa Avatar cũ sau khi lưu thành công.
                     val oldPath = currentAvatarPath
-                    if (newAvatarPath != null &&
+
+                    if (
+                        newAvatarPath != null &&
                         oldPath != null &&
                         oldPath != newAvatarPath
                     ) {
+
                         try {
                             avatarStorage.deleteAvatar(oldPath)
+
                         } catch (e: CancellationException) {
                             throw e
+
                         } catch (_: Exception) {
-                            // Lưu đã thành công; lỗi dọn ảnh cũ
-                            // không được làm mất thông tin vừa lưu.
+                            // Không làm mất kết quả lưu thành công.
                         }
                     }
+
+                    // Ảnh Camera đã được sao chép vào AvatarStorage.
+                    cleanupSelectedCameraFile()
 
                     dismiss()
 
                 } catch (e: CancellationException) {
                     throw e
-                } catch (e: Exception) {
-                    binding.etName.error = "Không thể lưu thông tin"
-                    binding.btnSave.isEnabled = true
-                } finally {
-                    val pathToDelete = newAvatarPath
 
-                    if (!savedToDataStore && pathToDelete != null) {
-                        try {
-                            avatarStorage.deleteAvatar(pathToDelete)
-                        } catch (e: CancellationException) {
-                            throw e
-                        } catch (_: Exception) {
-                            // Có thể dọn file tồn dư ở lần sau.
+                } catch (e: Exception) {
+
+                    binding.etName.error =
+                        "Không thể lưu thông tin"
+
+                    binding.btnSave.isEnabled = true
+
+                } finally {
+
+                    if (!savedToDataStore) {
+
+                        newAvatarPath?.let { path ->
+
+                            try {
+                                avatarStorage.deleteAvatar(path)
+
+                            } catch (e: CancellationException) {
+                                throw e
+
+                            } catch (_: Exception) {
+                                // Có thể dọn file tồn dư sau.
+                            }
                         }
                     }
                 }
@@ -271,42 +568,76 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    // =========================
+    // CLEANUP CAMERA CACHE
+    // =========================
 
-    private fun setupBirthday() {
-        binding.tvBirthday.setOnClickListener {
-            LoveDatePickerDialog
-                .newInstance(selectedBirthday ?: LocalDate.now())
-                .show(childFragmentManager, "birthday_picker")
-        }
+    private fun cleanupSelectedCameraFile() {
+
+        deleteTemporaryCameraFile(selectedCameraPath)
+        selectedCameraPath = null
     }
 
-    private fun setupAvatarPicker() {
-        val openPicker = View.OnClickListener {
-            photoPickerLauncher.launch(
-                PickVisualMediaRequest(
-                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-            )
+    private fun deleteTemporaryCameraFile(path: String?) {
+
+        if (path == null) return
+
+        val context = context ?: return
+
+        val directory = File(
+            context.cacheDir,
+            CAMERA_DIRECTORY
+        ).canonicalFile
+
+        val file = File(path).canonicalFile
+
+        // Chỉ cho phép xóa file trong thư mục Camera tạm.
+        if (file.parentFile == directory) {
+            file.delete()
         }
-
-        binding.ivAvatar.setOnClickListener(openPicker)
-        binding.tvChangePhoto.setOnClickListener(openPicker)
     }
-
-
 
     override fun onDestroyView() {
+
         _binding = null
         super.onDestroyView()
     }
 
     companion object {
+
         private const val ARG_PERSON_TYPE = "person_type"
 
-        fun newInstance(personType: PersonType): InformationBottomSheet {
+        private const val CAMERA_DIRECTORY = "avatar_camera"
+
+        private const val KEY_PENDING_CAMERA_URI =
+            "pending_camera_uri"
+
+        private const val KEY_PENDING_CAMERA_PATH =
+            "pending_camera_path"
+
+        private const val KEY_SELECTED_AVATAR_URI =
+            "selected_avatar_uri"
+
+        private const val KEY_SELECTED_CAMERA_PATH =
+            "selected_camera_path"
+
+        private const val KEY_SELECTED_BIRTHDAY =
+            "selected_birthday"
+
+        private const val KEY_SELECTED_GENDER =
+            "selected_gender"
+
+        fun newInstance(
+            personType: PersonType
+        ): InformationBottomSheet {
+
             return InformationBottomSheet().apply {
+
                 arguments = Bundle().apply {
-                    putString(ARG_PERSON_TYPE, personType.name)
+                    putString(
+                        ARG_PERSON_TYPE,
+                        personType.name
+                    )
                 }
             }
         }

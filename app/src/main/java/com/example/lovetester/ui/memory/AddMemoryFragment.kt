@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentAddMemoryBinding
-import com.example.lovetester.ui.common.dialog.LoveDatePickerDialog
+import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

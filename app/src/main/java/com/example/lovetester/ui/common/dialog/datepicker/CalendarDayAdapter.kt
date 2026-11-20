@@ -1,4 +1,4 @@
-package com.example.lovetester.ui.common.dialog
+package com.example.lovetester.ui.common.dialog.datepicker
 
 import android.graphics.Color
 import android.view.LayoutInflater

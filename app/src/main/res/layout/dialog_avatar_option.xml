@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="24dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="32dp"
+    android:background="@drawable/bg_avatar_option_dialog">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:text="Select option"
+        android:textSize="16sp"
+        android:gravity="center_vertical"
+        android:textColor="#1E232E"
+        android:fontFamily="@font/plus_jakarta_sans_semibold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="134dp"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/btnTakePhoto"
+            android:layout_width="0dp"
+            android:layout_height="134dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@drawable/bg_avatar_option_button"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_camera"
+                android:contentDescription="@null"
+                app:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Take a photo"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/plus_jakarta_sans_medium"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnUploadPhoto"
+            android:layout_width="0dp"
+            android:layout_height="134dp"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@drawable/bg_avatar_option_button"
+            android:foreground="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_upload_simple"
+                android:contentDescription="@null"
+                app:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Upload photo"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/plus_jakarta_sans_medium"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

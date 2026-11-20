@@ -14,7 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class MemoryAdapter :
+class MemoryAdapter(
+    private val onDeleteRequest: (MemoryEntity) -> Unit
+) :
     ListAdapter<MemoryEntity, MemoryAdapter.MemoryViewHolder>(
         DIFF_CALLBACK
     ) {
@@ -39,7 +41,8 @@ class MemoryAdapter :
     }
 
     class MemoryViewHolder(
-        private val binding: ItemMemoryBinding
+        private val binding: ItemMemoryBinding,
+        private val onDeleteRequest: (MemoryEntity) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private var imageJob: Job? = null
@@ -63,6 +66,11 @@ class MemoryAdapter :
                 val image = decodeMemoryBitmap(resolver, Uri.fromFile(File(memory.imagePath)))
                 binding.ivMemoryPhoto.setImageBitmap(image)
             }
+
+            binding.root.setOnLongClickListener {
+                onDeleteRequest(memory)
+                true
+            }
         }
     }
 
@@ -74,7 +82,10 @@ class MemoryAdapter :
             false
         )
 
-        return MemoryViewHolder(binding)
+        return MemoryViewHolder(
+            binding,
+            onDeleteRequest
+        )
     }
 
     override fun onViewRecycled(holder: MemoryViewHolder) {

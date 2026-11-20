@@ -74,19 +74,7 @@
             android:contentDescription="Add memory"/>
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/btnAddMoreMemory"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/bg_memory_add_button"
-        android:contentDescription="Add memory"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_add"
-        android:tint="@color/color_ff0845"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMemories"

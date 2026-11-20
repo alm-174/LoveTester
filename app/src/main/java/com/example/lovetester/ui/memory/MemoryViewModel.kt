@@ -1,6 +1,7 @@
 package com.example.lovetester.ui.memory
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,6 +84,17 @@ class MemoryViewModel @Inject constructor(
         }
     }
 
+    fun delete(memory: MemoryEntity) {
+        viewModelScope.launch {
+            try {
+                repository.deleteMemory(memory.id)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e("MemoryViewModel", "Delete memory failed", e)
+            }
+        }
+    }
     fun clearSaveResult() {
         if (_saveState.value != MemorySaveState.Saving) {
             _saveState.value = MemorySaveState.Idle

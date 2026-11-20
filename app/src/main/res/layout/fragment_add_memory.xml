@@ -193,7 +193,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@android:drawable/ic_menu_my_calendar"
+                    android:src="@drawable/ic_nav_memory"
                     android:contentDescription="@null"
                     app:tint="#4B4F58" />
 

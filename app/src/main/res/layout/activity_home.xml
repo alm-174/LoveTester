@@ -241,112 +241,14 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <include
         android:id="@+id/layoutBottomNav"
+        layout="@layout/view_bottom_tabs"
         android:layout_width="0dp"
         android:layout_height="67dp"
-        android:orientation="horizontal"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Home -->
-        <LinearLayout
-            android:id="@+id/navHome"
-            android:contentDescription="Home tab"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:id="@+id/ivNavHome"
-                android:src="@drawable/ic_nav_home"
-                android:contentDescription="Home"
-                app:tint="@color/color_ff0845" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:id="@+id/tvNavHome"
-                android:text="Home"
-                android:textSize="14sp"
-                android:fontFamily="@font/plus_jakarta_sans_semibold"
-                android:textColor="@color/color_ff0845" />
-
-        </LinearLayout>
-        <!-- Love test -->
-        <LinearLayout
-            android:id="@+id/navLoveTest"
-            android:contentDescription="Love Test tab"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:id="@+id/ivNavLoveTest"
-                android:src="@drawable/ic_nav_love_test"
-                android:contentDescription="Love Test"
-                app:tint="#454954" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:id="@+id/tvNavLoveTest"
-                android:text="Love Test"
-                android:textSize="14sp"
-                android:fontFamily="@font/plus_jakarta_sans_semibold"
-                android:textColor="#454954" />
-
-        </LinearLayout>
-        <!-- Memory -->
-
-        <LinearLayout
-            android:id="@+id/navMemory"
-            android:contentDescription="Memory tab"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:id="@+id/ivNavMemory"
-                android:src="@drawable/ic_nav_memory"
-                android:contentDescription="Memory"
-                app:tint="#454954" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:id="@+id/tvNavMemory"
-                android:text="Memory"
-                android:textSize="14sp"
-                android:fontFamily="@font/plus_jakarta_sans_semibold"
-                android:textColor="#454954" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/homeMemoryContainer"

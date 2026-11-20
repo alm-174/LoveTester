@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.lovetester.R
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.FragmentStartDateBinding
-import com.example.lovetester.ui.common.dialog.LoveDatePickerDialog
+import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate

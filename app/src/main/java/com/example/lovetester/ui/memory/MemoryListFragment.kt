@@ -1,6 +1,7 @@
 
 package com.example.lovetester.ui.memory
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -14,7 +15,10 @@ import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentMemoryListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.lovetester.data.local.database.MemoryEntity
+
 @AndroidEntryPoint
 class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
 
@@ -25,7 +29,15 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
 
     private val viewModel: MemoryViewModel by activityViewModels()
 
-    private val memoryAdapter = MemoryAdapter()
+    private val memoryAdapter = MemoryAdapter(
+        onDeleteRequest = { MemoryEntity ->
+            confirmDelete(MemoryEntity)
+        }
+    )
+
+    private val footerAdapter = MemoryFooterAdapter(::openAddMemory)
+    private val listAdapter = ConcatAdapter(memoryAdapter, footerAdapter)
+    private var openingAddMemory = false
 
     override fun onViewCreated(
         view: View,
@@ -34,17 +46,17 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentMemoryListBinding.bind(view)
+        openingAddMemory = false
 
         binding.rvMemories.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = memoryAdapter
+            adapter = listAdapter
         }
 
         observeUiState()
 
         val addMemory = View.OnClickListener { openAddMemory() }
         binding.btnAddMemory.setOnClickListener(addMemory)
-        binding.btnAddMoreMemory.setOnClickListener(addMemory)
         binding.root.isClickable = true
     }
 
@@ -61,7 +73,6 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
     }
 
     private fun render(state: MemoryUiState) {
-        binding.btnAddMoreMemory.isVisible = state is MemoryUiState.Success && state.memories.isNotEmpty()
         when (state) {
 
             is MemoryUiState.Loading -> {
@@ -75,7 +86,9 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
                 binding.layoutEmptyState.isVisible = isEmpty
                 binding.rvMemories.isVisible = !isEmpty
 
-                memoryAdapter.submitList(state.memories)
+                memoryAdapter.submitList(state.memories) {
+                    footerAdapter.setVisible(memoryAdapter.currentList.isNotEmpty())
+                }
             }
 
             is MemoryUiState.Error -> {
@@ -93,9 +106,9 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
 
     private fun openAddMemory() {
         val manager = parentFragmentManager
-        if (manager.isStateSaved || manager.findFragmentById(id) !== this) return
+        if (openingAddMemory || manager.isStateSaved || manager.findFragmentById(id) !== this) return
+        openingAddMemory = true
         binding.btnAddMemory.isEnabled = false
-        binding.btnAddMoreMemory.isEnabled = false
         manager.beginTransaction()
             .setReorderingAllowed(true)
             .replace(
@@ -104,6 +117,20 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
             )
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun confirmDelete(memory : MemoryEntity){
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Memory")
+            .setMessage("Bạn có chắc muốn xóa kỷ niệm '${memory.title}' không?")
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("Delete") { _, _ ->
+                // Bài tiếp theo: gọi ViewModel để xóa
+                viewModel.delete(memory)
+            }
+            .show()
     }
 
     override fun onDestroyView() {
