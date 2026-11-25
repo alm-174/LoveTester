@@ -26,13 +26,13 @@
     <string name="permission_decription">This app needs permissions below to work properly</string>
 
     <!-- Horoscope Test messages -->
-    <string name="horoscope_message_0_5">Everything can become chaotic...</string>
-    <string name="horoscope_message_6_20">In a relationship, both partners may try to change...</string>
-    <string name="horoscope_message_21_35">Overall, both are stubborn but in different ways...</string>
-    <string name="horoscope_message_36_50">The couple is not too intense, nor too sweet...</string>
-    <string name="horoscope_message_51_70">A beautiful, peaceful and harmonious love affair...</string>
-    <string name="horoscope_message_71_90">Love each other in our own way, protect each other...</string>
-    <string name="horoscope_message_91_100">They have many things in common, attracted to each other...</string>
+    <string name="horoscope_message_0_5">Everything can become chaotic because it is difficult for them to trust each other and cannot sympathize with the other person\'s behavior. If there is a misunderstanding in a relationship, the emotions of both people often tend to go out of control, easily causing arguments to become fierce and lead to not very good results</string>
+    <string name="horoscope_message_6_20">In a relationship, both partners may try to change for each other, but eventually they may feel exhausted and unable to maintain a long-term relationship</string>
+    <string name="horoscope_message_21_35">Overall, both are stubborn but in different ways, lacking patience and understanding, feelings are hurt and distance appears in the relationship.</string>
+    <string name="horoscope_message_36_50">The couple is not too intense, nor too sweet and melting, they are together, cultivating love with sympathy, understanding and connection.</string>
+    <string name="horoscope_message_51_70">A beautiful, peaceful and harmonious love affair like a calm sea. They stay together, silently trying to achieve their goals.</string>
+    <string name="horoscope_message_71_90">Love each other in our own way, protect each other from the smallest things. Even when far away, both halves silently watch, waiting to support the other</string>
+    <string name="horoscope_message_91_100">They have many things in common, attracted to each other by harmony and passion. The couple is always full of bold ideas and willing to spend time implementing them together</string>
 
     <string name="share">Share</string>
     <string name="retry">Retry</string>

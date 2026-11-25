@@ -16,13 +16,14 @@
     <string name="permission_decription">Cette application a besoin des autorisations ci-dessous pour fonctionner correctement</string>
 
     <!-- Horoscope Test messages -->
-    <string name="horoscope_message_0_5">Tout peut devenir chaotique...</string>
-    <string name="horoscope_message_6_20">Dans le couple, chacun peut essayer de changer l\'autre...</string>
-    <string name="horoscope_message_21_35">Dans l\'ensemble, tous deux sont têtus, mais de façons différentes...</string>
-    <string name="horoscope_message_36_50">Le couple n\'est ni trop intense, ni trop doux...</string>
-    <string name="horoscope_message_51_70">Une histoire d\'amour belle, paisible et harmonieuse...</string>
-    <string name="horoscope_message_71_90">Ils s\'aiment à leur manière et se protègent mutuellement...</string>
-    <string name="horoscope_message_91_100">Ils ont beaucoup de points communs et sont attirés l\'un par l\'autre...</string>
+    <!-- TODO: verify translation with Figma -->
+    <string name="horoscope_message_0_5">Tout peut devenir chaotique car il leur est difficile de se faire confiance et ils ne peuvent pas comprendre le comportement de l\'autre. En cas de malentendu dans la relation, les émotions des deux personnes ont tendance à devenir incontrôlables, ce qui provoque facilement des disputes violentes et des résultats peu favorables</string>
+    <string name="horoscope_message_6_20">Dans une relation, les deux partenaires peuvent essayer de changer pour l\'autre, mais finissent par se sentir épuisés et incapables de maintenir une relation à long terme</string>
+    <string name="horoscope_message_21_35">Dans l\'ensemble, tous deux sont têtus mais de façons différentes, manquent de patience et de compréhension, les sentiments sont blessés et la distance apparaît dans la relation.</string>
+    <string name="horoscope_message_36_50">Le couple n\'est ni trop intense, ni trop doux et mielleux, ils sont ensemble et cultivent l\'amour avec empathie, compréhension et connexion.</string>
+    <string name="horoscope_message_51_70">Une histoire d\'amour belle, paisible et harmonieuse comme une mer calme. Ils restent ensemble, travaillant silencieusement à atteindre leurs objectifs.</string>
+    <string name="horoscope_message_71_90">Ils s\'aiment à leur manière et se protègent mutuellement dans les moindres détails. Même de loin, les deux moitiés veillent en silence, prêtes à soutenir l\'autre</string>
+    <string name="horoscope_message_91_100">Ils ont beaucoup de points communs et sont attirés l\'un par l\'autre par l\'harmonie et la passion. Le couple est toujours plein d\'idées audacieuses et prêt à consacrer du temps à les concrétiser</string>
 
     <string name="share">Partager</string>
     <string name="retry">Réessayer</string>

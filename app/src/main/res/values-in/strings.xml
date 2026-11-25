@@ -16,13 +16,14 @@
     <string name="permission_decription">Aplikasi ini memerlukan izin di bawah agar berfungsi dengan baik</string>
 
     <!-- Horoscope Test messages -->
-    <string name="horoscope_message_0_5">Semuanya bisa menjadi kacau...</string>
-    <string name="horoscope_message_6_20">Dalam hubungan, kedua pasangan mungkin sama-sama mencoba mengubah satu sama lain...</string>
-    <string name="horoscope_message_21_35">Secara keseluruhan, keduanya keras kepala, tetapi dengan cara yang berbeda...</string>
-    <string name="horoscope_message_36_50">Pasangan ini tidak terlalu menggebu, juga tidak terlalu manis...</string>
-    <string name="horoscope_message_51_70">Kisah cinta yang indah, damai, dan harmonis...</string>
-    <string name="horoscope_message_71_90">Saling mencintai dengan cara masing-masing dan saling melindungi...</string>
-    <string name="horoscope_message_91_100">Mereka punya banyak kesamaan dan saling tertarik...</string>
+    <!-- TODO: verify translation with Figma -->
+    <string name="horoscope_message_0_5">Semuanya bisa menjadi kacau karena sulit bagi mereka untuk saling percaya dan tidak bisa memahami perilaku pasangannya. Jika terjadi kesalahpahaman dalam hubungan, emosi keduanya cenderung tidak terkendali, mudah menyebabkan perdebatan sengit dan hasil yang kurang baik</string>
+    <string name="horoscope_message_6_20">Dalam hubungan, kedua pasangan mungkin mencoba berubah satu sama lain, tetapi pada akhirnya mereka merasa kelelahan dan tidak mampu mempertahankan hubungan jangka panjang</string>
+    <string name="horoscope_message_21_35">Secara keseluruhan, keduanya keras kepala tetapi dengan cara yang berbeda, kurang sabar dan pengertian, perasaan terluka dan jarak muncul dalam hubungan.</string>
+    <string name="horoscope_message_36_50">Pasangan ini tidak terlalu menggebu, juga tidak terlalu manis dan meleleh, mereka bersama, memupuk cinta dengan simpati, pengertian, dan koneksi.</string>
+    <string name="horoscope_message_51_70">Kisah cinta yang indah, damai, dan harmonis seperti laut yang tenang. Mereka tetap bersama, diam-diam berusaha mencapai tujuan mereka.</string>
+    <string name="horoscope_message_71_90">Saling mencintai dengan cara masing-masing dan saling melindungi dari hal-hal terkecil. Bahkan saat jauh, kedua belahan jiwa diam-diam memperhatikan, menunggu untuk mendukung yang lain</string>
+    <string name="horoscope_message_91_100">Mereka punya banyak kesamaan dan saling tertarik oleh keharmonisan dan gairah. Pasangan ini selalu penuh ide berani dan bersedia meluangkan waktu untuk mewujudkannya bersama</string>
 
     <string name="share">Bagikan</string>
     <string name="retry">Coba lagi</string>

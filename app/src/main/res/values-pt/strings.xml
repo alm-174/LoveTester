@@ -16,13 +16,14 @@
     <string name="permission_decription">Este app precisa das permissões abaixo para funcionar corretamente</string>
 
     <!-- Horoscope Test messages -->
-    <string name="horoscope_message_0_5">Tudo pode virar um caos...</string>
-    <string name="horoscope_message_6_20">Em um relacionamento, os dois podem tentar mudar um ao outro...</string>
-    <string name="horoscope_message_21_35">No geral, ambos são teimosos, mas de maneiras diferentes...</string>
-    <string name="horoscope_message_36_50">O casal não é muito intenso, nem muito doce...</string>
-    <string name="horoscope_message_51_70">Um romance lindo, tranquilo e harmonioso...</string>
-    <string name="horoscope_message_71_90">Amam-se do seu jeito e protegem um ao outro...</string>
-    <string name="horoscope_message_91_100">Têm muito em comum e sentem-se atraídos um pelo outro...</string>
+    <!-- TODO: verify translation with Figma -->
+    <string name="horoscope_message_0_5">Tudo pode virar um caos porque é difícil para eles confiarem um no outro e não conseguem se identificar com o comportamento do parceiro. Se houver um mal-entendido na relação, as emoções de ambos tendem a sair do controle, causando facilmente discussões acaloradas e resultados nada bons</string>
+    <string name="horoscope_message_6_20">Em um relacionamento, os dois parceiros podem tentar mudar um pelo outro, mas eventualmente se sentem exaustos e incapazes de manter um relacionamento de longo prazo</string>
+    <string name="horoscope_message_21_35">No geral, ambos são teimosos, mas de maneiras diferentes, falta paciência e compreensão, os sentimentos são feridos e a distância surge no relacionamento.</string>
+    <string name="horoscope_message_36_50">O casal não é muito intenso, nem muito doce e derretido, estão juntos cultivando o amor com empatia, compreensão e conexão.</string>
+    <string name="horoscope_message_51_70">Um romance lindo, tranquilo e harmonioso como um mar calmo. Permanecem juntos, esforçando-se silenciosamente para alcançar seus objetivos.</string>
+    <string name="horoscope_message_71_90">Amam-se do seu jeito e protegem um ao outro nas menores coisas. Mesmo estando longe, as duas metades observam em silêncio, esperando para apoiar o outro</string>
+    <string name="horoscope_message_91_100">Têm muito em comum e sentem-se atraídos pela harmonia e paixão. O casal está sempre cheio de ideias ousadas e disposto a dedicar tempo para realizá-las juntos</string>
 
     <string name="share">Compartilhar</string>
     <string name="retry">Tentar novamente</string>

@@ -16,13 +16,14 @@
     <string name="permission_decription">Diese App benötigt die folgenden Berechtigungen, um richtig zu funktionieren</string>
 
     <!-- Horoscope Test messages -->
-    <string name="horoscope_message_0_5">Alles kann chaotisch werden...</string>
-    <string name="horoscope_message_6_20">In einer Beziehung versuchen vielleicht beide, den anderen zu ändern...</string>
-    <string name="horoscope_message_21_35">Insgesamt sind beide stur, aber auf unterschiedliche Art...</string>
-    <string name="horoscope_message_36_50">Das Paar ist weder zu leidenschaftlich noch zu süß...</string>
-    <string name="horoscope_message_51_70">Eine schöne, friedliche und harmonische Liebe...</string>
-    <string name="horoscope_message_71_90">Sie lieben sich auf ihre eigene Weise und beschützen einander...</string>
-    <string name="horoscope_message_91_100">Sie haben viele Gemeinsamkeiten und fühlen sich zueinander hingezogen...</string>
+    <!-- TODO: verify translation with Figma -->
+    <string name="horoscope_message_0_5">Alles kann chaotisch werden, denn es fällt ihnen schwer, einander zu vertrauen, und sie können das Verhalten des anderen nicht nachvollziehen. Bei einem Missverständnis in der Beziehung geraten die Emotionen beider oft außer Kontrolle, was leicht dazu führt, dass Streitigkeiten heftig werden und zu keinem guten Ergebnis führen</string>
+    <string name="horoscope_message_6_20">In einer Beziehung versuchen vielleicht beide Partner, sich füreinander zu ändern, doch irgendwann fühlen sie sich erschöpft und können die Beziehung nicht langfristig aufrechterhalten</string>
+    <string name="horoscope_message_21_35">Insgesamt sind beide stur, aber auf unterschiedliche Weise, es fehlt an Geduld und Verständnis, Gefühle werden verletzt und Distanz entsteht in der Beziehung.</string>
+    <string name="horoscope_message_36_50">Das Paar ist weder zu leidenschaftlich noch zu süß und schmelzend, sie sind zusammen und pflegen die Liebe mit Mitgefühl, Verständnis und Verbundenheit.</string>
+    <string name="horoscope_message_51_70">Eine schöne, friedliche und harmonische Liebesgeschichte wie ein ruhiges Meer. Sie bleiben zusammen und arbeiten still an ihren Zielen.</string>
+    <string name="horoscope_message_71_90">Sie lieben sich auf ihre eigene Weise und beschützen einander bei den kleinsten Dingen. Selbst aus der Ferne wachen beide Hälften still übereinander und warten darauf, den anderen zu unterstützen</string>
+    <string name="horoscope_message_91_100">Sie haben viele Gemeinsamkeiten und fühlen sich durch Harmonie und Leidenschaft zueinander hingezogen. Das Paar ist immer voller kühner Ideen und bereit, Zeit in deren Umsetzung zu investieren</string>
 
     <string name="share">Teilen</string>
     <string name="retry">Erneut versuchen</string>

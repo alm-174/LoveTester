@@ -16,13 +16,14 @@
     <string name="permission_decription">Esta aplicación necesita los siguientes permisos para funcionar correctamente</string>
 
     <!-- Horoscope Test messages -->
-    <string name="horoscope_message_0_5">Todo puede volverse caótico...</string>
-    <string name="horoscope_message_6_20">En una relación, ambos pueden intentar cambiar al otro...</string>
-    <string name="horoscope_message_21_35">En general, ambos son tercos, pero de maneras distintas...</string>
-    <string name="horoscope_message_36_50">La pareja no es ni demasiado intensa ni demasiado dulce...</string>
-    <string name="horoscope_message_51_70">Un romance hermoso, tranquilo y armonioso...</string>
-    <string name="horoscope_message_71_90">Se aman a su manera y se protegen el uno al otro...</string>
-    <string name="horoscope_message_91_100">Tienen muchas cosas en común y se sienten atraídos el uno por el otro...</string>
+    <!-- TODO: verify translation with Figma -->
+    <string name="horoscope_message_0_5">Todo puede volverse caótico porque es difícil que confíen el uno en el otro y no pueden empatizar con el comportamiento de la otra persona. Si hay un malentendido en la relación, las emociones de ambos tienden a descontrolarse, lo que fácilmente provoca discusiones acaloradas y resultados poco favorables</string>
+    <string name="horoscope_message_6_20">En una relación, ambos pueden intentar cambiar por el otro, pero eventualmente se sienten agotados e incapaces de mantener una relación a largo plazo</string>
+    <string name="horoscope_message_21_35">En general, ambos son tercos pero de maneras distintas, les falta paciencia y comprensión, los sentimientos se hieren y aparece la distancia en la relación.</string>
+    <string name="horoscope_message_36_50">La pareja no es ni demasiado intensa ni demasiado dulce y empalagosa, están juntos cultivando el amor con empatía, comprensión y conexión.</string>
+    <string name="horoscope_message_51_70">Un romance hermoso, tranquilo y armonioso como un mar en calma. Permanecen juntos, esforzándose silenciosamente por alcanzar sus metas.</string>
+    <string name="horoscope_message_71_90">Se aman a su manera y se protegen mutuamente en las cosas más pequeñas. Incluso estando lejos, ambas mitades vigilan en silencio, esperando apoyar al otro</string>
+    <string name="horoscope_message_91_100">Tienen muchas cosas en común y se sienten atraídos por la armonía y la pasión. La pareja siempre está llena de ideas audaces y dispuesta a dedicar tiempo a hacerlas realidad</string>
 
     <string name="share">Compartir</string>
     <string name="retry">Reintentar</string>
