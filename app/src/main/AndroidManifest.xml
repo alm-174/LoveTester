@@ -56,7 +56,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.lovetest.LoveTestActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.memory.MemoryActivity"
             android:exported="false" />

@@ -3,13 +3,15 @@ package com.example.lovetester.data.local
 import android.content.Context
 import android.net.Uri
 import com.example.lovetester.data.local.storage.ImageDownscaler
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
+import javax.inject.Inject
 
-class BackgroundImageStorage(
-    private val context: Context
+class BackgroundImageStorage @Inject constructor(
+    @param:ApplicationContext private val context: Context
 ) {
 
     suspend fun saveImage(uri: Uri): String =

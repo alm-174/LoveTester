@@ -9,8 +9,10 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.example.lovetester.R
 import com.example.lovetester.databinding.BottomSheetHoroscopeBinding
 import com.example.lovetester.ui.background.BackgroundGridSpacing
+import com.example.lovetester.ui.common.expandWithMaxHeight
 
 class HoroscopePickerBottomSheet :
     BottomSheetDialogFragment() {
@@ -62,8 +64,11 @@ class HoroscopePickerBottomSheet :
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+    }
 
-
+    override fun onStart() {
+        super.onStart()
+        expandWithMaxHeight(R.dimen.sheet_max_height_horoscope)
     }
 
     private fun setupRecyclerView() {

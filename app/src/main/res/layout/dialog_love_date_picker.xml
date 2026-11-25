@@ -34,7 +34,7 @@
             android:gravity="center"
             tools:text="December - 2023"
             android:fontFamily="@font/plus_jakarta_sans_semibold"
-            android:textSize="@dimen/text_body"
+            android:textSize="@dimen/text_sheet_title"
             android:textColor="@color/text_calendar_month"
             android:clickable="true"
             android:focusable="true"

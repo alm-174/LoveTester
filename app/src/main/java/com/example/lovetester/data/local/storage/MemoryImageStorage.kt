@@ -10,7 +10,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class MemoryImageStorage @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
 
     suspend fun saveImage(uri: Uri): String {

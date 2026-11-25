@@ -28,6 +28,7 @@ import com.example.lovetester.databinding.BottomSheetInformationBinding
 import com.example.lovetester.ui.common.dialog.avataroption.AvatarOptionDialog
 import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -35,8 +36,16 @@ import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class InformationBottomSheet : BottomSheetDialogFragment() {
+
+    @Inject
+    lateinit var repository: LoveSettingsRepository
+
+    @Inject
+    lateinit var avatarStorage: AvatarStorage
 
     private var _binding: BottomSheetInformationBinding? = null
 
@@ -218,10 +227,6 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
     // =========================
 
     private fun setupInformation() {
-
-        val repository = LoveSettingsRepository(
-            requireContext().applicationContext
-        )
 
         val infoFlow = when (personType) {
             PersonType.YOU -> repository.youInfo
@@ -468,11 +473,6 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
             binding.btnSave.isEnabled = false
 
             viewLifecycleOwner.lifecycleScope.launch {
-
-                val context = requireContext().applicationContext
-
-                val repository = LoveSettingsRepository(context)
-                val avatarStorage = AvatarStorage(context)
 
                 var newAvatarPath: String? = null
                 var savedToDataStore = false

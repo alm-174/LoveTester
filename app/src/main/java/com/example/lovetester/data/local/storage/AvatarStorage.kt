@@ -3,13 +3,15 @@ package com.example.lovetester.data.local.storage
 
 import android.content.Context
 import android.net.Uri
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
+import javax.inject.Inject
 
-class AvatarStorage(
-    private val context: Context
+class AvatarStorage @Inject constructor(
+    @param:ApplicationContext private val context: Context
 ) {
 
     suspend fun saveAvatar(uri: Uri): String {

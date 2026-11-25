@@ -64,7 +64,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:contentDescription="@string/add_memory_photo_add"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="@dimen/radius_card"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/surface_photo_placeholder"
                 app:layout_constraintTop_toTopOf="parent"

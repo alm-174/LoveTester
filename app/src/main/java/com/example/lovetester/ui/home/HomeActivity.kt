@@ -37,9 +37,13 @@ import java.io.File
 import java.time.LocalDate
 import java.time.Period
 import java.time.temporal.ChronoUnit
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var repository: LoveSettingsRepository
 
     private lateinit var binding: ActivityHomeBinding
 
@@ -90,8 +94,6 @@ class HomeActivity : AppCompatActivity() {
                 addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             })
         }
-
-        val repository = LoveSettingsRepository(applicationContext)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

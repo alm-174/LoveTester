@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The white, rounded surface comes from the bottom sheet theme (themes.xml). -->
+<!-- The white, rounded surface comes from the bottom sheet theme (themes.xml).
+     Height: wraps content; BackgroundBottomSheet caps it with BottomSheetBehavior.maxHeight. -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="512dp"
     android:orientation="vertical">
 
     <View
@@ -17,19 +17,20 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_screen_horizontal"
         android:layout_marginTop="12dp"
         android:text="@string/background_sheet_title"
         android:textAppearance="@style/TextAppearance.LoveTester.SheetTitle" />
 
+    <!-- wrap_content: inside a wrap_content LinearLayout the list is measured AT_MOST the space
+         left, so a long list scrolls instead of being cut off. -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBackgrounds"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="@dimen/margin_screen_horizontal"
+        android:paddingEnd="@dimen/margin_screen_horizontal"
         android:paddingBottom="16dp"
         android:clipToPadding="false" />
 

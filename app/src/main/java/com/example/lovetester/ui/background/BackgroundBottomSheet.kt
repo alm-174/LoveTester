@@ -15,6 +15,7 @@ import com.example.lovetester.R
 import com.example.lovetester.data.local.BackgroundImageStorage
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.BottomSheetBackgroundBinding
+import com.example.lovetester.ui.common.expandWithMaxHeight
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
@@ -27,6 +28,9 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var repository: LoveSettingsRepository
+
+    @Inject
+    lateinit var storage: BackgroundImageStorage
 
     private var _binding: BottomSheetBackgroundBinding? = null
 
@@ -79,6 +83,11 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
         setupBackgroundList()
     }
 
+    override fun onStart() {
+        super.onStart()
+        expandWithMaxHeight(R.dimen.sheet_max_height_background)
+    }
+
     override fun onDestroyView() {
         binding.rvBackgrounds.adapter = null
         _binding = null
@@ -87,8 +96,6 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
 
     private fun setupBackgroundList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val storage = BackgroundImageStorage(requireContext())
-
             val paths = storage.getSavedImages()
 
             val customItems = paths.map { path ->
@@ -139,8 +146,6 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
     private fun handleSelectedPhoto(uri: Uri) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val context = requireContext().applicationContext
-                val storage = BackgroundImageStorage(context)
                 val path = storage.saveImage(uri)
 
                 repository.setSelectedBackgroundId("custom:$path")

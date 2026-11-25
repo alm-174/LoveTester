@@ -15,13 +15,18 @@ import com.example.lovetester.ui.common.applySystemBarsPadding
 import com.example.lovetester.ui.common.enableLightEdgeToEdge
 import com.example.lovetester.ui.language.LanguageActivity
 import com.example.lovetester.ui.permission.PermissionActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class IntroActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityIntroBinding
-    private lateinit var repository: LoveSettingsRepository
+
+    @Inject
+    lateinit var repository: LoveSettingsRepository
 
     private var pageChangeCallback: ViewPager2.OnPageChangeCallback? = null
     private var isNavigating = false
@@ -33,8 +38,6 @@ class IntroActivity : AppCompatActivity() {
         binding = ActivityIntroBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.root.applySystemBarsPadding()
-
-        repository = LoveSettingsRepository(applicationContext)
 
         // 1. Danh sách 3 trang giới thiệu
         val pages = listOf(

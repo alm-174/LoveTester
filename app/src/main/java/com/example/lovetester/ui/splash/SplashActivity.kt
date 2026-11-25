@@ -21,11 +21,17 @@ import com.example.lovetester.ui.home.HomeActivity
 import com.example.lovetester.ui.intro.IntroActivity
 import com.example.lovetester.ui.language.LanguageActivity
 import com.example.lovetester.ui.permission.PermissionActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var repository: LoveSettingsRepository
 
     private lateinit var binding: ActivitySplashBinding
     private var animator: ValueAnimator? = null
@@ -105,8 +111,6 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun loadOnboardingStep() {
-        val repository = LoveSettingsRepository(applicationContext)
-
         lifecycleScope.launch {
             onboardingStep = try {
                 repository.onboardingStep.first()

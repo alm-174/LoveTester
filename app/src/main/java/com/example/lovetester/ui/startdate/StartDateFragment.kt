@@ -14,17 +14,21 @@ import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.FragmentStartDateBinding
 import com.example.lovetester.ui.common.showOnce
 import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class StartDateFragment : Fragment(R.layout.fragment_start_date) {
 
     private var _binding: FragmentStartDateBinding? = null
     private val binding get() = requireNotNull(_binding)
 
-    private lateinit var repository: LoveSettingsRepository
+    @Inject
+    lateinit var repository: LoveSettingsRepository
 
     private var selectedDate: LocalDate? = null
 
@@ -41,10 +45,6 @@ class StartDateFragment : Fragment(R.layout.fragment_start_date) {
 
         applyWindowInsets()
         setStatusBarDarkIcons(enabled = true)
-
-        repository = LoveSettingsRepository(
-            requireContext().applicationContext
-        )
 
         // Nhận kết quả từ Dialog
         childFragmentManager.setFragmentResultListener(

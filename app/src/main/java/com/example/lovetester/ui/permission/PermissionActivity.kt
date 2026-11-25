@@ -23,14 +23,18 @@ import androidx.lifecycle.lifecycleScope
 import com.example.lovetester.data.local.model.OnboardingStep
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.ui.intro.IntroActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PermissionActivity : AppCompatActivity(){
 
     private lateinit var binding: ActivityPermissionBinding
 
-    private lateinit var repository: LoveSettingsRepository
+    @Inject
+    lateinit var repository: LoveSettingsRepository
     private var isNavigating = false
     private val cameraPermissionLauncher =
         registerForActivityResult(
@@ -48,7 +52,6 @@ class PermissionActivity : AppCompatActivity(){
         binding = ActivityPermissionBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.root.applySystemBarsPadding()
-        repository = LoveSettingsRepository(applicationContext)
 
         syncCameraPermissionSwitch()
 
