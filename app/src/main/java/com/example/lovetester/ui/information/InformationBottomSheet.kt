@@ -543,6 +543,8 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
 
                 } catch (e: Exception) {
 
+                    Log.e("AvatarSave", "Lỗi khi lưu avatar", e)
+
                     binding.etName.error =
                         getString(errorRes)
 
