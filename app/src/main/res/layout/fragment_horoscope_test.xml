@@ -9,13 +9,12 @@
 
     <ImageButton
         android:id="@+id/btnBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_arrow_left"
+        style="@style/Widget.LoveTester.BackButton"
         android:contentDescription="@string/common_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,9 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/horoscope_test_title"
-        android:textSize="20sp"
-        android:textColor="@color/text_title"
-        android:fontFamily="@font/plus_jakarta_sans_semibold"
+        android:textAppearance="@style/TextAppearance.LoveTester.ScreenTitle"
         app:layout_constraintTop_toTopOf="@id/btnBack"
         app:layout_constraintBottom_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +49,8 @@
             android:orientation="vertical"
             android:gravity="center_horizontal"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
 
             <FrameLayout
                 android:layout_width="110dp"
@@ -101,7 +99,8 @@
             android:orientation="vertical"
             android:gravity="center_horizontal"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
 
             <FrameLayout
                 android:layout_width="110dp"

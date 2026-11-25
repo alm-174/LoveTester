@@ -5,6 +5,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.lovetester.R
 import com.example.lovetester.databinding.ActivitySettingsBinding
+import com.example.lovetester.ui.common.applySystemBarsPadding
+import com.example.lovetester.ui.common.enableLightEdgeToEdge
 import com.example.lovetester.ui.language.LanguageFragment
 
 class SettingsActivity : AppCompatActivity() {
@@ -14,8 +16,10 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableLightEdgeToEdge()
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarsPadding()
 
         supportFragmentManager.addOnBackStackChangedListener {
             updateScreen(

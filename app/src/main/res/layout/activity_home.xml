@@ -85,6 +85,7 @@
         <!-- Cột trái -->
         <LinearLayout
             android:id="@+id/layoutPersonOne"
+        android:foreground="?attr/selectableItemBackground"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -140,6 +141,7 @@
 
         <LinearLayout
             android:id="@+id/layoutLoveDays"
+        android:foreground="?attr/selectableItemBackground"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -186,6 +188,7 @@
 
         <LinearLayout
             android:id="@+id/layoutPersonTwo"
+        android:foreground="?attr/selectableItemBackground"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

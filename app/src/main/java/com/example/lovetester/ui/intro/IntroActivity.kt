@@ -11,6 +11,8 @@ import com.example.lovetester.R
 import com.example.lovetester.data.local.model.OnboardingStep
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.ActivityIntroBinding
+import com.example.lovetester.ui.common.applySystemBarsPadding
+import com.example.lovetester.ui.common.enableLightEdgeToEdge
 import com.example.lovetester.ui.language.LanguageActivity
 import com.example.lovetester.ui.permission.PermissionActivity
 import kotlinx.coroutines.CancellationException
@@ -27,8 +29,10 @@ class IntroActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableLightEdgeToEdge()
         binding = ActivityIntroBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarsPadding()
 
         repository = LoveSettingsRepository(applicationContext)
 

@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.lovetester.R
 import com.example.lovetester.databinding.ActivityPermissionBinding
+import com.example.lovetester.ui.common.applySystemBarsPadding
+import com.example.lovetester.ui.common.enableLightEdgeToEdge
 import android.provider.Settings
 import com.example.lovetester.ui.home.HomeActivity
 import android.widget.Toast
@@ -42,8 +44,10 @@ class PermissionActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableLightEdgeToEdge()
         binding = ActivityPermissionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarsPadding()
         repository = LoveSettingsRepository(applicationContext)
 
         syncCameraPermissionSwitch()

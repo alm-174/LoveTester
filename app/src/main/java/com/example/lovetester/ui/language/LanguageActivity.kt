@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.data.local.model.OnboardingStep
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.ActivityLanguageBinding
+import com.example.lovetester.ui.common.applySystemBarsPadding
+import com.example.lovetester.ui.common.enableLightEdgeToEdge
 import com.example.lovetester.ui.intro.IntroActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
@@ -32,8 +34,10 @@ class LanguageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableLightEdgeToEdge()
         binding = ActivityLanguageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarsPadding()
 
         setupLanguageList()
         setupConfirmButton()

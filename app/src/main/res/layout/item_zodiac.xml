@@ -4,7 +4,8 @@
     android:layout_height="156dp"
     android:background="@drawable/bg_zodiac_item"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/ivZodiac"
