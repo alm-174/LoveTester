@@ -1,18 +1,17 @@
 package com.example.lovetester.ui.memory
 
-import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import com.example.lovetester.R
 import com.example.lovetester.data.local.database.MemoryEntity
 import com.example.lovetester.databinding.ItemMemoryBinding
 import java.io.File
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class MemoryAdapter(
     private val onDeleteRequest: (MemoryEntity) -> Unit
@@ -45,11 +44,9 @@ class MemoryAdapter(
         private val onDeleteRequest: (MemoryEntity) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        private var imageJob: Job? = null
+        private var deleteActionId = View.NO_ID
 
         fun clearPhoto() {
-            imageJob?.cancel()
-            imageJob = null
             binding.ivMemoryPhoto.setImageDrawable(null)
         }
 
@@ -59,15 +56,23 @@ class MemoryAdapter(
             // 2. Hiển thị ngày kỷ niệm
             binding.tvMemoryCardDate.text = memory.date
 
-            // 3. Hiển thị ảnh kỷ niệm
-            clearPhoto()
-            val resolver = binding.root.context.contentResolver
-            imageJob = CoroutineScope(Dispatchers.Main.immediate).launch {
-                val image = decodeMemoryBitmap(resolver, Uri.fromFile(File(memory.imagePath)))
-                binding.ivMemoryPhoto.setImageBitmap(image)
-            }
+            // 3. Hiển thị ảnh kỷ niệm. Coil decodes off the main thread, downsamples to the view
+            // size and cancels the request itself when the view is reused or detached.
+            binding.ivMemoryPhoto.load(File(memory.imagePath))
 
             binding.root.setOnLongClickListener {
+                onDeleteRequest(memory)
+                true
+            }
+
+            // TalkBack users cannot long-press: expose the same action in the actions menu.
+            if (deleteActionId != View.NO_ID) {
+                ViewCompat.removeAccessibilityAction(binding.root, deleteActionId)
+            }
+            deleteActionId = ViewCompat.addAccessibilityAction(
+                binding.root,
+                binding.root.context.getString(R.string.memory_delete_button)
+            ) { _, _ ->
                 onDeleteRequest(memory)
                 true
             }

@@ -14,7 +14,11 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
+import coil3.load
 import com.example.lovetester.R
+import com.example.lovetester.ui.common.hideKeyboard
+import com.example.lovetester.ui.common.onImeDone
+import com.example.lovetester.ui.common.showOnce
 import com.example.lovetester.data.local.model.Gender
 import com.example.lovetester.data.local.model.PersonInfo
 import com.example.lovetester.data.local.model.MAX_NAME_LENGTH
@@ -71,7 +75,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                 cleanupSelectedCameraFile()
 
                 selectedAvatarUri = uri
-                _binding?.ivAvatar?.setImageURI(uri)
+                _binding?.ivAvatar?.load(uri)
             }
         }
 
@@ -97,7 +101,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                 selectedCameraPath = path
                 selectedAvatarUri = uri
 
-                _binding?.ivAvatar?.setImageURI(uri)
+                _binding?.ivAvatar?.load(uri)
 
             } else {
 
@@ -175,7 +179,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         setupSave()
 
         selectedAvatarUri?.let { uri ->
-            binding.ivAvatar.setImageURI(uri)
+            binding.ivAvatar.load(uri)
         }
     }
 
@@ -237,9 +241,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                     val file = File(path)
 
                     if (file.isFile) {
-                        binding.ivAvatar.setImageURI(
-                            Uri.fromFile(file)
-                        )
+                        binding.ivAvatar.load(file)
                     }
                 }
             }
@@ -311,14 +313,10 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
 
         binding.tvBirthday.setOnClickListener {
 
-            LoveDatePickerDialog
-                .newInstance(
-                    selectedBirthday ?: LocalDate.now()
-                )
-                .show(
-                    childFragmentManager,
-                    "birthday_picker"
-                )
+            childFragmentManager.showOnce(
+                LoveDatePickerDialog.newInstance(selectedBirthday ?: LocalDate.now()),
+                "birthday_picker"
+            )
         }
     }
 
@@ -337,16 +335,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
 
         val openDialog = View.OnClickListener {
 
-            if (
-                childFragmentManager.findFragmentByTag(
-                    "avatar_option_dialog"
-                ) == null
-            ) {
-                AvatarOptionDialog().show(
-                    childFragmentManager,
-                    "avatar_option_dialog"
-                )
-            }
+            childFragmentManager.showOnce(AvatarOptionDialog(), "avatar_option_dialog")
         }
 
         binding.ivAvatar.setOnClickListener(openDialog)
@@ -448,7 +437,11 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
 
     private fun setupSave() {
 
+        binding.etName.onImeDone()
+
         binding.btnSave.setOnClickListener {
+
+            binding.etName.hideKeyboard()
 
             val rawName = binding.etName.text.toString()
             val trimmedName = rawName.trim()

@@ -58,6 +58,9 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    implementation(libs.coil)
+    implementation(libs.androidx.exifinterface)
+
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
 

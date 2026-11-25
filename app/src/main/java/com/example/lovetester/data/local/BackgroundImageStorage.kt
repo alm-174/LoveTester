@@ -2,6 +2,7 @@ package com.example.lovetester.data.local
 
 import android.content.Context
 import android.net.Uri
+import com.example.lovetester.data.local.storage.ImageDownscaler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -29,13 +30,11 @@ class BackgroundImageStorage(
             )
 
             try {
-                val input = context.contentResolver.openInputStream(uri)
-                    ?: error("Cannot open selected image")
+                // Shrinks to <= 1440px on Dispatchers.IO; the original is never copied as-is.
+                ImageDownscaler.saveDownscaled(context, uri, destination)
 
-                input.use { source ->
-                    destination.outputStream().use { target ->
-                        source.copyTo(target)
-                    }
+                check(destination.length() > 0L) {
+                    "Saved image is empty"
                 }
 
                 destination.absolutePath

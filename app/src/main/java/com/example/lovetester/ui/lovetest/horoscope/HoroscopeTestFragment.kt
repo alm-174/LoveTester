@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentHoroscopeTestBinding
 import com.example.lovetester.ui.common.safeNavigate
+import com.example.lovetester.ui.common.showOnce
 import com.example.lovetester.ui.lovetest.result.LoveTestResultFragment
 import kotlinx.coroutines.launch
 
@@ -83,10 +84,10 @@ class HoroscopeTestFragment :
     }
 
     private fun openPicker(requestKey: String, current: ZodiacSign) {
-        if (childFragmentManager.findFragmentByTag(HoroscopePickerBottomSheet.TAG) != null) return
-
-        HoroscopePickerBottomSheet.newInstance(requestKey, current)
-            .show(childFragmentManager, HoroscopePickerBottomSheet.TAG)
+        childFragmentManager.showOnce(
+            HoroscopePickerBottomSheet.newInstance(requestKey, current),
+            HoroscopePickerBottomSheet.TAG
+        )
     }
 
     private fun observeState() {

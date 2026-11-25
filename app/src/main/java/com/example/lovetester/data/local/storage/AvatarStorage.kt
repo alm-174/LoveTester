@@ -28,14 +28,8 @@ class AvatarStorage(
             )
 
             try {
-                val input = context.contentResolver.openInputStream(uri)
-                    ?: error("Cannot open selected image")
-
-                input.use { source ->
-                    destination.outputStream().use { output ->
-                        source.copyTo(output)
-                    }
-                }
+                // Shrinks to <= 1440px on Dispatchers.IO; the original is never copied as-is.
+                ImageDownscaler.saveDownscaled(context, uri, destination)
 
                 check(destination.length() > 0L) {
                     "Saved image is empty"

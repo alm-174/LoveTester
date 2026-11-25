@@ -4,7 +4,6 @@ package com.example.lovetester.ui.memory
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -58,6 +57,7 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
         val addMemory = View.OnClickListener { openAddMemory() }
         binding.btnAddMemory.setOnClickListener(addMemory)
         binding.root.isClickable = true
+        binding.btnRetryMemories.setOnClickListener { viewModel.retry() }
     }
 
     private fun observeUiState() {
@@ -73,6 +73,9 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
     }
 
     private fun render(state: MemoryUiState) {
+        binding.progressMemories.isVisible = state is MemoryUiState.Loading
+        binding.layoutErrorState.isVisible = state is MemoryUiState.Error
+
         when (state) {
 
             is MemoryUiState.Loading -> {
@@ -94,12 +97,7 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
             is MemoryUiState.Error -> {
                 binding.layoutEmptyState.isVisible = false
                 binding.rvMemories.isVisible = false
-
-                Toast.makeText(
-                    requireContext(),
-                    getString(state.messageRes),
-                    Toast.LENGTH_SHORT
-                ).show()
+                binding.tvErrorMessage.setText(state.messageRes)
             }
         }
     }

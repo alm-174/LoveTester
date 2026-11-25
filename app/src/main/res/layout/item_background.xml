@@ -4,6 +4,7 @@
     android:layout_height="200dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_background_placeholder"
+    android:foreground="@drawable/fg_background_item"
     android:clipToOutline="true">
 
     <ImageView

@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.lovetester.R
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.FragmentStartDateBinding
+import com.example.lovetester.ui.common.showOnce
 import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -105,10 +106,7 @@ class StartDateFragment : Fragment(R.layout.fragment_start_date) {
             selectedDate ?: LocalDate.now()
         )
 
-        dialog.show(
-            childFragmentManager,
-            "LoveDatePickerDialog"
-        )
+        childFragmentManager.showOnce(dialog, "LoveDatePickerDialog")
     }
 
     private fun updateSelectedDate() {

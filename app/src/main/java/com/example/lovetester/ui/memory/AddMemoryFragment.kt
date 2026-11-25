@@ -15,6 +15,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentAddMemoryBinding
+import com.example.lovetester.ui.common.hideKeyboard
+import com.example.lovetester.ui.common.onImeDone
 import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -78,7 +80,11 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
             LoveDatePickerDialog.newInstance(selectedDate ?: LocalDate.now())
                 .showNow(childFragmentManager, DATE_PICKER_TAG)
         }
-        binding.btnSaveMemory.setOnClickListener { saveMemory() }
+        binding.etMemoryTitle.onImeDone()
+        binding.btnSaveMemory.setOnClickListener {
+            binding.etMemoryTitle.hideKeyboard()
+            saveMemory()
+        }
 
         renderSaving(viewModel.saveState.value == MemorySaveState.Saving)
         viewLifecycleOwner.lifecycleScope.launch {

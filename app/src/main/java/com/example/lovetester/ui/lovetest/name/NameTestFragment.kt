@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentNameTestBinding
+import com.example.lovetester.ui.common.hideKeyboard
+import com.example.lovetester.ui.common.onImeDone
 import com.example.lovetester.ui.common.safeNavigate
 import com.example.lovetester.ui.lovetest.domain.LoveTestCalculator
 
@@ -29,7 +31,11 @@ class NameTestFragment : Fragment(R.layout.fragment_name_test) {
             findNavController().navigateUp()
         }
 
+        binding.etPartnerName.onImeDone()
+
         binding.btnLoveTest.setOnClickListener {
+            it.hideKeyboard()
+
             val yourName = binding.etYourName.text.toString().trim()
             val partnerName = binding.etPartnerName.text.toString().trim()
 

@@ -18,6 +18,7 @@ import com.example.lovetester.databinding.BottomSheetBackgroundBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -96,7 +97,10 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
 
             val allItems = backgrounds + customItems
 
-            val adapter = BackgroundAdapter(allItems) { item ->
+            val adapter = BackgroundAdapter(
+                items = allItems,
+                selectedId = repository.selectedBackgroundId.first()
+            ) { item ->
                 when (item) {
                     BackgroundItem.AddPhoto -> {
                         photoPickerLauncher.launch(

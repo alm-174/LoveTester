@@ -5,6 +5,9 @@ import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -47,20 +50,32 @@ class MemoryViewModel @Inject constructor(
     private val repository: MemoryRepository
 ) : ViewModel() {
 
+    // Bumping this restarts the observation (used by the "Retry" button after an error).
+    private val retryTrigger = MutableStateFlow(0)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<MemoryUiState> =
-        repository.observeMemories()
-            .map<List<MemoryEntity>, MemoryUiState> { memories ->
-                MemoryUiState.Success(memories)
-            }
-            .catch { exception ->
-                Log.e("MemoryViewModel", "Load memories failed", exception)
-                emit(MemoryUiState.Error(R.string.memory_error_load))
+        retryTrigger
+            .flatMapLatest {
+                repository.observeMemories()
+                    .map<List<MemoryEntity>, MemoryUiState> { memories ->
+                        MemoryUiState.Success(memories)
+                    }
+                    .onStart { emit(MemoryUiState.Loading) }
+                    .catch { exception ->
+                        Log.e("MemoryViewModel", "Load memories failed", exception)
+                        emit(MemoryUiState.Error(R.string.memory_error_load))
+                    }
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = MemoryUiState.Loading
             )
+
+    fun retry() {
+        retryTrigger.value++
+    }
 
     private val _saveState = MutableStateFlow<MemorySaveState>(MemorySaveState.Idle)
     val saveState = _saveState.asStateFlow()

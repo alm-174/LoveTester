@@ -2,7 +2,6 @@ package com.example.lovetester.ui.home
 
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,10 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import coil3.load
+import coil3.request.error
 import com.example.lovetester.R
+import com.example.lovetester.ui.common.showOnce
 import com.example.lovetester.data.local.model.Gender
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.ActivityHomeBinding
@@ -57,10 +59,7 @@ class HomeActivity : AppCompatActivity() {
         applyWindowInsets()
 
         binding.btnGallery.setOnClickListener {
-            BackgroundBottomSheet().show(
-                supportFragmentManager,
-                "background_sheet"
-            )
+            supportFragmentManager.showOnce(BackgroundBottomSheet(), SHEET_TAG)
         }
 
         binding.layoutLoveDays.setOnClickListener {
@@ -124,10 +123,7 @@ class HomeActivity : AppCompatActivity() {
                         id?.startsWith("custom:") == true -> {
                             val path = id.removePrefix("custom:")
 
-                            binding.ivHomeBackground.setImageURI(null)
-                            binding.ivHomeBackground.setImageURI(
-                                Uri.fromFile(File(path))
-                            )
+                            binding.ivHomeBackground.load(File(path))
                         }
 
                         else -> {
@@ -138,7 +134,7 @@ class HomeActivity : AppCompatActivity() {
                                 else -> R.drawable.home_background
                             }
 
-                            binding.ivHomeBackground.setImageResource(drawableRes)
+                            binding.ivHomeBackground.load(drawableRes)
                         }
                     }
                 }
@@ -229,6 +225,9 @@ class HomeActivity : AppCompatActivity() {
         const val EXTRA_TAB = "com.example.lovetester.extra.HOME_TAB"
         const val TAB_HOME = "home"
         const val TAB_MEMORY = "memory"
+
+        // One tag for every bottom sheet opened from Home: only one can be open at a time.
+        private const val SHEET_TAG = "home_sheet"
     }
 
     private fun renderMemoryNavigation() {
@@ -245,6 +244,9 @@ class HomeActivity : AppCompatActivity() {
         binding.btnSettings.isVisible = !showingMemory
         binding.btnGallery.isVisible = !showingMemory
         binding.homeMemoryContainer.isVisible = showingMemory
+        // Hide the start-date container again once its fragment has been popped.
+        binding.startDateContainer.isVisible =
+            supportFragmentManager.findFragmentById(R.id.startDateContainer) != null
         binding.layoutBottomNav.root.isVisible = !onAdd
         binding.layoutBottomNav.root.setBackgroundColor(if (onMemory) Color.WHITE else Color.TRANSPARENT)
         binding.layoutBottomNav.navMemory.isEnabled = true
@@ -323,16 +325,21 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun openStartDate() {
+        val manager = supportFragmentManager
+        // Already open (or state saved): a second tap must not stack another copy.
+        if (manager.isStateSaved || manager.findFragmentById(R.id.startDateContainer) != null) return
 
         binding.startDateContainer.visibility = View.VISIBLE
 
-        supportFragmentManager.beginTransaction()
+        manager.beginTransaction()
             .replace(
                 R.id.startDateContainer,
                 StartDateFragment()
             )
             .addToBackStack("start_date")
             .commit()
+        // Register the fragment now so a fast double tap sees it.
+        manager.executePendingTransactions()
     }
 
     private fun genderIcon(gender: Gender): Int {
@@ -344,12 +351,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun openInformation(personType: PersonType) {
-        InformationBottomSheet
-            .newInstance(personType)
-            .show(
-                supportFragmentManager,
-                "information_sheet"
-            )
+        supportFragmentManager.showOnce(InformationBottomSheet.newInstance(personType), SHEET_TAG)
     }
 
     private fun calculateAge(birthday: LocalDate?): String {
@@ -373,10 +375,11 @@ class HomeActivity : AppCompatActivity() {
     ) {
         val file = path?.let { File(it) }
 
+        // Coil decodes off the main thread, downsamples to the view size and cancels stale requests.
         if (file != null && file.isFile) {
-            imageView.setImageURI(Uri.fromFile(file))
+            imageView.load(file) { error(defaultDrawable) }
         } else {
-            imageView.setImageResource(defaultDrawable)
+            imageView.load(defaultDrawable)
         }
     }
 }
