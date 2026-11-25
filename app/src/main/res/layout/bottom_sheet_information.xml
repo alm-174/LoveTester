@@ -91,7 +91,8 @@
             android:textSize="14sp"
             android:fontFamily="@font/plus_jakarta_sans_medium"
             android:textColor="@color/text_body"
-            android:hint="@string/information_name_hint"/>
+            android:hint="@string/information_name_hint"
+            android:importantForAutofill="no"/>
 
         <TextView
             android:layout_width="match_parent"

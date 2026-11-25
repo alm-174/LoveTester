@@ -6,7 +6,6 @@
     <color name="splash_gradient_end">#F9FAFF</color>
     <color name="splash_logo_background">#FF9595</color>
 
-    <color name="splash_title_color">@color/text_title</color>
     <color name="splash_title_shadow">#33000000</color>
     <color name="splash_title_love">@color/text_title</color>
     <color name="splash_title_counter">#FF1744</color>
@@ -33,7 +32,6 @@
     <color name="text_error">#B3261E</color>
     <color name="text_calendar_month">#27272A</color>
     <color name="text_calendar_weekday">#6B6F77</color>
-    <color name="text_on_primary_soft">#FCFCFC</color>
 
     <!-- Surfaces / dividers -->
     <color name="divider">#C5CAD4</color>

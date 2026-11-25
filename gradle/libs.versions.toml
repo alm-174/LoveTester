@@ -12,6 +12,7 @@ navigation = "2.10.2"
 hilt = "2.60.1"
 ksp = "2.3.9"
 room = "2.8.5"
+datastore = "1.1.7"
 # Coil 3.4+ is built with newer Kotlin metadata than this project's compiler (2.2) can read.
 coil = "3.3.0"
 exifinterface = "1.4.2"
@@ -36,6 +37,7 @@ androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", vers
 
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 [plugins]
 androidx-room = { id = "androidx.room", version.ref = "room" }
