@@ -28,7 +28,7 @@ class LoveTestActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val tabs = binding.layoutBottomNav
-        val active = getColor(R.color.color_ff0845)
+        val active = getColor(R.color.primary)
         val inactive = Color.parseColor("#454954")
         tabs.ivNavHome.setColorFilter(inactive)
         tabs.tvNavHome.setTextColor(inactive)

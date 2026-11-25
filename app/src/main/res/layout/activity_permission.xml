@@ -10,9 +10,9 @@
         android:id="@+id/tvPermissionTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Permission"
+        android:text="@string/permission_title"
         android:textSize="20sp"
-        android:textColor="@color/color_1e232e"
+        android:textColor="@color/text_title"
         android:fontFamily="@font/plus_jakarta_sans_semibold"
         android:layout_marginStart="@dimen/space_16"
         android:layout_marginTop="@dimen/space_16"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:text="@string/permission_decription"
         android:textSize="14sp"
-        android:textColor="#4B4F58"
+        android:textColor="@color/text_body"
         android:fontFamily="@font/plus_jakarta_sans_regular"
         android:gravity="center"
         android:layout_marginTop="40dp"
@@ -66,8 +66,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Allow access"
-            android:textColor="#4B4F58"
+            android:text="@string/permission_allow_access"
+            android:textColor="@color/text_body"
             android:textSize="16sp"
             android:fontFamily="@font/plus_jakarta_sans_semibold" />
 
@@ -77,8 +77,8 @@
             android:layout_height="wrap_content"
             android:checked="false"
             android:showText="false"
-            app:thumbTint="@color/color_ff0845"
-            app:trackTint="@color/color_4dff4081" />
+            app:thumbTint="@color/primary"
+            app:trackTint="@color/switch_track_on" />
 
     </LinearLayout>
 
@@ -89,9 +89,9 @@
         android:minWidth="80dp"
         android:layout_marginTop="66dp"
         android:gravity="center"
-        android:text="Continue"
+        android:text="@string/common_continue"
         android:textSize="18sp"
-        android:textColor="@color/color_ff0845"
+        android:textColor="@color/primary"
         android:fontFamily="@font/plus_jakarta_sans_semibold"
         android:clickable="true"
         android:focusable="true"

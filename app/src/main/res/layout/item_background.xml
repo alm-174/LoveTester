@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="Background image" />
+        android:contentDescription="@string/background_item_image" />
 
     <ImageView
         android:id="@+id/ivAdd"
@@ -21,6 +21,6 @@
         android:src="@drawable/ic_add"
         app:tint="@color/white"
         android:visibility="gone"
-        android:contentDescription="Add photo" />
+        android:contentDescription="@string/common_add_photo" />
 
 </FrameLayout>

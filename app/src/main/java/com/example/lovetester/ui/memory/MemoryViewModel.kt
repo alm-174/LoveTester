@@ -2,6 +2,7 @@ package com.example.lovetester.ui.memory
 
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.viewModelScope
 import com.example.lovetester.data.local.database.MemoryEntity
 import com.example.lovetester.data.repository.MemoryRepository
+import com.example.lovetester.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +30,7 @@ sealed interface MemoryUiState {
     ) : MemoryUiState
 
     data class Error(
-        val message: String
+        @param:StringRes val messageRes: Int
     ) : MemoryUiState
 }
 
@@ -51,11 +53,8 @@ class MemoryViewModel @Inject constructor(
                 MemoryUiState.Success(memories)
             }
             .catch { exception ->
-                emit(
-                    MemoryUiState.Error(
-                        exception.message ?: "Cannot load memories"
-                    )
-                )
+                Log.e("MemoryViewModel", "Load memories failed", exception)
+                emit(MemoryUiState.Error(R.string.memory_error_load))
             }
             .stateIn(
                 scope = viewModelScope,

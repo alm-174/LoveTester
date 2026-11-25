@@ -133,7 +133,7 @@ class StartDateFragment : Fragment(R.layout.fragment_start_date) {
                 binding.btnDone.isEnabled = true
                 android.widget.Toast.makeText(
                     requireContext(),
-                    "Unable to save date",
+                    getString(R.string.start_date_save_error),
                     android.widget.Toast.LENGTH_SHORT
                 ).show()
             }

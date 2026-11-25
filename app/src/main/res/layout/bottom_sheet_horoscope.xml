@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="570dp"
+    android:layout_height="wrap_content"
+    android:minHeight="570dp"
     android:background="@android:color/white">
 
     <View
@@ -22,9 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="28dp"
-        android:text="Horoscope"
+        android:text="@string/horoscope_picker_title"
         android:textSize="16sp"
-        android:textColor="#1E232E"
+        android:textColor="@color/text_title"
         android:fontFamily="@font/plus_jakarta_sans_semibold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

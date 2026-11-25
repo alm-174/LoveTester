@@ -6,21 +6,39 @@
     <color name="splash_gradient_end">#F9FAFF</color>
     <color name="splash_logo_background">#FF9595</color>
 
-    <color name="splash_title_color">#202532</color>
+    <color name="splash_title_color">@color/text_title</color>
     <color name="splash_title_shadow">#33000000</color>
-    <color name="splash_title_love">#202532</color>
+    <color name="splash_title_love">@color/text_title</color>
     <color name="splash_title_counter">#FF1744</color>
 
-    <color name="splash_dot_active">#FF0845</color>
+    <color name="splash_dot_active">@color/primary</color>
     <color name="splash_dot_inactive">#F5C4CB</color>
 
-    <color name="splash_ads_text">#4B4F58</color>
+    <color name="splash_ads_text">@color/text_body</color>
 
     <color name="language_item_unselected">#F7F7F7</color>
 
-    <color name="language_item_selected">#4DFF0845</color>
-    <color name="language_item_selected_stroke">#FF0845</color>
-    <color name="color_1e232e">#1E232E</color>
-    <color name="color_ff0845">#FF0845</color>
-    <color name="color_4dff4081">#4DFF4081</color>
+    <color name="language_item_selected">@color/primary_30</color>
+    <color name="language_item_selected_stroke">@color/primary</color>
+    <color name="text_title">#1E232E</color>
+    <color name="primary">#FF0845</color>
+    <color name="switch_track_on">@color/primary_30</color>
+    <color name="gradient_end">#FFB099</color>
+
+    <!-- Text -->
+    <color name="text_body">#4B4F58</color>
+    <color name="text_hint">#9CA3AF</color>
+    <color name="text_error">#B3261E</color>
+    <color name="text_calendar_month">#27272A</color>
+    <color name="text_calendar_weekday">#787B82</color>
+    <color name="text_on_primary_soft">#FCFCFC</color>
+
+    <!-- Surfaces / dividers -->
+    <color name="divider">#C5CAD4</color>
+    <color name="sheet_handle">#DCDFE5</color>
+    <color name="surface_photo_placeholder">#F3F4F8</color>
+    <color name="primary_10">#1AFF0845</color>
+    <color name="primary_20">#33FF0845</color>
+    <color name="primary_30">#4DFF0845</color>
+    <color name="memory_card_background">#442828</color>
 </resources>

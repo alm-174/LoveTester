@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -22,8 +23,8 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_chevron_left"
             android:background="@android:color/transparent"
-            android:contentDescription="Previous month"
-            app:tint="@color/color_ff0845"/>
+            android:contentDescription="@string/date_picker_previous_month"
+            app:tint="@color/primary"/>
 
         <TextView
             android:id="@+id/tvCalendarMonth"
@@ -31,13 +32,13 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="December - 2023"
+            tools:text="December - 2023"
             android:fontFamily="@font/plus_jakarta_sans_semibold"
             android:textSize="@dimen/text_body"
-            android:textColor="#27272A"
+            android:textColor="@color/text_calendar_month"
             android:clickable="true"
             android:focusable="true"
-            android:contentDescription="Choose year"/>
+            android:contentDescription="@string/date_picker_choose_year"/>
 
         <ImageButton
             android:id="@+id/btnNextMonth"
@@ -45,8 +46,8 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_chevron_right"
             android:background="@android:color/transparent"
-            android:contentDescription="Next month"
-            app:tint="@color/color_ff0845"/>
+            android:contentDescription="@string/date_picker_next_month"
+            app:tint="@color/primary"/>
 
     </LinearLayout>
 
@@ -66,70 +67,70 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Sun"
+            android:text="@string/date_picker_weekday_sun"
             android:textSize="@dimen/text_body"
             android:fontFamily="@font/plus_jakarta_sans_regular"
-            android:textColor="#787B82"/>
+            android:textColor="@color/text_calendar_weekday"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Mon"
+            android:text="@string/date_picker_weekday_mon"
             android:textSize="@dimen/text_body"
             android:fontFamily="@font/plus_jakarta_sans_regular"
-            android:textColor="#787B82"/>
+            android:textColor="@color/text_calendar_weekday"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Tue"
+            android:text="@string/date_picker_weekday_tue"
             android:textSize="@dimen/text_body"
             android:fontFamily="@font/plus_jakarta_sans_regular"
-            android:textColor="#787B82"/>
+            android:textColor="@color/text_calendar_weekday"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Wed"
+            android:text="@string/date_picker_weekday_wed"
             android:textSize="@dimen/text_body"
             android:fontFamily="@font/plus_jakarta_sans_regular"
-            android:textColor="#787B82"/>
+            android:textColor="@color/text_calendar_weekday"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Thu"
+            android:text="@string/date_picker_weekday_thu"
             android:textSize="@dimen/text_body"
             android:fontFamily="@font/plus_jakarta_sans_regular"
-            android:textColor="#787B82"/>
+            android:textColor="@color/text_calendar_weekday"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Fri"
+            android:text="@string/date_picker_weekday_fri"
             android:textSize="@dimen/text_body"
             android:fontFamily="@font/plus_jakarta_sans_regular"
-            android:textColor="#787B82"/>
+            android:textColor="@color/text_calendar_weekday"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Sat"
+            android:text="@string/date_picker_weekday_sat"
             android:textSize="@dimen/text_body"
             android:fontFamily="@font/plus_jakarta_sans_regular"
-            android:textColor="#787B82"/>
+            android:textColor="@color/text_calendar_weekday"/>
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -169,10 +170,10 @@
             android:id="@+id/btnCancelDate"
             android:layout_width="80dp"
             android:layout_height="40dp"
-            android:text="Cancel"
+            android:text="@string/common_cancel"
             android:textAllCaps="false"
             android:textSize="12sp"
-            android:textColor="#1E232E"
+            android:textColor="@color/text_title"
             android:background="@drawable/bg_date_cancel"
             app:backgroundTint="@null"
             android:minWidth="0dp"
@@ -185,7 +186,7 @@
             android:layout_width="80dp"
             android:layout_height="40dp"
             android:layout_marginStart="12dp"
-            android:text="Save"
+            android:text="@string/common_save"
             android:textAllCaps="false"
             android:textSize="12sp"
             android:textColor="@color/white"

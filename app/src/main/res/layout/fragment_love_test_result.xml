@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,7 +15,7 @@
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_arrow_left"
-        android:contentDescription="Back"
+        android:contentDescription="@string/common_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,9 +23,9 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Result"
+        android:text="@string/result_title"
         android:textSize="22sp"
-        android:textColor="#202532"
+        android:textColor="@color/text_title"
         android:fontFamily="@font/plus_jakarta_sans_semibold"
         app:layout_constraintTop_toTopOf="@id/btnBack"
         app:layout_constraintBottom_toBottomOf="@id/btnBack"
@@ -46,7 +47,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/love_heart"
             android:scaleType="fitXY"
-            android:contentDescription="Love result heart" />
+            android:contentDescription="@string/result_heart" />
 
         <TextView
             android:id="@+id/tvPercentage"
@@ -54,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="20%"
+            tools:text="20%"
             android:textSize="48sp"
             android:textColor="@android:color/white"
             android:fontFamily="@font/plus_jakarta_sans_semibold" />
@@ -84,7 +85,7 @@
                 android:layout_height="106dp"
                 android:src="@drawable/avatar_sasuke"
                 android:scaleType="fitCenter"
-                android:contentDescription="Person one avatar" />
+                android:contentDescription="@string/common_person_one_avatar" />
 
             <TextView
                 android:id="@+id/tvPersonOne"
@@ -94,9 +95,9 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="Sasuke"
+                tools:text="Sasuke"
                 android:textSize="16sp"
-                android:textColor="#444955"
+                android:textColor="@color/text_body"
                 android:fontFamily="@font/plus_jakarta_sans_semibold" />
 
         </LinearLayout>
@@ -107,7 +108,7 @@
             android:layout_height="40dp"
             android:layout_marginHorizontal="12dp"
             android:src="@drawable/ic_love_infinity"
-            android:contentDescription="Love infinity" />
+            android:contentDescription="@string/common_love_infinity" />
 
         <LinearLayout
             android:layout_width="120dp"
@@ -121,7 +122,7 @@
                 android:layout_height="106dp"
                 android:src="@drawable/avatar_naruto"
                 android:scaleType="fitCenter"
-                android:contentDescription="Person two avatar" />
+                android:contentDescription="@string/common_person_two_avatar" />
 
             <TextView
                 android:id="@+id/tvPersonTwo"
@@ -131,9 +132,9 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="Naruto"
+                tools:text="Naruto"
                 android:textSize="16sp"
-                android:textColor="#444955"
+                android:textColor="@color/text_body"
                 android:fontFamily="@font/plus_jakarta_sans_semibold" />
 
         </LinearLayout>
@@ -149,12 +150,63 @@
         android:layout_marginTop="44dp"
         android:background="@drawable/bg_result_message"
         android:padding="14dp"
-        android:textColor="#202532"
+        android:textColor="@color/text_title"
         android:textSize="17sp"
         android:fontFamily="@font/plus_jakarta_sans_regular"
-        android:text="Your love test result message"
+        tools:text="Your love test result message"
         app:layout_constraintTop_toBottomOf="@id/layoutPersons"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/layoutActions"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="40dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnShare"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:letterSpacing="0"
+            android:text="@string/share"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textColor="@color/primary"
+            android:fontFamily="@font/plus_jakarta_sans_semibold"
+            app:strokeColor="@color/primary"
+            app:strokeWidth="1dp"
+            app:cornerRadius="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRetry"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:letterSpacing="0"
+            android:stateListAnimator="@null"
+            android:text="@string/retry"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:fontFamily="@font/plus_jakarta_sans_semibold"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="8dp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

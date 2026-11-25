@@ -11,7 +11,7 @@
     <!-- Home -->
     <LinearLayout
         android:id="@+id/navHome"
-        android:contentDescription="Home tab"
+        android:contentDescription="@string/nav_home_tab"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -25,24 +25,24 @@
             android:layout_height="24dp"
             android:id="@+id/ivNavHome"
             android:src="@drawable/ic_nav_home"
-            android:contentDescription="Home"
-            app:tint="@color/color_ff0845" />
+            android:contentDescription="@string/nav_home"
+            app:tint="@color/primary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:id="@+id/tvNavHome"
-            android:text="Home"
+            android:text="@string/nav_home"
             android:textSize="14sp"
             android:fontFamily="@font/plus_jakarta_sans_semibold"
-            android:textColor="@color/color_ff0845" />
+            android:textColor="@color/primary" />
 
     </LinearLayout>
     <!-- Love test -->
     <LinearLayout
         android:id="@+id/navLoveTest"
-        android:contentDescription="Love Test tab"
+        android:contentDescription="@string/nav_love_test_tab"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -56,25 +56,25 @@
             android:layout_height="40dp"
             android:id="@+id/ivNavLoveTest"
             android:src="@drawable/ic_nav_love_test"
-            android:contentDescription="Love Test"
-            app:tint="#454954" />
+            android:contentDescription="@string/nav_love_test"
+            app:tint="@color/text_body" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:id="@+id/tvNavLoveTest"
-            android:text="Love Test"
+            android:text="@string/nav_love_test"
             android:textSize="14sp"
             android:fontFamily="@font/plus_jakarta_sans_semibold"
-            android:textColor="#454954" />
+            android:textColor="@color/text_body" />
 
     </LinearLayout>
     <!-- Memory -->
 
     <LinearLayout
         android:id="@+id/navMemory"
-        android:contentDescription="Memory tab"
+        android:contentDescription="@string/nav_memory_tab"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -88,18 +88,18 @@
             android:layout_height="24dp"
             android:id="@+id/ivNavMemory"
             android:src="@drawable/ic_nav_memory"
-            android:contentDescription="Memory"
-            app:tint="#454954" />
+            android:contentDescription="@string/nav_memory"
+            app:tint="@color/text_body" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:id="@+id/tvNavMemory"
-            android:text="Memory"
+            android:text="@string/nav_memory"
             android:textSize="14sp"
             android:fontFamily="@font/plus_jakarta_sans_semibold"
-            android:textColor="#454954" />
+            android:textColor="@color/text_body" />
 
     </LinearLayout>
 

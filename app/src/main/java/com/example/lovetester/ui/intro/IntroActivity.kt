@@ -126,7 +126,7 @@ class IntroActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this@IntroActivity,
-                    "Không thể lưu tiến trình. Vui lòng thử lại.",
+                    getString(R.string.intro_save_progress_error),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -180,7 +180,7 @@ class IntroActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this@IntroActivity,
-                    "Không thể quay lại. Vui lòng thử lại.",
+                    getString(R.string.intro_back_error),
                     Toast.LENGTH_SHORT
                 ).show()
             }

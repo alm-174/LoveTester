@@ -12,10 +12,10 @@
         android:layout_height="60dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/bg_memory_add_button"
-        android:contentDescription="Add memory"
+        android:contentDescription="@string/common_add_memory"
         android:padding="5dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_add"
-        app:tint="@color/color_ff0845" />
+        app:tint="@color/primary" />
 
 </FrameLayout>

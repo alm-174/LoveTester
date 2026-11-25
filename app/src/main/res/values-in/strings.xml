@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="splash_ads_notice">Tindakan ini dapat berisi iklan</string>
+
+    <string name="language_title">Bahasa</string>
+    <string name="language_confirm">Konfirmasi bahasa</string>
+
+    <string name="intro_title_1">Uji Hubunganmu</string>
+    <string name="intro_description_1">Cari tahu kecocokan cintamu\ndengan pasanganmu</string>
+
+    <string name="intro_title_2">Penghitung Hari Cinta</string>
+    <string name="intro_description_2">Catat sudah berapa lama\nkalian bersama</string>
+
+    <string name="intro_title_3">Momen Tak Terlupakan</string>
+    <string name="intro_description_3">Simpan momen-momen berharga bersama</string>
+    <string name="permission_decription">Aplikasi ini memerlukan izin di bawah agar berfungsi dengan baik</string>
+
+    <!-- Horoscope Test messages -->
+    <string name="horoscope_message_0_5">Semuanya bisa menjadi kacau...</string>
+    <string name="horoscope_message_6_20">Dalam hubungan, kedua pasangan mungkin sama-sama mencoba mengubah satu sama lain...</string>
+    <string name="horoscope_message_21_35">Secara keseluruhan, keduanya keras kepala, tetapi dengan cara yang berbeda...</string>
+    <string name="horoscope_message_36_50">Pasangan ini tidak terlalu menggebu, juga tidak terlalu manis...</string>
+    <string name="horoscope_message_51_70">Kisah cinta yang indah, damai, dan harmonis...</string>
+    <string name="horoscope_message_71_90">Saling mencintai dengan cara masing-masing dan saling melindungi...</string>
+    <string name="horoscope_message_91_100">Mereka punya banyak kesamaan dan saling tertarik...</string>
+
+    <string name="share">Bagikan</string>
+    <string name="retry">Coba lagi</string>
+
+    <!-- Common -->
+    <string name="common_back">Kembali</string>
+    <string name="common_save">Simpan</string>
+    <string name="common_cancel">Batal</string>
+    <string name="common_done">Selesai</string>
+    <string name="common_next">Berikutnya</string>
+    <string name="common_continue">Lanjutkan</string>
+    <string name="common_love_infinity">Cinta tak terbatas</string>
+    <string name="common_add_memory">Tambah kenangan</string>
+    <string name="common_add_photo">Tambah foto</string>
+    <string name="common_select_date">Pilih tanggal</string>
+    <string name="common_person_one_avatar">Avatar orang pertama</string>
+    <string name="common_person_two_avatar">Avatar orang kedua</string>
+    <string name="common_gender_male">Pria</string>
+    <string name="common_gender_female">Wanita</string>
+
+    <!-- Bottom tabs -->
+    <string name="nav_home">Beranda</string>
+    <string name="nav_home_tab">Tab Beranda</string>
+    <string name="nav_love_test">Tes Cinta</string>
+    <string name="nav_love_test_tab">Tab Tes Cinta</string>
+    <string name="nav_memory">Kenangan</string>
+    <string name="nav_memory_tab">Tab Kenangan</string>
+
+    <!-- Home -->
+    <string name="home_couple_illustration">Ilustrasi pasangan</string>
+    <string name="home_settings">Pengaturan</string>
+    <string name="home_gallery">Galeri</string>
+    <string name="home_love_days_heart">Hati hari cinta</string>
+    <plurals name="home_love_days">
+        <item quantity="other">%1$d\nHari</item>
+    </plurals>
+    <string name="home_love_days_empty">0 Hari</string>
+    <string name="home_tap_to_start_date">Ketuk untuk mengatur tanggal mulai</string>
+
+    <!-- Permission -->
+    <string name="permission_title">Izin</string>
+    <string name="permission_allow_access">Izinkan akses</string>
+    <string name="permission_save_error">Tidak dapat menyimpan status. Silakan coba lagi.</string>
+    <string name="permission_camera_dialog_title">Matikan izin Kamera</string>
+    <string name="permission_camera_dialog_message">Untuk mematikan izin Kamera, buka pengaturan aplikasi lalu cabut izinnya.</string>
+    <string name="permission_camera_dialog_open_settings">Buka pengaturan</string>
+    <string name="permission_back_error">Tidak dapat kembali ke Intro. Silakan coba lagi.</string>
+
+    <!-- Intro -->
+    <string name="intro_save_progress_error">Tidak dapat menyimpan progresmu. Silakan coba lagi.</string>
+    <string name="intro_back_error">Tidak dapat kembali. Silakan coba lagi.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Pengaturan</string>
+    <string name="settings_rate">Beri nilai</string>
+    <string name="settings_feedback">Masukan</string>
+    <string name="settings_privacy_policy">Kebijakan Privasi</string>
+
+    <!-- Background -->
+    <string name="background_sheet_title">Pilih latar belakangmu</string>
+    <string name="background_item_image">Gambar latar belakang</string>
+    <string name="background_save_error">Tidak dapat menyimpan foto yang dipilih</string>
+
+    <!-- Information -->
+    <string name="information_title">Informasi</string>
+    <string name="information_avatar">Avatar profil</string>
+    <string name="information_change_photo">Ketuk untuk mengganti foto</string>
+    <string name="information_name_label">Nama</string>
+    <string name="information_name_hint">Masukkan nama</string>
+    <string name="information_gender_label">Jenis kelamin</string>
+    <string name="information_birthday_label">Tanggal lahir</string>
+    <string name="information_error_name_empty">Nama tidak boleh kosong</string>
+    <string name="information_error_name_too_long">Nama maksimal 100 karakter</string>
+    <string name="information_error_save">Tidak dapat menyimpan informasimu</string>
+    <string name="information_error_read_photo">Tidak dapat membaca foto yang dipilih</string>
+    <string name="information_camera_error">Tidak dapat membuka kamera</string>
+    <string name="avatar_option_title">Pilih opsi</string>
+    <string name="avatar_option_take_photo">Ambil foto</string>
+    <string name="avatar_option_upload_photo">Unggah foto</string>
+
+    <!-- Date picker -->
+    <string name="date_picker_previous_month">Bulan sebelumnya</string>
+    <string name="date_picker_choose_year">Pilih tahun</string>
+    <string name="date_picker_next_month">Bulan berikutnya</string>
+    <string name="date_picker_weekday_sun">Min</string>
+    <string name="date_picker_weekday_mon">Sen</string>
+    <string name="date_picker_weekday_tue">Sel</string>
+    <string name="date_picker_weekday_wed">Rab</string>
+    <string name="date_picker_weekday_thu">Kam</string>
+    <string name="date_picker_weekday_fri">Jum</string>
+    <string name="date_picker_weekday_sat">Sab</string>
+
+    <!-- Memory -->
+    <string name="memory_list_title">Kenangan</string>
+    <string name="memory_list_empty_title">Belum ada hari jadi</string>
+    <string name="memory_list_empty_description">Simpan hari jadi tak terlupakanmu di sini!</string>
+    <string name="memory_error_load">Tidak dapat memuat kenangan</string>
+    <string name="memory_delete_button">Hapus</string>
+    <string name="memory_delete_title">Hapus Kenangan</string>
+    <string name="memory_delete_message">Yakin ingin menghapus kenangan \'%1$s\'?</string>
+    <string name="add_memory_title">Kenangan</string>
+    <string name="add_memory_photo_add">Tambah foto kenangan</string>
+    <string name="add_memory_photo_preview">Foto kenangan</string>
+    <string name="add_memory_title_label">Judul</string>
+    <string name="add_memory_title_hint">Masukkan judul kenangan</string>
+    <string name="add_memory_date_label">Tanggal</string>
+    <string name="add_memory_select_date">Pilih tanggal kenangan</string>
+    <string name="add_memory_error_title_empty">Masukkan judul</string>
+    <string name="add_memory_error_title_too_long">Gunakan maksimal 100 karakter</string>
+    <string name="add_memory_error_save">Tidak dapat menyimpan kenangan. Periksa foto atau coba lagi.</string>
+    <string name="add_memory_error_date">Pilih tanggal untuk kenangan ini.</string>
+    <string name="add_memory_error_photo">Pilih foto untuk kenangan ini.</string>
+    <string name="add_memory_error_read_photo">Tidak dapat membaca foto ini. Pilih lagi atau pilih foto lain.</string>
+
+    <!-- Start date -->
+    <string name="start_date_title">Tanggal Mulai</string>
+    <string name="start_date_label">Tanggal jadian</string>
+    <string name="start_date_save_error">Tidak dapat menyimpan tanggal</string>
+
+    <!-- Love test -->
+    <string name="love_test_title">Tes Cinta</string>
+    <string name="love_test_name_title">Tes Nama</string>
+    <string name="love_test_name_description">Cari tahu kecocokanmu dengan memasukkan namamu</string>
+    <string name="love_test_horoscope_title">Tes Horoskop</string>
+    <string name="love_test_horoscope_description">Coba tes kecocokan zodiak yang lucu dengan gebetanmu</string>
+
+    <!-- Name test -->
+    <string name="name_test_title">Tes Nama</string>
+    <string name="name_test_your_name_label">Namamu</string>
+    <string name="name_test_partner_name_label">Nama pasanganmu</string>
+    <string name="name_test_button_love_test">Tes Cinta</string>
+    <string name="name_test_error_empty_name">Silakan masukkan namamu</string>
+    <string name="name_test_error_empty_partner_name">Silakan masukkan nama pasanganmu</string>
+
+    <!-- Horoscope test -->
+    <string name="horoscope_test_title">Tes Horoskop</string>
+    <string name="horoscope_test_your_zodiac">Zodiakmu</string>
+    <string name="horoscope_test_partner_zodiac">Zodiak pasanganmu</string>
+    <string name="horoscope_test_button_love_test">Tes Cinta</string>
+    <string name="horoscope_picker_title">Horoskop</string>
+    <string name="item_zodiac_sign">Tanda zodiak</string>
+
+    <!-- Zodiac names -->
+    <string name="zodiac_aries">Aries</string>
+    <string name="zodiac_taurus">Taurus</string>
+    <string name="zodiac_gemini">Gemini</string>
+    <string name="zodiac_cancer">Kanker</string>
+    <string name="zodiac_leo">Leo</string>
+    <string name="zodiac_virgo">Virgo</string>
+    <string name="zodiac_libra">Libra</string>
+    <string name="zodiac_scorpio">Skorpio</string>
+    <string name="zodiac_sagittarius">Sagitarius</string>
+    <string name="zodiac_capricorn">Capricorn</string>
+    <string name="zodiac_aquarius">Aquarius</string>
+    <string name="zodiac_pisces">Pisces</string>
+
+    <!-- Result -->
+    <string name="result_title">Hasil</string>
+    <string name="result_heart">Hati hasil cinta</string>
+    <string name="name_test_message_0_20">Sebaiknya kalian berteman saja, jangan jatuh cinta! Ini bisa jadi hubungan terbaik dalam hidupmu, atau kamu akan kehilangan orang itu selamanya. Terkadang, kisah cinta terindah adalah yang tak terucap di antara sahabat</string>
+    <string name="name_test_message_21_50">Lebih dari sekadar teman, kita pantas menjadi kekasih! Kisah cinta sebaiknya mulai ditulis sekarang! Cinta itu seperti angin, tak terlihat tetapi bisa dirasakan.</string>
+    <string name="name_test_message_51_80">Aku ingin memelukmu erat dan merasakan detak jantung kita menyatu selamanya! Kamu menyebutnya kegilaan, aku menyebutnya cinta. Kita hanya bisa belajar mencintai dengan mencintai</string>
+    <string name="name_test_message_81_100">Aku dilahirkan untuk menjadi kekasihmu! Kamu adalah permata hatiku! Kita harus menjadi diri sendiri sebelum menjadi milik orang lain. Jiwaku dan jiwamu terjalin selamanya</string>
+</resources>

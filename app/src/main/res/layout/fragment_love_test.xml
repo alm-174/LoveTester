@@ -12,9 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Love Test"
+        android:text="@string/love_test_title"
         android:textSize="20sp"
-        android:textColor="#1E232E"
+        android:textColor="@color/text_title"
         android:fontFamily="@font/plus_jakarta_sans_semibold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -28,7 +28,7 @@
         android:layout_marginTop="34dp"
         android:clickable="true"
         android:focusable="true"
-        app:cardBackgroundColor="#FFFFFF"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:layout_constraintTop_toBottomOf="@id/tvLoveTestTitle"
@@ -54,19 +54,19 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Name Test"
+                    android:text="@string/love_test_name_title"
                     android:textSize="20sp"
-                    android:textColor="#1E232E"
+                    android:textColor="@color/text_title"
                     android:fontFamily="@font/plus_jakarta_sans_semibold"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="Discover your compatibility by entering your name"
+                    android:text="@string/love_test_name_description"
                     android:textSize="12sp"
                     android:maxLines="2"
-                    android:textColor="#4B4F58"
+                    android:textColor="@color/text_body"
                     android:fontFamily="@font/plus_jakarta_sans_regular"/>
 
             </LinearLayout>
@@ -91,7 +91,7 @@
         android:layout_marginTop="12dp"
         android:clickable="true"
         android:focusable="true"
-        app:cardBackgroundColor="#FFFFFF"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:layout_constraintTop_toBottomOf="@id/cardNameTest"
@@ -117,19 +117,19 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Horoscope Test"
+                    android:text="@string/love_test_horoscope_title"
                     android:textSize="20sp"
-                    android:textColor="#1E232E"
+                    android:textColor="@color/text_title"
                     android:fontFamily="@font/plus_jakarta_sans_semibold"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="Try a cute zodiac compatibility test with your crush"
+                    android:text="@string/love_test_horoscope_description"
                     android:textSize="12sp"
                     android:maxLines="2"
-                    android:textColor="#4B4F58"
+                    android:textColor="@color/text_body"
                     android:fontFamily="@font/plus_jakarta_sans_regular"/>
 
             </LinearLayout>

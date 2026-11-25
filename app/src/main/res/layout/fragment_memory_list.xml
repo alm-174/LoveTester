@@ -12,10 +12,10 @@
         android:layout_height="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Memory"
+        android:text="@string/memory_list_title"
         android:textSize="20sp"
         android:fontFamily="@font/plus_jakarta_sans_semibold"
-        android:textColor="#1E232E"
+        android:textColor="@color/text_title"
         android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -45,20 +45,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="No anniversary"
+            android:text="@string/memory_list_empty_title"
             android:textSize="18sp"
             android:fontFamily="@font/plus_jakarta_sans_semibold"
-            android:textColor="#000000"/>
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/tvEmptyDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Preserve your unforgettable anniversary here!"
+            android:text="@string/memory_list_empty_description"
             android:textSize="14sp"
             android:fontFamily="@font/plus_jakarta_sans_regular"
-            android:textColor="#4B4F58"
+            android:textColor="@color/text_body"
             android:gravity="center"/>
 
         <ImageButton
@@ -67,11 +67,11 @@
             android:layout_height="60dp"
             android:layout_marginTop="32dp"
             android:src="@drawable/ic_add"
-            android:tint="@color/color_ff0845"
+            android:tint="@color/primary"
             android:padding="5dp"
             android:scaleType="centerInside"
             android:background="@drawable/bg_memory_add_button"
-            android:contentDescription="Add memory"/>
+            android:contentDescription="@string/common_add_memory"/>
     </LinearLayout>
 
 

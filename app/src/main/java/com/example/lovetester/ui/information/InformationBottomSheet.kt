@@ -3,6 +3,7 @@ package com.example.lovetester.ui.information
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,10 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.lovetester.R
 import com.example.lovetester.data.local.model.Gender
 import com.example.lovetester.data.local.model.PersonInfo
+import com.example.lovetester.data.local.model.MAX_NAME_LENGTH
 import com.example.lovetester.data.local.model.validateName
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.data.local.storage.AvatarStorage
@@ -445,7 +448,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
 
             Toast.makeText(
                 requireContext(),
-                "Không thể mở Camera",
+                getString(R.string.information_camera_error),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -460,12 +463,25 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         binding.btnSave.setOnClickListener {
 
             val rawName = binding.etName.text.toString()
+            val trimmedName = rawName.trim()
+
+            // UI checks the name first and shows a localized message.
+            if (trimmedName.isBlank()) {
+                binding.etName.error = getString(R.string.information_error_name_empty)
+                return@setOnClickListener
+            }
+            if (trimmedName.length > MAX_NAME_LENGTH) {
+                binding.etName.error = getString(R.string.information_error_name_too_long)
+                return@setOnClickListener
+            }
 
             val name = try {
                 validateName(rawName)
             } catch (e: IllegalArgumentException) {
 
-                binding.etName.error = e.message
+                // Unreachable after the checks above; validateName is only a developer guard.
+                Log.w("InformationBottomSheet", "validateName rejected a checked name", e)
+                binding.etName.error = getString(R.string.information_error_save)
                 return@setOnClickListener
             }
 
@@ -480,13 +496,18 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
 
                 var newAvatarPath: String? = null
                 var savedToDataStore = false
+                var errorRes = R.string.information_error_save
 
                 try {
 
                     val avatarPath = selectedAvatarUri?.let { uri ->
 
-                        avatarStorage.saveAvatar(uri).also {
+                        run {
+                            errorRes = R.string.information_error_read_photo
+                            avatarStorage.saveAvatar(uri)
+                        }.also {
                             newAvatarPath = it
+                            errorRes = R.string.information_error_save
                         }
 
                     } ?: currentAvatarPath
@@ -542,7 +563,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                 } catch (e: Exception) {
 
                     binding.etName.error =
-                        "Không thể lưu thông tin"
+                        getString(errorRes)
 
                     binding.btnSave.isEnabled = true
 

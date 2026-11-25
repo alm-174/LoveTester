@@ -99,14 +99,18 @@ class HomeActivity : AppCompatActivity() {
                 repository.loveStartDate.collect { startDate ->
 
                     if (startDate == null) {
-                        binding.tvLoveDays.text = "0 Day"
+                        binding.tvLoveDays.text = getString(R.string.home_love_days_empty)
                     } else {
                         val days = ChronoUnit.DAYS.between(
                             startDate,
                             LocalDate.now()
                         ).coerceAtLeast(0)
 
-                        binding.tvLoveDays.text = "$days\nDay"
+                        binding.tvLoveDays.text = resources.getQuantityString(
+                            R.plurals.home_love_days,
+                            days.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+                            days
+                        )
                     }
                 }
             }
@@ -247,7 +251,7 @@ class HomeActivity : AppCompatActivity() {
         binding.layoutBottomNav.navMemory.isSelected = onMemory
         binding.layoutBottomNav.navHome.isSelected = current == null
 
-        val selected = getColor(R.color.color_ff0845)
+        val selected = getColor(R.color.primary)
         val unselected = Color.parseColor("#454954")
         val homeColor = if (onMemory) unselected else selected
         val memoryColor = if (onMemory) selected else unselected

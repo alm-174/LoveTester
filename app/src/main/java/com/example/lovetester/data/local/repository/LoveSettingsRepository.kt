@@ -7,9 +7,12 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.lovetester.data.local.model.Gender
 import com.example.lovetester.data.local.model.OnboardingStep
 import com.example.lovetester.data.local.model.PersonInfo
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
 val Context.settingsStore by preferencesDataStore(
@@ -17,7 +20,10 @@ val Context.settingsStore by preferencesDataStore(
 )
 
 
-class LoveSettingsRepository(context: Context) {
+@Singleton
+class LoveSettingsRepository @Inject constructor(
+    @ApplicationContext context: Context
+) {
 
     private val store = context.applicationContext.settingsStore
     private val LOVE_START_DATE =

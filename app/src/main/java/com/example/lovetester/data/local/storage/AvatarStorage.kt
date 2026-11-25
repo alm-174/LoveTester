@@ -18,7 +18,7 @@ class AvatarStorage(
 
             if (!directory.exists()) {
                 check(directory.mkdirs() || directory.isDirectory) {
-                    "Không thể tạo thư mục avatars"
+                    "Cannot create avatars directory"
                 }
             }
 
@@ -29,7 +29,7 @@ class AvatarStorage(
 
             try {
                 val input = context.contentResolver.openInputStream(uri)
-                    ?: error("Không thể đọc ảnh đã chọn")
+                    ?: error("Cannot open selected image")
 
                 input.use { source ->
                     destination.outputStream().use { output ->
@@ -38,7 +38,7 @@ class AvatarStorage(
                 }
 
                 check(destination.length() > 0L) {
-                    "Ảnh được lưu không có dữ liệu"
+                    "Saved image is empty"
                 }
 
                 destination.absolutePath
@@ -58,7 +58,7 @@ class AvatarStorage(
             // Chỉ cho phép xóa file nằm trực tiếp trong thư mục avatars.
             if (file.canonicalFile.parentFile == directory.canonicalFile) {
                 if (file.exists() && !file.delete()) {
-                    error("Không thể xóa ảnh Avatar")
+                    error("Cannot delete avatar file")
                 }
             }
         }

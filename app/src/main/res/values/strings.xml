@@ -1,19 +1,19 @@
 <resources>
-    <string name="app_name">LoveTester</string>
-    <string name="splash_love">LOVE</string>
-    <string name="splash_counter">COUNTER</string>
+    <string name="app_name" translatable="false">LoveTester</string>
+    <string name="splash_love" translatable="false">LOVE</string>
+    <string name="splash_counter" translatable="false">COUNTER</string>
     <string name="splash_ads_notice">This action can contain ads</string>
 
     <string name="language_title">Language</string>
     <string name="language_confirm">Confirm language</string>
 
-    <string name="language_english">English</string>
-    <string name="language_hindi">Hindi</string>
-    <string name="language_spanish">Spanish</string>
-    <string name="language_french">French</string>
-    <string name="language_portuguese">Portuguese</string>
-    <string name="language_indonesian">Indonesian</string>
-    <string name="language_german">German</string>
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_hindi" translatable="false">Hindi</string>
+    <string name="language_spanish" translatable="false">Spanish</string>
+    <string name="language_french" translatable="false">French</string>
+    <string name="language_portuguese" translatable="false">Portuguese</string>
+    <string name="language_indonesian" translatable="false">Indonesian</string>
+    <string name="language_german" translatable="false">German</string>
 
     <string name="intro_title_1">Test Your Relationship</string>
     <string name="intro_description_1">Find out your love compatibility\nwith your partner</string>
@@ -24,4 +24,180 @@
     <string name="intro_title_3">Memorable Moments</string>
     <string name="intro_description_3">Preserve cherished moments together</string>
     <string name="permission_decription">This app needs permissions below to work properly</string>
+
+    <!-- Horoscope Test messages -->
+    <string name="horoscope_message_0_5">Everything can become chaotic...</string>
+    <string name="horoscope_message_6_20">In a relationship, both partners may try to change...</string>
+    <string name="horoscope_message_21_35">Overall, both are stubborn but in different ways...</string>
+    <string name="horoscope_message_36_50">The couple is not too intense, nor too sweet...</string>
+    <string name="horoscope_message_51_70">A beautiful, peaceful and harmonious love affair...</string>
+    <string name="horoscope_message_71_90">Love each other in our own way, protect each other...</string>
+    <string name="horoscope_message_91_100">They have many things in common, attracted to each other...</string>
+
+    <string name="share">Share</string>
+    <string name="retry">Retry</string>
+
+    <!-- Common -->
+    <string name="common_back">Back</string>
+    <string name="common_save">Save</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_done">Done</string>
+    <string name="common_next">Next</string>
+    <string name="common_continue">Continue</string>
+    <string name="common_love_infinity">Love infinity</string>
+    <string name="common_add_memory">Add memory</string>
+    <string name="common_add_photo">Add photo</string>
+    <string name="common_select_date">Select date</string>
+    <string name="common_person_one_avatar">Person one avatar</string>
+    <string name="common_person_two_avatar">Person two avatar</string>
+    <string name="common_gender_male">Male</string>
+    <string name="common_gender_female">Female</string>
+    <string name="percent_format" translatable="false">%1$d%%</string>
+
+    <!-- Bottom tabs -->
+    <string name="nav_home">Home</string>
+    <string name="nav_home_tab">Home tab</string>
+    <string name="nav_love_test">Love Test</string>
+    <string name="nav_love_test_tab">Love Test tab</string>
+    <string name="nav_memory">Memory</string>
+    <string name="nav_memory_tab">Memory tab</string>
+
+    <!-- Home -->
+    <string name="home_couple_illustration">Couple illustration</string>
+    <string name="home_settings">Settings</string>
+    <string name="home_gallery">Gallery</string>
+    <string name="home_love_days_heart">Love days heart</string>
+    <plurals name="home_love_days">
+        <item quantity="one">%1$d\nDay</item>
+        <item quantity="other">%1$d\nDay</item>
+    </plurals>
+    <string name="home_love_days_empty">0 Day</string>
+    <string name="home_tap_to_start_date">Tap to start date</string>
+
+    <!-- Permission -->
+    <string name="permission_title">Permission</string>
+    <string name="permission_allow_access">Allow access</string>
+    <string name="permission_save_error">Couldn\'t save the status. Please try again.</string>
+    <string name="permission_camera_dialog_title">Turn off Camera permission</string>
+    <string name="permission_camera_dialog_message">To turn off the Camera permission, open the app settings and revoke it.</string>
+    <string name="permission_camera_dialog_open_settings">Open settings</string>
+    <string name="permission_back_error">Couldn\'t go back to Intro. Please try again.</string>
+
+    <!-- Intro -->
+    <string name="intro_save_progress_error">Couldn\'t save your progress. Please try again.</string>
+    <string name="intro_back_error">Couldn\'t go back. Please try again.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Setting</string>
+    <string name="settings_rate">Rate</string>
+    <string name="settings_feedback">Feedback</string>
+    <string name="settings_privacy_policy">Privacy Policy</string>
+
+    <!-- Background -->
+    <string name="background_sheet_title">Choose your background</string>
+    <string name="background_item_image">Background image</string>
+    <string name="background_save_error">Couldn\'t save the selected photo</string>
+
+    <!-- Information -->
+    <string name="information_title">Information</string>
+    <string name="information_avatar">Profile avatar</string>
+    <string name="information_change_photo">Tap to change photo</string>
+    <string name="information_name_label">Name</string>
+    <string name="information_name_hint">Enter name</string>
+    <string name="information_gender_label">Gender</string>
+    <string name="information_birthday_label">Birthday</string>
+    <string name="information_error_name_empty">Name can\'t be empty</string>
+    <string name="information_error_name_too_long">Name must be 100 characters or fewer</string>
+    <string name="information_error_save">Couldn\'t save your information</string>
+    <string name="information_error_read_photo">Couldn\'t read the selected photo</string>
+    <string name="information_camera_error">Couldn\'t open the camera</string>
+    <string name="avatar_option_title">Select option</string>
+    <string name="avatar_option_take_photo">Take a photo</string>
+    <string name="avatar_option_upload_photo">Upload photo</string>
+
+    <!-- Date picker -->
+    <string name="date_picker_previous_month">Previous month</string>
+    <string name="date_picker_choose_year">Choose year</string>
+    <string name="date_picker_next_month">Next month</string>
+    <string name="date_picker_weekday_sun">Sun</string>
+    <string name="date_picker_weekday_mon">Mon</string>
+    <string name="date_picker_weekday_tue">Tue</string>
+    <string name="date_picker_weekday_wed">Wed</string>
+    <string name="date_picker_weekday_thu">Thu</string>
+    <string name="date_picker_weekday_fri">Fri</string>
+    <string name="date_picker_weekday_sat">Sat</string>
+
+    <!-- Memory -->
+    <string name="memory_list_title">Memory</string>
+    <string name="memory_list_empty_title">No anniversary</string>
+    <string name="memory_list_empty_description">Preserve your unforgettable anniversary here!</string>
+    <string name="memory_error_load">Couldn\'t load memories</string>
+    <string name="memory_delete_button">Delete</string>
+    <string name="memory_delete_title">Delete Memory</string>
+    <string name="memory_delete_message">Are you sure you want to delete the memory \'%1$s\'?</string>
+    <string name="add_memory_title">Memory</string>
+    <string name="add_memory_photo_add">Add memory photo</string>
+    <string name="add_memory_photo_preview">Memory photo</string>
+    <string name="add_memory_title_label">Title</string>
+    <string name="add_memory_title_hint">Enter memory title</string>
+    <string name="add_memory_date_label">Date</string>
+    <string name="add_memory_select_date">Select memory date</string>
+    <string name="add_memory_error_title_empty">Enter a title</string>
+    <string name="add_memory_error_title_too_long">Use at most 100 characters</string>
+    <string name="add_memory_error_save">Could not save memory. Check the photo or try again.</string>
+    <string name="add_memory_error_date">Select a date for this memory.</string>
+    <string name="add_memory_error_photo">Choose a photo for this memory.</string>
+    <string name="add_memory_error_read_photo">Cannot read this photo. Choose it again or select another one.</string>
+
+    <!-- Start date -->
+    <string name="start_date_title">Start Date</string>
+    <string name="start_date_label">Date of love</string>
+    <string name="start_date_save_error">Unable to save date</string>
+
+    <!-- Love test -->
+    <string name="love_test_title">Love Test</string>
+    <string name="love_test_name_title">Name Test</string>
+    <string name="love_test_name_description">Discover your compatibility by entering your name</string>
+    <string name="love_test_horoscope_title">Horoscope Test</string>
+    <string name="love_test_horoscope_description">Try a cute zodiac compatibility test with your crush</string>
+
+    <!-- Name test -->
+    <string name="name_test_title">Name Test</string>
+    <string name="name_test_your_name_label">Your name</string>
+    <string name="name_test_partner_name_label">Partner’s name</string>
+    <string name="name_test_your_name_hint" translatable="false">Sasuke</string>
+    <string name="name_test_partner_name_hint" translatable="false">Naruto</string>
+    <string name="name_test_button_love_test">Love Test</string>
+    <string name="name_test_error_empty_name">Please enter your name</string>
+    <string name="name_test_error_empty_partner_name">Please enter your partner\'s name</string>
+
+    <!-- Horoscope test -->
+    <string name="horoscope_test_title">Horoscope Test</string>
+    <string name="horoscope_test_your_zodiac">Your zodiac</string>
+    <string name="horoscope_test_partner_zodiac">Partner zodiac</string>
+    <string name="horoscope_test_button_love_test">Love Test</string>
+    <string name="horoscope_picker_title">Horoscope</string>
+    <string name="item_zodiac_sign">Zodiac sign</string>
+
+    <!-- Zodiac names -->
+    <string name="zodiac_aries">Aries</string>
+    <string name="zodiac_taurus">Taurus</string>
+    <string name="zodiac_gemini">Gemini</string>
+    <string name="zodiac_cancer">Cancer</string>
+    <string name="zodiac_leo">Leo</string>
+    <string name="zodiac_virgo">Virgo</string>
+    <string name="zodiac_libra">Libra</string>
+    <string name="zodiac_scorpio">Scorpio</string>
+    <string name="zodiac_sagittarius">Sagittarius</string>
+    <string name="zodiac_capricorn">Capricorn</string>
+    <string name="zodiac_aquarius">Aquarius</string>
+    <string name="zodiac_pisces">Pisces</string>
+
+    <!-- Result -->
+    <string name="result_title">Result</string>
+    <string name="result_heart">Love result heart</string>
+    <string name="name_test_message_0_20">You should be friends not fall in love! It will either be the best relationship of your life, or you will lose that person forever. Sometimes, the greatest love stories are the ones that remain unspoken between best friends</string>
+    <string name="name_test_message_21_50">More than friends, we should be our loves! Love story should be started writing now! Love is like the wind, you can’t see it but you can feel it.</string>
+    <string name="name_test_message_51_80">I want to hold you close to me and feel our hearts beat as one forever! You call it madness, but I call it love. We can only learn to love by loving</string>
+    <string name="name_test_message_81_100">I was born to be your lover! You are the apple of my eyes! We must be our own before we can be another’s. My soul and your soul are forever tangled</string>
 </resources>

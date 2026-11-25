@@ -59,6 +59,23 @@
             android:name="percentage"
             app:argType="integer" />
 
+        <argument
+            android:name="testType"
+            app:argType="string"
+            android:defaultValue="name" />
+
+        <argument
+            android:name="signOne"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
+        <argument
+            android:name="signTwo"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
     </fragment>
 
 </navigation>

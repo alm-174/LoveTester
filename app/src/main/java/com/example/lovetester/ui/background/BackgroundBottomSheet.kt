@@ -16,10 +16,16 @@ import com.example.lovetester.data.local.BackgroundImageStorage
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.BottomSheetBackgroundBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class BackgroundBottomSheet : BottomSheetDialogFragment() {
+
+    @Inject
+    lateinit var repository: LoveSettingsRepository
 
     private var _binding: BottomSheetBackgroundBinding? = null
 
@@ -127,13 +133,12 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun handleSelectedPhoto(uri: Uri) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val context = requireContext().applicationContext
                 val storage = BackgroundImageStorage(context)
                 val path = storage.saveImage(uri)
 
-                val repository = LoveSettingsRepository(context)
                 repository.setSelectedBackgroundId("custom:$path")
 
                 dismiss()
@@ -143,7 +148,7 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
                 context?.let {
                     Toast.makeText(
                         it,
-                        "Không thể lưu ảnh đã chọn",
+                        it.getString(R.string.background_save_error),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -153,10 +158,6 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
 
     private fun saveSelectedBackground(id: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val repository = LoveSettingsRepository(
-                requireContext().applicationContext
-            )
-
             repository.setSelectedBackgroundId(id)
 
             dismiss()

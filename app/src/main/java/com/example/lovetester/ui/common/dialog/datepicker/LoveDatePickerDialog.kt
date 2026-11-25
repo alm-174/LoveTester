@@ -47,7 +47,7 @@ class LoveDatePickerDialog :
     private var isYearPickerVisible = false
 
     private val monthFormatter =
-        DateTimeFormatter.ofPattern("MMMM - yyyy", Locale.ENGLISH)
+        DateTimeFormatter.ofPattern("MMMM - yyyy", Locale.getDefault())
 
     override fun onViewCreated(
         view: View,

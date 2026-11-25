@@ -69,6 +69,10 @@ class LoveTestFragment : Fragment() {
 
         binding.cardHoroscopeTest.setOnClickListener {
             // Điều hướng tới HoroscopeTestFragment
+
+            findNavController().navigate(
+                R.id.action_loveTest_to_horoscopeTest
+            )
         }
     }
 

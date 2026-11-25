@@ -88,7 +88,7 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
                     when (state) {
                         MemorySaveState.Idle, MemorySaveState.Saving -> Unit
                         MemorySaveState.Error ->
-                            showError("Could not save memory. Check the photo or try again.")
+                            showError(getString(R.string.add_memory_error_save))
                         MemorySaveState.Success -> binding.root.post {
                             if (_binding != null && viewModel.saveState.value == MemorySaveState.Success) {
                                 closeForm()
@@ -103,18 +103,21 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
     private fun saveMemory() {
         val title = binding.etMemoryTitle.text.toString().trim()
         if (title.isBlank() || title.length > 100) {
-            binding.etMemoryTitle.error = if (title.isBlank()) "Enter a title" else "Use at most 100 characters"
+            binding.etMemoryTitle.error = getString(
+                if (title.isBlank()) R.string.add_memory_error_title_empty
+                else R.string.add_memory_error_title_too_long
+            )
             binding.etMemoryTitle.requestFocus()
             return
         }
         val date = selectedDate
         if (date == null) {
-            showError("Select a date for this memory.")
+            showError(getString(R.string.add_memory_error_date))
             return
         }
         val image = selectedImageUri
         if (image == null) {
-            showError("Choose a photo for this memory.")
+            showError(getString(R.string.add_memory_error_photo))
             return
         }
         showError(null)
@@ -150,7 +153,7 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
             if (bitmap == null) {
                 releaseImagePermission()
                 selectedImageUri = null
-                showError("Cannot read this photo. Choose it again or select another one.")
+                showError(getString(R.string.add_memory_error_read_photo))
             } else {
                 binding.ivMemoryPreview.setImageBitmap(bitmap)
                 binding.layoutAddPhoto.isVisible = false

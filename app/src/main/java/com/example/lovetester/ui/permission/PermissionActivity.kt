@@ -89,7 +89,7 @@ class PermissionActivity : AppCompatActivity(){
         if(isChecked){
             val thumbColor = ContextCompat.getColor(
                 this,
-                R.color.color_ff0845
+                R.color.primary
             )
 
             binding.switchAllowAccess.thumbTintList =
@@ -97,7 +97,7 @@ class PermissionActivity : AppCompatActivity(){
 
             val trackColor = ContextCompat.getColor(
                 this,
-                R.color.color_4dff4081
+                R.color.switch_track_on
             )
 
             binding.switchAllowAccess.trackTintList =
@@ -140,14 +140,12 @@ class PermissionActivity : AppCompatActivity(){
 
     private fun showDisableCameraDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Tắt quyền Camera")
-            .setMessage(
-                "Để tắt quyền Camera, bạn cần vào Cài đặt ứng dụng và thu hồi quyền Camera."
-            )
-            .setPositiveButton("Mở cài đặt") { _, _ ->
+            .setTitle(R.string.permission_camera_dialog_title)
+            .setMessage(R.string.permission_camera_dialog_message)
+            .setPositiveButton(R.string.permission_camera_dialog_open_settings) { _, _ ->
                 openAppSettings()
             }
-            .setNegativeButton("Hủy", null)
+            .setNegativeButton(R.string.common_cancel, null)
             .show()
     }
     private fun hasCameraPermission(): Boolean {
@@ -187,7 +185,7 @@ class PermissionActivity : AppCompatActivity(){
 
                 Toast.makeText(
                     this@PermissionActivity,
-                    "Không thể lưu trạng thái. Vui lòng thử lại.",
+                    getString(R.string.permission_save_error),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -222,7 +220,7 @@ class PermissionActivity : AppCompatActivity(){
 
                 Toast.makeText(
                     this@PermissionActivity,
-                    "Không thể quay lại Intro. Vui lòng thử lại.",
+                    getString(R.string.permission_back_error),
                     Toast.LENGTH_SHORT
                 ).show()
             }

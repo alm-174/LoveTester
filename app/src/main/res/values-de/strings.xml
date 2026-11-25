@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="splash_ads_notice">Diese Aktion kann Werbung enthalten</string>
+
+    <string name="language_title">Sprache</string>
+    <string name="language_confirm">Sprache bestätigen</string>
+
+    <string name="intro_title_1">Teste deine Beziehung</string>
+    <string name="intro_description_1">Finde heraus, wie gut ihr\nals Paar zusammenpasst</string>
+
+    <string name="intro_title_2">Liebestage-Zähler</string>
+    <string name="intro_description_2">Behalte im Blick, wie lange\nihr schon zusammen seid</string>
+
+    <string name="intro_title_3">Unvergessliche Momente</string>
+    <string name="intro_description_3">Bewahrt eure schönsten Momente gemeinsam auf</string>
+    <string name="permission_decription">Diese App benötigt die folgenden Berechtigungen, um richtig zu funktionieren</string>
+
+    <!-- Horoscope Test messages -->
+    <string name="horoscope_message_0_5">Alles kann chaotisch werden...</string>
+    <string name="horoscope_message_6_20">In einer Beziehung versuchen vielleicht beide, den anderen zu ändern...</string>
+    <string name="horoscope_message_21_35">Insgesamt sind beide stur, aber auf unterschiedliche Art...</string>
+    <string name="horoscope_message_36_50">Das Paar ist weder zu leidenschaftlich noch zu süß...</string>
+    <string name="horoscope_message_51_70">Eine schöne, friedliche und harmonische Liebe...</string>
+    <string name="horoscope_message_71_90">Sie lieben sich auf ihre eigene Weise und beschützen einander...</string>
+    <string name="horoscope_message_91_100">Sie haben viele Gemeinsamkeiten und fühlen sich zueinander hingezogen...</string>
+
+    <string name="share">Teilen</string>
+    <string name="retry">Erneut versuchen</string>
+
+    <!-- Common -->
+    <string name="common_back">Zurück</string>
+    <string name="common_save">Speichern</string>
+    <string name="common_cancel">Abbrechen</string>
+    <string name="common_done">Fertig</string>
+    <string name="common_next">Weiter</string>
+    <string name="common_continue">Fortfahren</string>
+    <string name="common_love_infinity">Unendliche Liebe</string>
+    <string name="common_add_memory">Erinnerung hinzufügen</string>
+    <string name="common_add_photo">Foto hinzufügen</string>
+    <string name="common_select_date">Datum auswählen</string>
+    <string name="common_person_one_avatar">Avatar der ersten Person</string>
+    <string name="common_person_two_avatar">Avatar der zweiten Person</string>
+    <string name="common_gender_male">Männlich</string>
+    <string name="common_gender_female">Weiblich</string>
+
+    <!-- Bottom tabs -->
+    <string name="nav_home">Start</string>
+    <string name="nav_home_tab">Tab Start</string>
+    <string name="nav_love_test">Liebestest</string>
+    <string name="nav_love_test_tab">Tab Liebestest</string>
+    <string name="nav_memory">Erinnerungen</string>
+    <string name="nav_memory_tab">Tab Erinnerungen</string>
+
+    <!-- Home -->
+    <string name="home_couple_illustration">Paar-Illustration</string>
+    <string name="home_settings">Einstellungen</string>
+    <string name="home_gallery">Galerie</string>
+    <string name="home_love_days_heart">Herz der Liebestage</string>
+    <plurals name="home_love_days">
+        <item quantity="one">%1$d\nTag</item>
+        <item quantity="other">%1$d\nTage</item>
+    </plurals>
+    <string name="home_love_days_empty">0 Tage</string>
+    <string name="home_tap_to_start_date">Tippen, um das Startdatum festzulegen</string>
+
+    <!-- Permission -->
+    <string name="permission_title">Berechtigung</string>
+    <string name="permission_allow_access">Zugriff erlauben</string>
+    <string name="permission_save_error">Der Status konnte nicht gespeichert werden. Bitte versuche es erneut.</string>
+    <string name="permission_camera_dialog_title">Kameraberechtigung deaktivieren</string>
+    <string name="permission_camera_dialog_message">Um die Kameraberechtigung zu deaktivieren, öffne die App-Einstellungen und widerrufe sie.</string>
+    <string name="permission_camera_dialog_open_settings">Einstellungen öffnen</string>
+    <string name="permission_back_error">Rückkehr zum Intro nicht möglich. Bitte versuche es erneut.</string>
+
+    <!-- Intro -->
+    <string name="intro_save_progress_error">Dein Fortschritt konnte nicht gespeichert werden. Bitte versuche es erneut.</string>
+    <string name="intro_back_error">Zurückgehen nicht möglich. Bitte versuche es erneut.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_rate">Bewerten</string>
+    <string name="settings_feedback">Feedback</string>
+    <string name="settings_privacy_policy">Datenschutzerklärung</string>
+
+    <!-- Background -->
+    <string name="background_sheet_title">Wähle deinen Hintergrund</string>
+    <string name="background_item_image">Hintergrundbild</string>
+    <string name="background_save_error">Das ausgewählte Foto konnte nicht gespeichert werden</string>
+
+    <!-- Information -->
+    <string name="information_title">Informationen</string>
+    <string name="information_avatar">Profil-Avatar</string>
+    <string name="information_change_photo">Tippen, um das Foto zu ändern</string>
+    <string name="information_name_label">Name</string>
+    <string name="information_name_hint">Namen eingeben</string>
+    <string name="information_gender_label">Geschlecht</string>
+    <string name="information_birthday_label">Geburtstag</string>
+    <string name="information_error_name_empty">Der Name darf nicht leer sein</string>
+    <string name="information_error_name_too_long">Der Name darf höchstens 100 Zeichen lang sein</string>
+    <string name="information_error_save">Deine Informationen konnten nicht gespeichert werden</string>
+    <string name="information_error_read_photo">Das ausgewählte Foto konnte nicht gelesen werden</string>
+    <string name="information_camera_error">Die Kamera konnte nicht geöffnet werden</string>
+    <string name="avatar_option_title">Option auswählen</string>
+    <string name="avatar_option_take_photo">Foto aufnehmen</string>
+    <string name="avatar_option_upload_photo">Foto hochladen</string>
+
+    <!-- Date picker -->
+    <string name="date_picker_previous_month">Vorheriger Monat</string>
+    <string name="date_picker_choose_year">Jahr auswählen</string>
+    <string name="date_picker_next_month">Nächster Monat</string>
+    <string name="date_picker_weekday_sun">So</string>
+    <string name="date_picker_weekday_mon">Mo</string>
+    <string name="date_picker_weekday_tue">Di</string>
+    <string name="date_picker_weekday_wed">Mi</string>
+    <string name="date_picker_weekday_thu">Do</string>
+    <string name="date_picker_weekday_fri">Fr</string>
+    <string name="date_picker_weekday_sat">Sa</string>
+
+    <!-- Memory -->
+    <string name="memory_list_title">Erinnerungen</string>
+    <string name="memory_list_empty_title">Kein Jahrestag</string>
+    <string name="memory_list_empty_description">Bewahre hier deine unvergesslichen Jahrestage auf!</string>
+    <string name="memory_error_load">Erinnerungen konnten nicht geladen werden</string>
+    <string name="memory_delete_button">Löschen</string>
+    <string name="memory_delete_title">Erinnerung löschen</string>
+    <string name="memory_delete_message">Möchtest du die Erinnerung \'%1$s\' wirklich löschen?</string>
+    <string name="add_memory_title">Erinnerung</string>
+    <string name="add_memory_photo_add">Erinnerungsfoto hinzufügen</string>
+    <string name="add_memory_photo_preview">Erinnerungsfoto</string>
+    <string name="add_memory_title_label">Titel</string>
+    <string name="add_memory_title_hint">Titel der Erinnerung eingeben</string>
+    <string name="add_memory_date_label">Datum</string>
+    <string name="add_memory_select_date">Datum der Erinnerung auswählen</string>
+    <string name="add_memory_error_title_empty">Titel eingeben</string>
+    <string name="add_memory_error_title_too_long">Verwende höchstens 100 Zeichen</string>
+    <string name="add_memory_error_save">Die Erinnerung konnte nicht gespeichert werden. Prüfe das Foto oder versuche es erneut.</string>
+    <string name="add_memory_error_date">Wähle ein Datum für diese Erinnerung aus.</string>
+    <string name="add_memory_error_photo">Wähle ein Foto für diese Erinnerung aus.</string>
+    <string name="add_memory_error_read_photo">Dieses Foto kann nicht gelesen werden. Wähle es erneut oder wähle ein anderes aus.</string>
+
+    <!-- Start date -->
+    <string name="start_date_title">Startdatum</string>
+    <string name="start_date_label">Datum der Liebe</string>
+    <string name="start_date_save_error">Das Datum konnte nicht gespeichert werden</string>
+
+    <!-- Love test -->
+    <string name="love_test_title">Liebestest</string>
+    <string name="love_test_name_title">Namenstest</string>
+    <string name="love_test_name_description">Finde deine Kompatibilität heraus, indem du deinen Namen eingibst</string>
+    <string name="love_test_horoscope_title">Horoskoptest</string>
+    <string name="love_test_horoscope_description">Probiere einen süßen Sternzeichen-Kompatibilitätstest mit deinem Schwarm aus</string>
+
+    <!-- Name test -->
+    <string name="name_test_title">Namenstest</string>
+    <string name="name_test_your_name_label">Dein Name</string>
+    <string name="name_test_partner_name_label">Name deines Schatzes</string>
+    <string name="name_test_button_love_test">Liebestest</string>
+    <string name="name_test_error_empty_name">Bitte gib deinen Namen ein</string>
+    <string name="name_test_error_empty_partner_name">Bitte gib den Namen deines Schatzes ein</string>
+
+    <!-- Horoscope test -->
+    <string name="horoscope_test_title">Horoskoptest</string>
+    <string name="horoscope_test_your_zodiac">Dein Sternzeichen</string>
+    <string name="horoscope_test_partner_zodiac">Sternzeichen deines Schatzes</string>
+    <string name="horoscope_test_button_love_test">Liebestest</string>
+    <string name="horoscope_picker_title">Horoskop</string>
+    <string name="item_zodiac_sign">Sternzeichen</string>
+
+    <!-- Zodiac names -->
+    <string name="zodiac_aries">Widder</string>
+    <string name="zodiac_taurus">Stier</string>
+    <string name="zodiac_gemini">Zwillinge</string>
+    <string name="zodiac_cancer">Krebs</string>
+    <string name="zodiac_leo">Löwe</string>
+    <string name="zodiac_virgo">Jungfrau</string>
+    <string name="zodiac_libra">Waage</string>
+    <string name="zodiac_scorpio">Skorpion</string>
+    <string name="zodiac_sagittarius">Schütze</string>
+    <string name="zodiac_capricorn">Steinbock</string>
+    <string name="zodiac_aquarius">Wassermann</string>
+    <string name="zodiac_pisces">Fische</string>
+
+    <!-- Result -->
+    <string name="result_title">Ergebnis</string>
+    <string name="result_heart">Herz des Liebesergebnisses</string>
+    <string name="name_test_message_0_20">Ihr solltet Freunde sein und euch nicht verlieben! Entweder wird es die beste Beziehung deines Lebens, oder du verlierst diesen Menschen für immer. Manchmal sind die schönsten Liebesgeschichten die, die zwischen besten Freunden unausgesprochen bleiben</string>
+    <string name="name_test_message_21_50">Mehr als Freunde – wir sollten ein Paar sein! Unsere Liebesgeschichte sollte jetzt beginnen! Liebe ist wie der Wind: Man sieht sie nicht, aber man kann sie spüren.</string>
+    <string name="name_test_message_51_80">Ich möchte dich fest an mich drücken und fühlen, wie unsere Herzen für immer als eins schlagen! Du nennst es Wahnsinn, ich nenne es Liebe. Lieben lernen wir nur durchs Lieben</string>
+    <string name="name_test_message_81_100">Ich bin dazu bestimmt, dich zu lieben! Du bist mein Augenstern! Wir müssen erst uns selbst gehören, bevor wir einem anderen gehören können. Meine Seele und deine Seele sind für immer verschlungen</string>
+</resources>

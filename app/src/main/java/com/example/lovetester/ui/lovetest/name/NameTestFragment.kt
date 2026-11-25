@@ -33,12 +33,12 @@ class NameTestFragment : Fragment(R.layout.fragment_name_test) {
             val partnerName = binding.etPartnerName.text.toString().trim()
 
             if (yourName.isBlank()) {
-                binding.etYourName.error = "Please enter your name"
+                binding.etYourName.error = getString(R.string.name_test_error_empty_name)
                 return@setOnClickListener
             }
 
             if (partnerName.isBlank()) {
-                binding.etPartnerName.error = "Please enter your partner's name"
+                binding.etPartnerName.error = getString(R.string.name_test_error_empty_partner_name)
                 return@setOnClickListener
             }
 

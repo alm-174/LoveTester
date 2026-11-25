@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Languages the app can be switched to (Android 13+ system "App languages" settings).
+    Tags are BCP-47. Indonesian is "id" here, while its resource folder is values-in
+    (see Language/SupportedLanguages for how both spellings are matched).
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="hi" />
+    <locale android:name="es" />
+    <locale android:name="fr" />
+    <locale android:name="pt" />
+    <locale android:name="id" />
+    <locale android:name="de" />
+</locale-config>

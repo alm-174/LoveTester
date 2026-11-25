@@ -97,7 +97,7 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
 
                 Toast.makeText(
                     requireContext(),
-                    state.message,
+                    getString(state.messageRes),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -121,12 +121,12 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
 
     private fun confirmDelete(memory : MemoryEntity){
         AlertDialog.Builder(requireContext())
-            .setTitle("Delete Memory")
-            .setMessage("Bạn có chắc muốn xóa kỷ niệm '${memory.title}' không?")
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setTitle(R.string.memory_delete_title)
+            .setMessage(getString(R.string.memory_delete_message, memory.title))
+            .setNegativeButton(R.string.common_cancel) { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("Delete") { _, _ ->
+            .setPositiveButton(R.string.memory_delete_button) { _, _ ->
                 // Bài tiếp theo: gọi ViewModel để xóa
                 viewModel.delete(memory)
             }

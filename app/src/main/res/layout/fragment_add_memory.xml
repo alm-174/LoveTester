@@ -24,8 +24,8 @@
             android:padding="8dp"
             android:scaleType="centerInside"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
-            app:tint="#4B4F58"
+            android:contentDescription="@string/common_back"
+            app:tint="@color/text_body"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -34,10 +34,10 @@
             android:id="@+id/tvMemoryTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Memory"
+            android:text="@string/add_memory_title"
             android:textSize="20sp"
             android:fontFamily="@font/plus_jakarta_sans_semibold"
-            android:textColor="#1E232E"
+            android:textColor="@color/text_title"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -69,10 +69,10 @@
                 android:layout_marginTop="28dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:contentDescription="Add memory photo"
+                android:contentDescription="@string/add_memory_photo_add"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#F3F4F8"
+                app:cardBackgroundColor="@color/surface_photo_placeholder"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -86,7 +86,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:contentDescription="Memory photo" />
+                        android:contentDescription="@string/add_memory_photo_preview" />
 
                     <LinearLayout
                         android:id="@+id/layoutAddPhoto"
@@ -100,15 +100,15 @@
                             android:layout_height="32dp"
                             android:src="@android:drawable/ic_menu_camera"
                             android:contentDescription="@null"
-                            app:tint="#4B4F58" />
+                            app:tint="@color/text_body" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Add photo"
+                            android:text="@string/common_add_photo"
                             android:textSize="14sp"
-                            android:textColor="#4B4F58"
+                            android:textColor="@color/text_body"
                             android:fontFamily="@font/plus_jakarta_sans_medium" />
 
                     </LinearLayout>
@@ -123,9 +123,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Title"
+                android:text="@string/add_memory_title_label"
                 android:textSize="14sp"
-                android:textColor="#1E232E"
+                android:textColor="@color/text_title"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
                 app:layout_constraintTop_toBottomOf="@id/cardMemoryPhoto"
                 app:layout_constraintStart_toStartOf="@id/cardMemoryPhoto" />
@@ -137,15 +137,15 @@
                 android:layout_height="44dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_memory_input"
-                android:hint="Enter memory title"
+                android:hint="@string/add_memory_title_hint"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:inputType="textCapSentences"
                 android:maxLength="100"
                 android:singleLine="true"
                 android:textSize="14sp"
-                android:textColor="#1E232E"
-                android:textColorHint="#9CA3AF"
+                android:textColor="@color/text_title"
+                android:textColorHint="@color/text_hint"
                 app:layout_constraintTop_toBottomOf="@id/tvTitleLabel"
                 app:layout_constraintStart_toStartOf="@id/cardMemoryPhoto"
                 app:layout_constraintEnd_toEndOf="@id/cardMemoryPhoto" />
@@ -156,9 +156,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="Date"
+                android:text="@string/add_memory_date_label"
                 android:textSize="14sp"
-                android:textColor="#1E232E"
+                android:textColor="@color/text_title"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
                 app:layout_constraintTop_toBottomOf="@id/etMemoryTitle"
                 app:layout_constraintStart_toStartOf="@id/cardMemoryPhoto" />
@@ -176,7 +176,7 @@
                 android:paddingEnd="12dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:contentDescription="Select memory date"
+                android:contentDescription="@string/add_memory_select_date"
                 app:layout_constraintTop_toBottomOf="@id/tvDateLabel"
                 app:layout_constraintStart_toStartOf="@id/cardMemoryPhoto"
                 app:layout_constraintEnd_toEndOf="@id/cardMemoryPhoto">
@@ -186,8 +186,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Select date"
-                    android:textColor="#9CA3AF"
+                    android:text="@string/common_select_date"
+                    android:textColor="@color/text_hint"
                     android:textSize="14sp" />
 
                 <ImageView
@@ -195,7 +195,7 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_nav_memory"
                     android:contentDescription="@null"
-                    app:tint="#4B4F58" />
+                    app:tint="@color/text_body" />
 
             </LinearLayout>
 
@@ -205,7 +205,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:accessibilityLiveRegion="polite"
-                android:textColor="#B3261E"
+                android:textColor="@color/text_error"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/layoutMemoryDate"
                 app:layout_constraintStart_toStartOf="@id/layoutMemoryDate"
@@ -222,12 +222,12 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
-        android:text="Save"
+        android:text="@string/common_save"
         android:textAllCaps="false"
         android:textSize="16sp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:fontFamily="@font/plus_jakarta_sans_medium"
-        app:backgroundTint="#FF0845"
+        app:backgroundTint="@color/primary"
         app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

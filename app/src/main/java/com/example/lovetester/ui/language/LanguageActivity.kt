@@ -2,20 +2,31 @@ package com.example.lovetester.ui.language
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.lovetester.R
-import com.example.lovetester.databinding.ActivityLanguageBinding
-import com.example.lovetester.ui.intro.IntroActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.data.local.model.OnboardingStep
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
+import com.example.lovetester.databinding.ActivityLanguageBinding
+import com.example.lovetester.ui.intro.IntroActivity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@AndroidEntryPoint
 class LanguageActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var repository: LoveSettingsRepository
 
     private lateinit var binding: ActivityLanguageBinding
 
-    private lateinit var repository: LoveSettingsRepository
+    private val viewModel: LanguageViewModel by viewModels()
+
     private var isNavigating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,37 +35,34 @@ class LanguageActivity : AppCompatActivity() {
         binding = ActivityLanguageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        repository = LoveSettingsRepository(applicationContext)
+        setupLanguageList()
+        setupConfirmButton()
+    }
 
-        val languages = listOf(
-            Language("en", R.string.language_english, R.drawable.flag_english),
-            Language("hi", R.string.language_hindi, R.drawable.flag_hindi),
-            Language("es", R.string.language_spanish, R.drawable.flag_spanish),
-            Language("fr", R.string.language_french, R.drawable.flag_french),
-            Language("pt", R.string.language_portuguese, R.drawable.flag_portuguese),
-            Language("id", R.string.language_indonesian, R.drawable.flag_indonesian),
-            Language("de", R.string.language_german, R.drawable.flag_german)
-        )
-
-        val adapter = LanguageAdapter(languages) { language ->
-            // Hiện tại chưa thay đổi Locale
+    private fun setupLanguageList() {
+        val adapter = LanguageAdapter(
+            languages = SupportedLanguages.all,
+            selectedId = viewModel.selectedId.value
+        ) { language ->
+            // Only highlight. The language is applied when the user taps the check icon.
+            viewModel.select(language)
         }
 
-        binding.rvLanguages.layoutManager =
-            LinearLayoutManager(this)
-
-        binding.rvLanguages.layoutManager =
-            LinearLayoutManager(this)
-
+        binding.rvLanguages.layoutManager = LinearLayoutManager(this)
         binding.rvLanguages.adapter = adapter
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.selectedId.collect { adapter.selectedId = it }
+            }
+        }
+    }
 
-
-
+    private fun setupConfirmButton() {
         binding.btnConfirmLanguage.setOnClickListener {
             if (isNavigating) return@setOnClickListener
 
-            val selectedLanguage = adapter.getSelectedLanguage()
+            val selectedLanguage = viewModel.selected
 
             isNavigating = true
             binding.btnConfirmLanguage.isEnabled = false
@@ -63,15 +71,14 @@ class LanguageActivity : AppCompatActivity() {
                 try {
                     repository.setOnboardingStep(OnboardingStep.INTRO)
 
-                    val intent = Intent(
-                        this@LanguageActivity,
-                        IntroActivity::class.java
-                    )
-                    startActivity(intent)
+                    // Apply right before leaving. Both calls run back-to-back on the main
+                    // thread, so IntroActivity is created already using the new language.
+                    SupportedLanguages.apply(selectedLanguage)
 
+                    startActivity(Intent(this@LanguageActivity, IntroActivity::class.java))
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
-                    if (e is kotlinx.coroutines.CancellationException) throw e
-
                     isNavigating = false
                     binding.btnConfirmLanguage.isEnabled = true
                     // TODO: Hiển thị thông báo không thể lưu trạng thái

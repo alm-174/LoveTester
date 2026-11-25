@@ -24,8 +24,8 @@
             android:padding="8dp"
             android:scaleType="centerInside"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
-            app:tint="#4B4F58"
+            android:contentDescription="@string/common_back"
+            app:tint="@color/text_body"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -34,10 +34,10 @@
             android:id="@+id/tvSettingsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Setting"
+            android:text="@string/settings_title"
             android:textSize="24sp"
             android:fontFamily="@font/plus_jakarta_sans_semibold"
-            android:textColor="#1E232E"
+            android:textColor="@color/text_title"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -79,10 +79,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="12dp"
-                android:text="Language"
+                android:text="@string/language_title"
                 android:textSize="16sp"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
-                android:textColor="#1E232E"/>
+                android:textColor="@color/text_title"/>
 
             <ImageView
                 android:layout_width="16dp"
@@ -96,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:layout_marginTop="0dp"
-            android:background="#C5CAD4"/>
+            android:background="@color/divider"/>
 
         <!-- RATE -->
         <LinearLayout
@@ -120,17 +120,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Rate"
+                android:text="@string/settings_rate"
                 android:textSize="16sp"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
-                android:textColor="#1E232E"/>
+                android:textColor="@color/text_title"/>
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="#C5CAD4"/>
+            android:background="@color/divider"/>
 
         <!-- SHARE -->
         <LinearLayout
@@ -154,17 +154,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Share"
+                android:text="@string/share"
                 android:textSize="16sp"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
-                android:textColor="#1E232E"/>
+                android:textColor="@color/text_title"/>
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="#C5CAD4"/>
+            android:background="@color/divider"/>
 
         <!-- FEEDBACK -->
         <LinearLayout
@@ -188,17 +188,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Feedback"
+                android:text="@string/settings_feedback"
                 android:textSize="16sp"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
-                android:textColor="#1E232E"/>
+                android:textColor="@color/text_title"/>
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="#C5CAD4"/>
+            android:background="@color/divider"/>
 
         <!-- PRIVACY POLICY -->
         <LinearLayout
@@ -222,10 +222,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Privacy Policy"
+                android:text="@string/settings_privacy_policy"
                 android:textSize="16sp"
                 android:fontFamily="@font/plus_jakarta_sans_medium"
-                android:textColor="#1E232E"/>
+                android:textColor="@color/text_title"/>
 
         </LinearLayout>
 

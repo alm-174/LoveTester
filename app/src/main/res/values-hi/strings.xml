@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="splash_ads_notice">इस कार्रवाई में विज्ञापन हो सकते हैं</string>
+
+    <string name="language_title">भाषा</string>
+    <string name="language_confirm">भाषा की पुष्टि करें</string>
+
+    <string name="intro_title_1">अपने रिश्ते को परखें</string>
+    <string name="intro_description_1">अपने साथी के साथ अपनी\nलव कम्पैटिबिलिटी जानें</string>
+
+    <string name="intro_title_2">लव डे काउंटर</string>
+    <string name="intro_description_2">जानें कि आप दोनों कितने\nसमय से साथ हैं</string>
+
+    <string name="intro_title_3">यादगार पल</string>
+    <string name="intro_description_3">साथ बिताए अनमोल पलों को सहेजें</string>
+    <string name="permission_decription">ऐप को ठीक से काम करने के लिए नीचे दी गई अनुमतियाँ चाहिए</string>
+
+    <!-- Horoscope Test messages -->
+    <string name="horoscope_message_0_5">सब कुछ अस्त-व्यस्त हो सकता है...</string>
+    <string name="horoscope_message_6_20">रिश्ते में दोनों साथी एक-दूसरे को बदलने की कोशिश कर सकते हैं...</string>
+    <string name="horoscope_message_21_35">कुल मिलाकर दोनों ज़िद्दी हैं, लेकिन अलग-अलग तरह से...</string>
+    <string name="horoscope_message_36_50">यह जोड़ी न बहुत तीव्र है, न बहुत मीठी...</string>
+    <string name="horoscope_message_51_70">एक खूबसूरत, शांत और सामंजस्यपूर्ण प्रेम-कहानी...</string>
+    <string name="horoscope_message_71_90">अपने-अपने अंदाज़ में एक-दूसरे से प्यार करना और एक-दूसरे की रक्षा करना...</string>
+    <string name="horoscope_message_91_100">इनमें बहुत कुछ समान है और ये एक-दूसरे की ओर खिंचे चले आते हैं...</string>
+
+    <string name="share">शेयर करें</string>
+    <string name="retry">फिर से कोशिश करें</string>
+
+    <!-- Common -->
+    <string name="common_back">वापस</string>
+    <string name="common_save">सहेजें</string>
+    <string name="common_cancel">रद्द करें</string>
+    <string name="common_done">हो गया</string>
+    <string name="common_next">आगे</string>
+    <string name="common_continue">जारी रखें</string>
+    <string name="common_love_infinity">अनंत प्रेम</string>
+    <string name="common_add_memory">याद जोड़ें</string>
+    <string name="common_add_photo">फ़ोटो जोड़ें</string>
+    <string name="common_select_date">तारीख़ चुनें</string>
+    <string name="common_person_one_avatar">पहले व्यक्ति का अवतार</string>
+    <string name="common_person_two_avatar">दूसरे व्यक्ति का अवतार</string>
+    <string name="common_gender_male">पुरुष</string>
+    <string name="common_gender_female">महिला</string>
+
+    <!-- Bottom tabs -->
+    <string name="nav_home">होम</string>
+    <string name="nav_home_tab">होम टैब</string>
+    <string name="nav_love_test">लव टेस्ट</string>
+    <string name="nav_love_test_tab">लव टेस्ट टैब</string>
+    <string name="nav_memory">यादें</string>
+    <string name="nav_memory_tab">यादें टैब</string>
+
+    <!-- Home -->
+    <string name="home_couple_illustration">जोड़े का चित्र</string>
+    <string name="home_settings">सेटिंग्स</string>
+    <string name="home_gallery">गैलरी</string>
+    <string name="home_love_days_heart">प्रेम के दिनों का दिल</string>
+    <plurals name="home_love_days">
+        <item quantity="one">%1$d\nदिन</item>
+        <item quantity="other">%1$d\nदिन</item>
+    </plurals>
+    <string name="home_love_days_empty">0 दिन</string>
+    <string name="home_tap_to_start_date">शुरुआती तारीख़ चुनने के लिए टैप करें</string>
+
+    <!-- Permission -->
+    <string name="permission_title">अनुमति</string>
+    <string name="permission_allow_access">एक्सेस दें</string>
+    <string name="permission_save_error">स्थिति सहेजी नहीं जा सकी। कृपया फिर से कोशिश करें।</string>
+    <string name="permission_camera_dialog_title">कैमरा अनुमति बंद करें</string>
+    <string name="permission_camera_dialog_message">कैमरा अनुमति बंद करने के लिए ऐप सेटिंग्स खोलें और अनुमति वापस लें।</string>
+    <string name="permission_camera_dialog_open_settings">सेटिंग्स खोलें</string>
+    <string name="permission_back_error">इंट्रो पर वापस नहीं जा सके। कृपया फिर से कोशिश करें।</string>
+
+    <!-- Intro -->
+    <string name="intro_save_progress_error">आपकी प्रगति सहेजी नहीं जा सकी। कृपया फिर से कोशिश करें।</string>
+    <string name="intro_back_error">वापस नहीं जा सके। कृपया फिर से कोशिश करें।</string>
+
+    <!-- Settings -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="settings_rate">रेट करें</string>
+    <string name="settings_feedback">फ़ीडबैक</string>
+    <string name="settings_privacy_policy">गोपनीयता नीति</string>
+
+    <!-- Background -->
+    <string name="background_sheet_title">अपना बैकग्राउंड चुनें</string>
+    <string name="background_item_image">बैकग्राउंड इमेज</string>
+    <string name="background_save_error">चुनी गई फ़ोटो सहेजी नहीं जा सकी</string>
+
+    <!-- Information -->
+    <string name="information_title">जानकारी</string>
+    <string name="information_avatar">प्रोफ़ाइल अवतार</string>
+    <string name="information_change_photo">फ़ोटो बदलने के लिए टैप करें</string>
+    <string name="information_name_label">नाम</string>
+    <string name="information_name_hint">नाम दर्ज करें</string>
+    <string name="information_gender_label">लिंग</string>
+    <string name="information_birthday_label">जन्मदिन</string>
+    <string name="information_error_name_empty">नाम खाली नहीं हो सकता</string>
+    <string name="information_error_name_too_long">नाम 100 अक्षरों से अधिक नहीं होना चाहिए</string>
+    <string name="information_error_save">आपकी जानकारी सहेजी नहीं जा सकी</string>
+    <string name="information_error_read_photo">चुनी गई फ़ोटो पढ़ी नहीं जा सकी</string>
+    <string name="information_camera_error">कैमरा नहीं खुल सका</string>
+    <string name="avatar_option_title">विकल्प चुनें</string>
+    <string name="avatar_option_take_photo">फ़ोटो खींचें</string>
+    <string name="avatar_option_upload_photo">फ़ोटो अपलोड करें</string>
+
+    <!-- Date picker -->
+    <string name="date_picker_previous_month">पिछला महीना</string>
+    <string name="date_picker_choose_year">साल चुनें</string>
+    <string name="date_picker_next_month">अगला महीना</string>
+    <string name="date_picker_weekday_sun">रवि</string>
+    <string name="date_picker_weekday_mon">सोम</string>
+    <string name="date_picker_weekday_tue">मंगल</string>
+    <string name="date_picker_weekday_wed">बुध</string>
+    <string name="date_picker_weekday_thu">गुरु</string>
+    <string name="date_picker_weekday_fri">शुक्र</string>
+    <string name="date_picker_weekday_sat">शनि</string>
+
+    <!-- Memory -->
+    <string name="memory_list_title">यादें</string>
+    <string name="memory_list_empty_title">कोई सालगिरह नहीं</string>
+    <string name="memory_list_empty_description">अपनी यादगार सालगिरह यहाँ सहेजें!</string>
+    <string name="memory_error_load">यादें लोड नहीं हो सकीं</string>
+    <string name="memory_delete_button">हटाएँ</string>
+    <string name="memory_delete_title">याद हटाएँ</string>
+    <string name="memory_delete_message">क्या आप सच में \'%1$s\' याद को हटाना चाहते हैं?</string>
+    <string name="add_memory_title">याद</string>
+    <string name="add_memory_photo_add">याद की फ़ोटो जोड़ें</string>
+    <string name="add_memory_photo_preview">याद की फ़ोटो</string>
+    <string name="add_memory_title_label">शीर्षक</string>
+    <string name="add_memory_title_hint">याद का शीर्षक लिखें</string>
+    <string name="add_memory_date_label">तारीख़</string>
+    <string name="add_memory_select_date">याद की तारीख़ चुनें</string>
+    <string name="add_memory_error_title_empty">शीर्षक लिखें</string>
+    <string name="add_memory_error_title_too_long">अधिकतम 100 अक्षर इस्तेमाल करें</string>
+    <string name="add_memory_error_save">याद सहेजी नहीं जा सकी। फ़ोटो जाँचें या फिर से कोशिश करें।</string>
+    <string name="add_memory_error_date">इस याद के लिए तारीख़ चुनें।</string>
+    <string name="add_memory_error_photo">इस याद के लिए फ़ोटो चुनें।</string>
+    <string name="add_memory_error_read_photo">यह फ़ोटो पढ़ी नहीं जा सकी। इसे फिर से चुनें या कोई दूसरी फ़ोटो चुनें।</string>
+
+    <!-- Start date -->
+    <string name="start_date_title">शुरुआती तारीख़</string>
+    <string name="start_date_label">प्यार की तारीख़</string>
+    <string name="start_date_save_error">तारीख़ सहेजी नहीं जा सकी</string>
+
+    <!-- Love test -->
+    <string name="love_test_title">लव टेस्ट</string>
+    <string name="love_test_name_title">नाम टेस्ट</string>
+    <string name="love_test_name_description">अपना नाम दर्ज करके अपनी कम्पैटिबिलिटी जानें</string>
+    <string name="love_test_horoscope_title">राशिफल टेस्ट</string>
+    <string name="love_test_horoscope_description">अपने क्रश के साथ राशि कम्पैटिबिलिटी का एक प्यारा टेस्ट आज़माएँ</string>
+
+    <!-- Name test -->
+    <string name="name_test_title">नाम टेस्ट</string>
+    <string name="name_test_your_name_label">आपका नाम</string>
+    <string name="name_test_partner_name_label">साथी का नाम</string>
+    <string name="name_test_button_love_test">लव टेस्ट</string>
+    <string name="name_test_error_empty_name">कृपया अपना नाम दर्ज करें</string>
+    <string name="name_test_error_empty_partner_name">कृपया अपने साथी का नाम दर्ज करें</string>
+
+    <!-- Horoscope test -->
+    <string name="horoscope_test_title">राशिफल टेस्ट</string>
+    <string name="horoscope_test_your_zodiac">आपकी राशि</string>
+    <string name="horoscope_test_partner_zodiac">साथी की राशि</string>
+    <string name="horoscope_test_button_love_test">लव टेस्ट</string>
+    <string name="horoscope_picker_title">राशिफल</string>
+    <string name="item_zodiac_sign">राशि</string>
+
+    <!-- Zodiac names -->
+    <string name="zodiac_aries">मेष</string>
+    <string name="zodiac_taurus">वृषभ</string>
+    <string name="zodiac_gemini">मिथुन</string>
+    <string name="zodiac_cancer">कर्क</string>
+    <string name="zodiac_leo">सिंह</string>
+    <string name="zodiac_virgo">कन्या</string>
+    <string name="zodiac_libra">तुला</string>
+    <string name="zodiac_scorpio">वृश्चिक</string>
+    <string name="zodiac_sagittarius">धनु</string>
+    <string name="zodiac_capricorn">मकर</string>
+    <string name="zodiac_aquarius">कुंभ</string>
+    <string name="zodiac_pisces">मीन</string>
+
+    <!-- Result -->
+    <string name="result_title">परिणाम</string>
+    <string name="result_heart">लव रिज़ल्ट दिल</string>
+    <string name="name_test_message_0_20">आपको दोस्त ही रहना चाहिए, प्यार में नहीं पड़ना चाहिए! यह या तो आपकी ज़िंदगी का सबसे अच्छा रिश्ता होगा, या आप उस इंसान को हमेशा के लिए खो देंगे। कभी-कभी सबसे खूबसूरत प्रेम कहानियाँ वही होती हैं जो सबसे अच्छे दोस्तों के बीच अनकही रह जाती हैं</string>
+    <string name="name_test_message_21_50">दोस्ती से कहीं बढ़कर, हमें एक-दूसरे का प्यार बनना चाहिए! प्रेम कहानी अभी लिखना शुरू होनी चाहिए! प्यार हवा की तरह है, आप उसे देख नहीं सकते पर महसूस कर सकते हैं।</string>
+    <string name="name_test_message_51_80">आओ एक-दूसरे को क़रीब थाम लें और महसूस करें कि हमारे दिल हमेशा के लिए एक होकर धड़कते हैं! लोग इसे पागलपन कहते हैं, पर हम इसे प्यार कहते हैं। प्यार करना हम प्यार करके ही सीख सकते हैं</string>
+    <string name="name_test_message_81_100">हम एक-दूसरे के प्रेमी बनने के लिए ही बने हैं! तुम मेरी आँखों का तारा हो! किसी और के होने से पहले हमें खुद का होना होगा। मेरी रूह और तुम्हारी रूह हमेशा के लिए उलझी हुई हैं</string>
+</resources>

@@ -15,9 +15,15 @@ enum class Gender {
     OTHER
 }
 
+const val MAX_NAME_LENGTH = 100
+
+/**
+ * Developer guard: the UI must check the name BEFORE calling this and show its own
+ * localized message. The messages below are for logs only, never shown to the user.
+ */
 fun validateName(raw: String): String {
     val title = raw.trim()
-    require(title.isNotBlank()) { "Tên không được trống" }
-    require(title.length <= 100) { "Tên tối đa 100 ký tự" }
+    require(title.isNotBlank()) { "Name must not be blank" }
+    require(title.length <= MAX_NAME_LENGTH) { "Name must be at most $MAX_NAME_LENGTH characters" }
     return title
 }

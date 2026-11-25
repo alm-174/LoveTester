@@ -19,7 +19,7 @@ class MemoryImageStorage @Inject constructor(
 
             if (!directory.exists()) {
                 check(directory.mkdirs() || directory.isDirectory) {
-                    "Không thể tạo thư mục memories"
+                    "Cannot create memories directory"
                 }
             }
 
@@ -30,7 +30,7 @@ class MemoryImageStorage @Inject constructor(
 
             try {
                 val input = context.contentResolver.openInputStream(uri)
-                    ?: error("Không thể đọc ảnh đã chọn")
+                    ?: error("Cannot open selected image")
 
                 input.use { source ->
                     destination.outputStream().use { output ->
@@ -39,7 +39,7 @@ class MemoryImageStorage @Inject constructor(
                 }
 
                 check(destination.length() > 0L) {
-                    "Ảnh được lưu không có dữ liệu"
+                    "Saved image is empty"
                 }
 
                 destination.absolutePath
@@ -59,7 +59,7 @@ class MemoryImageStorage @Inject constructor(
             // Chỉ cho phép xóa file nằm trực tiếp trong thư mục avatars.
             if (file.canonicalFile.parentFile == directory.canonicalFile) {
                 if (file.exists() && !file.delete()) {
-                    error("Không thể xóa ảnh Memory")
+                    error("Cannot delete memory image file")
                 }
             }
         }
