@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="570dp"
-    android:background="@drawable/bg_information_sheet">
+    android:layout_height="wrap_content"
+    android:minHeight="570dp">
 
     <View
         android:id="@+id/dragHandle"
         android:layout_width="40dp"
         android:layout_height="4dp"
         android:layout_marginTop="12dp"
-        android:backgroundTint="@color/sheet_handle"
-        android:background="@drawable/bg_background_placeholder"
+        style="@style/Widget.LoveTester.SheetHandle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -22,13 +21,11 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:gravity="center_vertical"
         android:text="@string/information_title"
-        android:textColor="@color/text_title"
-        android:textSize="16sp"
-        android:fontFamily="@font/plus_jakarta_sans_semibold"
+        android:textAppearance="@style/TextAppearance.LoveTester.SheetTitle"
         app:layout_constraintTop_toBottomOf="@id/dragHandle"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -151,12 +148,8 @@
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:backgroundTint="@color/primary"
+        style="@style/Widget.LoveTester.Button.Filled"
         android:text="@string/common_save"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:fontFamily="@font/plus_jakarta_sans_semibold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="20dp"

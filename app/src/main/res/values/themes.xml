@@ -2,6 +2,7 @@
     <!-- Base application theme. Light only: the app is designed for a light UI (see report). -->
     <style name="Base.Theme.LoveTester" parent="Theme.Material3.Light.NoActionBar">
         <item name="materialButtonStyle">@style/Widget.LoveTester.Button.Filled</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.LoveTester.BottomSheetDialog</item>
         <!-- Stop the system "force dark" from recolouring the (hard-coded light) screens. -->
         <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
     </style>

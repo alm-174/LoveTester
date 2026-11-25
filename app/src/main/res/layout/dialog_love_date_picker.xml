@@ -168,34 +168,20 @@
 
         <Button
             android:id="@+id/btnCancelDate"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:text="@string/common_cancel"
-            android:textAllCaps="false"
-            android:textSize="12sp"
-            android:textColor="@color/text_title"
-            android:background="@drawable/bg_date_cancel"
-            app:backgroundTint="@null"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="0dp"/>
+            style="@style/Widget.LoveTester.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:minWidth="88dp"
+            android:text="@string/common_cancel"/>
 
         <Button
             android:id="@+id/btnSaveDate"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
+            style="@style/Widget.LoveTester.Button.Filled"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginStart="12dp"
-            android:text="@string/common_save"
-            android:textAllCaps="false"
-            android:textSize="12sp"
-            android:textColor="@color/white"
-            android:background="@drawable/bg_date_save"
-            app:backgroundTint="@null"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="0dp"/>
+            android:minWidth="88dp"
+            android:text="@string/common_save"/>
 
     </LinearLayout>
 

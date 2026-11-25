@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The white, rounded surface comes from the bottom sheet theme (themes.xml). -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="512dp"
-    android:orientation="vertical"
-    android:background="@android:color/white">
+    android:layout_height="wrap_content"
+    android:minHeight="512dp"
+    android:orientation="vertical">
 
     <View
+        style="@style/Widget.LoveTester.SheetHandle"
         android:layout_width="40dp"
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
-        android:background="@color/sheet_handle" />
+        android:layout_marginTop="12dp" />
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:layout_marginStart="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:text="@string/background_sheet_title"
-        android:textSize="16sp"
-        android:fontFamily="@font/plus_jakarta_sans_semibold"
-        android:textColor="@color/text_title" />
+        android:textAppearance="@style/TextAppearance.LoveTester.SheetTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBackgrounds"

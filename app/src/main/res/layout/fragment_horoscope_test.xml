@@ -32,8 +32,8 @@
 
     <LinearLayout
         android:id="@+id/layoutZodiacPair"
-        android:layout_width="313dp"
-        android:layout_height="148dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:orientation="horizontal"
         android:gravity="top|center_horizontal"
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 tools:text="Aries"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:textColor="@color/text_body"
                 android:fontFamily="@font/plus_jakarta_sans_semibold" />
 
@@ -123,7 +123,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 tools:text="Aries"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:textColor="@color/text_body"
                 android:fontFamily="@font/plus_jakarta_sans_semibold" />
 

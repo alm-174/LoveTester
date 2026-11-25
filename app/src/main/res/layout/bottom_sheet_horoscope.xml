@@ -4,15 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="570dp"
-    android:background="@android:color/white">
+    android:minHeight="570dp">
 
     <View
         android:id="@+id/viewHandle"
         android:layout_width="40dp"
         android:layout_height="4dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/bg_background_placeholder"
+        style="@style/Widget.LoveTester.SheetHandle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -21,12 +20,10 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
         android:text="@string/horoscope_picker_title"
-        android:textSize="16sp"
-        android:textColor="@color/text_title"
-        android:fontFamily="@font/plus_jakarta_sans_semibold"
+        android:textAppearance="@style/TextAppearance.LoveTester.SheetTitle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
