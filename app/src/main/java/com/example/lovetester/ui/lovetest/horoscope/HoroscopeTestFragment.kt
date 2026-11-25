@@ -5,24 +5,19 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentHoroscopeTestBinding
+import com.example.lovetester.ui.common.collectOn
 import com.example.lovetester.ui.common.safeNavigate
 import com.example.lovetester.ui.common.showOnce
+import com.example.lovetester.ui.common.viewBinding
 import com.example.lovetester.ui.lovetest.result.LoveTestResultFragment
-import kotlinx.coroutines.launch
 
 class HoroscopeTestFragment :
     Fragment(R.layout.fragment_horoscope_test) {
 
-    private var _binding: FragmentHoroscopeTestBinding? = null
-
-    private val binding: FragmentHoroscopeTestBinding
-        get() = requireNotNull(_binding)
+    private val binding by viewBinding(FragmentHoroscopeTestBinding::bind)
 
     private val viewModel: HoroscopeTestViewModel by viewModels()
 
@@ -31,8 +26,6 @@ class HoroscopeTestFragment :
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding = FragmentHoroscopeTestBinding.bind(view)
 
         setupResultListeners()
         setupClicks()
@@ -91,16 +84,12 @@ class HoroscopeTestFragment :
     }
 
     private fun observeState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    binding.ivYourZodiac.setImageResource(state.mySign.iconRes)
-                    binding.tvYourZodiac.setText(state.mySign.nameRes)
+        viewModel.uiState.collectOn(viewLifecycleOwner) { state ->
+            binding.ivYourZodiac.setImageResource(state.mySign.iconRes)
+            binding.tvYourZodiac.setText(state.mySign.nameRes)
 
-                    binding.ivPartnerZodiac.setImageResource(state.partnerSign.iconRes)
-                    binding.tvPartnerZodiac.setText(state.partnerSign.nameRes)
-                }
-            }
+            binding.ivPartnerZodiac.setImageResource(state.partnerSign.iconRes)
+            binding.tvPartnerZodiac.setText(state.partnerSign.nameRes)
         }
     }
 
@@ -109,8 +98,4 @@ class HoroscopeTestFragment :
         private const val REQUEST_PARTNER_SIGN = "request_partner_sign"
     }
 
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
-    }
 }

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +14,10 @@ import com.example.lovetester.R
 import com.example.lovetester.data.local.BackgroundImageStorage
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.BottomSheetBackgroundBinding
+import com.example.lovetester.ui.common.GridSpacingDecoration
 import com.example.lovetester.ui.common.expandWithMaxHeight
+import com.example.lovetester.ui.common.toast
+import com.example.lovetester.ui.common.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
@@ -32,10 +34,7 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
     @Inject
     lateinit var storage: BackgroundImageStorage
 
-    private var _binding: BottomSheetBackgroundBinding? = null
-
-    private val binding: BottomSheetBackgroundBinding
-        get() = requireNotNull(_binding)
+    private val binding by viewBinding(BottomSheetBackgroundBinding::bind)
 
     private val backgrounds = listOf(
         BackgroundItem.AddPhoto,
@@ -65,15 +64,7 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = BottomSheetBackgroundBinding.inflate(
-            inflater,
-            container,
-            false
-        )
-
-        return binding.root
-    }
+    ): View = inflater.inflate(R.layout.bottom_sheet_background, container, false)
 
     override fun onViewCreated(
         view: View,
@@ -90,7 +81,6 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
 
     override fun onDestroyView() {
         binding.rvBackgrounds.adapter = null
-        _binding = null
         super.onDestroyView()
     }
 
@@ -128,14 +118,14 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
             }
 
             binding.rvBackgrounds.layoutManager =
-                GridLayoutManager(requireContext(), 2)
+                GridLayoutManager(requireContext(), SPAN_COUNT)
 
             val spacing =
                 (12 * resources.displayMetrics.density + 0.5f).toInt()
 
             if (binding.rvBackgrounds.itemDecorationCount == 0) {
                 binding.rvBackgrounds.addItemDecoration(
-                    BackgroundGridSpacing(spacing)
+                    GridSpacingDecoration(spacing, SPAN_COUNT)
                 )
             }
 
@@ -154,13 +144,7 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                context?.let {
-                    Toast.makeText(
-                        it,
-                        it.getString(R.string.background_save_error),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                context?.toast(R.string.background_save_error)
             }
         }
     }
@@ -171,5 +155,9 @@ class BackgroundBottomSheet : BottomSheetDialogFragment() {
 
             dismiss()
         }
+    }
+
+    private companion object {
+        const val SPAN_COUNT = 2
     }
 }

@@ -3,6 +3,8 @@ package com.example.lovetester.ui.common
 import androidx.annotation.DimenRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
+import com.example.lovetester.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -15,6 +17,14 @@ fun FragmentManager.showOnce(dialog: DialogFragment, tag: String) {
     if (isStateSaved || findFragmentByTag(tag) != null) return
     dialog.showNow(this, tag)
 }
+
+/** The app's one screen-change animation set (also used by the actions in nav_love_test.xml). */
+fun FragmentTransaction.setScreenAnimations(): FragmentTransaction = setCustomAnimations(
+    R.anim.screen_enter,
+    R.anim.screen_exit,
+    R.anim.screen_pop_enter,
+    R.anim.screen_pop_exit
+)
 
 /**
  * Opens the sheet fully, never taller than [maxHeightRes]. The layout wraps its content, so on a

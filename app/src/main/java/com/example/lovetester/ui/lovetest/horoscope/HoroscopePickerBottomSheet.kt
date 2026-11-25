@@ -11,16 +11,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.example.lovetester.R
 import com.example.lovetester.databinding.BottomSheetHoroscopeBinding
-import com.example.lovetester.ui.background.BackgroundGridSpacing
+import com.example.lovetester.ui.common.GridSpacingDecoration
 import com.example.lovetester.ui.common.expandWithMaxHeight
+import com.example.lovetester.ui.common.viewBinding
 
 class HoroscopePickerBottomSheet :
     BottomSheetDialogFragment() {
 
-    private var _binding: BottomSheetHoroscopeBinding? = null
-
-    private val binding: BottomSheetHoroscopeBinding
-        get() = requireNotNull(_binding)
+    private val binding by viewBinding(BottomSheetHoroscopeBinding::bind)
 
     private val requestKey: String
         get() = requireArguments().getString(ARG_REQUEST_KEY)!!
@@ -48,14 +46,7 @@ class HoroscopePickerBottomSheet :
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = BottomSheetHoroscopeBinding.inflate(
-            inflater,
-            container,
-            false
-        )
-        return binding.root
-    }
+    ): View = inflater.inflate(R.layout.bottom_sheet_horoscope, container, false)
 
     override fun onViewCreated(
         view: View,
@@ -75,7 +66,7 @@ class HoroscopePickerBottomSheet :
         val spacing = (16 * resources.displayMetrics.density + 0.5f).toInt()
         binding.rvZodiac.layoutManager = GridLayoutManager(requireContext(), 2)
         if (binding.rvZodiac.itemDecorationCount == 0) {
-            binding.rvZodiac.addItemDecoration(BackgroundGridSpacing(spacing))
+            binding.rvZodiac.addItemDecoration(GridSpacingDecoration(spacing, 2))
         }
 
         binding.rvZodiac.adapter = ZodiacAdapter(selectedSign) { sign ->
@@ -86,7 +77,6 @@ class HoroscopePickerBottomSheet :
 
     override fun onDestroyView() {
         binding.rvZodiac.adapter = null
-        _binding = null
         super.onDestroyView()
     }
 }

@@ -28,6 +28,8 @@
     <!-- Text -->
     <color name="text_body">#4B4F58</color>
     <color name="text_hint">#6B7280</color>
+    <color name="text_disabled">#B8BBC4</color>
+    <color name="tab_inactive">#454954</color>
     <color name="text_error">#B3261E</color>
     <color name="text_calendar_month">#27272A</color>
     <color name="text_calendar_weekday">#6B6F77</color>

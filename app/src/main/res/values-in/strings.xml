@@ -141,6 +141,9 @@
     <string name="add_memory_error_date">Pilih tanggal untuk kenangan ini.</string>
     <string name="add_memory_error_photo">Pilih foto untuk kenangan ini.</string>
     <string name="add_memory_error_read_photo">Tidak dapat membaca foto ini. Pilih lagi atau pilih foto lain.</string>
+    <string name="add_memory_discard_title">Buang kenangan ini?</string>
+    <string name="add_memory_discard_message">Perubahan Anda belum disimpan dan akan hilang.</string>
+    <string name="add_memory_discard_confirm">Buang</string>
 
     <!-- Start date -->
     <string name="start_date_title">Tanggal Mulai</string>

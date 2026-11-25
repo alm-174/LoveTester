@@ -21,8 +21,11 @@ class BackgroundAdapter(
     var selectedId: String? = selectedId
         set(value) {
             if (field == value) return
+            val oldIndex = items.indexOfFirst { it.storedId() == field }
             field = value
-            notifyItemRangeChanged(0, items.size)
+            val newIndex = items.indexOfFirst { it.storedId() == value }
+            if (oldIndex != -1) notifyItemChanged(oldIndex)
+            if (newIndex != -1) notifyItemChanged(newIndex)
         }
 
     class BackgroundViewHolder(

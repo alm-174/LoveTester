@@ -2,7 +2,6 @@ package com.example.lovetester.ui.intro
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +12,7 @@ import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.ActivityIntroBinding
 import com.example.lovetester.ui.common.applySystemBarsPadding
 import com.example.lovetester.ui.common.enableLightEdgeToEdge
+import com.example.lovetester.ui.common.toast
 import com.example.lovetester.ui.language.LanguageActivity
 import com.example.lovetester.ui.permission.PermissionActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -131,11 +131,7 @@ class IntroActivity : AppCompatActivity() {
                 isNavigating = false
                 binding.btnNext.isEnabled = true
 
-                Toast.makeText(
-                    this@IntroActivity,
-                    getString(R.string.intro_save_progress_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+                toast(R.string.intro_save_progress_error)
             }
         }
     }
@@ -185,11 +181,7 @@ class IntroActivity : AppCompatActivity() {
                 isNavigating = false
                 binding.btnNext.isEnabled = true
 
-                Toast.makeText(
-                    this@IntroActivity,
-                    getString(R.string.intro_back_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+                toast(R.string.intro_back_error)
             }
         }
     }

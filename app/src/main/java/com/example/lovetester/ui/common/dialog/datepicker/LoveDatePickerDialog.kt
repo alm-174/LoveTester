@@ -7,6 +7,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.lovetester.R
 import com.example.lovetester.databinding.DialogLoveDatePickerBinding
+import com.example.lovetester.ui.common.viewBinding
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -35,8 +36,7 @@ class LoveDatePickerDialog :
         }
     }
 
-    private var _binding: DialogLoveDatePickerBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private val binding by viewBinding(DialogLoveDatePickerBinding::bind)
 
     private lateinit var dayAdapter: CalendarDayAdapter
     private lateinit var yearAdapter: CalendarYearAdapter
@@ -55,7 +55,6 @@ class LoveDatePickerDialog :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = DialogLoveDatePickerBinding.bind(view)
         maximumDate = LocalDate.now()
 
         val initialDate = arguments
@@ -264,7 +263,6 @@ class LoveDatePickerDialog :
     override fun onDestroyView() {
         binding.rvCalendarDays.adapter = null
         binding.rvCalendarYears.adapter = null
-        _binding = null
         super.onDestroyView()
     }
 }

@@ -13,6 +13,8 @@ import com.example.lovetester.R
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.FragmentStartDateBinding
 import com.example.lovetester.ui.common.showOnce
+import com.example.lovetester.ui.common.toast
+import com.example.lovetester.ui.common.viewBinding
 import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -24,8 +26,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class StartDateFragment : Fragment(R.layout.fragment_start_date) {
 
-    private var _binding: FragmentStartDateBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private val binding by viewBinding(FragmentStartDateBinding::bind)
 
     @Inject
     lateinit var repository: LoveSettingsRepository
@@ -40,8 +41,6 @@ class StartDateFragment : Fragment(R.layout.fragment_start_date) {
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding = FragmentStartDateBinding.bind(view)
 
         applyWindowInsets()
         setStatusBarDarkIcons(enabled = true)
@@ -129,11 +128,7 @@ class StartDateFragment : Fragment(R.layout.fragment_start_date) {
 
             } catch (e: Exception) {
                 binding.btnDone.isEnabled = true
-                android.widget.Toast.makeText(
-                    requireContext(),
-                    getString(R.string.start_date_save_error),
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
+                requireContext().toast(R.string.start_date_save_error)
             }
         }
     }
@@ -204,7 +199,6 @@ class StartDateFragment : Fragment(R.layout.fragment_start_date) {
 
     override fun onDestroyView() {
         setStatusBarDarkIcons(enabled = false)
-        _binding = null
         super.onDestroyView()
     }
 }

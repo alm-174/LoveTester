@@ -10,22 +10,18 @@ import com.example.lovetester.databinding.FragmentNameTestBinding
 import com.example.lovetester.ui.common.hideKeyboard
 import com.example.lovetester.ui.common.onImeDone
 import com.example.lovetester.ui.common.safeNavigate
+import com.example.lovetester.ui.common.viewBinding
 import com.example.lovetester.ui.lovetest.domain.LoveTestCalculator
 
 class NameTestFragment : Fragment(R.layout.fragment_name_test) {
 
-    private var _binding: FragmentNameTestBinding? = null
-
-    private val binding: FragmentNameTestBinding
-        get() = requireNotNull(_binding)
+    private val binding by viewBinding(FragmentNameTestBinding::bind)
 
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding = FragmentNameTestBinding.bind(view)
 
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
@@ -67,8 +63,4 @@ class NameTestFragment : Fragment(R.layout.fragment_name_test) {
         }
     }
 
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
-    }
 }

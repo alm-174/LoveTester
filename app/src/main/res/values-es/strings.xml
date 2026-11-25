@@ -143,6 +143,9 @@
     <string name="add_memory_error_date">Selecciona una fecha para este recuerdo.</string>
     <string name="add_memory_error_photo">Elige una foto para este recuerdo.</string>
     <string name="add_memory_error_read_photo">No se puede leer esta foto. Vuelve a elegirla o selecciona otra.</string>
+    <string name="add_memory_discard_title">¿Descartar este recuerdo?</string>
+    <string name="add_memory_discard_message">Tus cambios no se han guardado y se perderán.</string>
+    <string name="add_memory_discard_confirm">Descartar</string>
 
     <!-- Start date -->
     <string name="start_date_title">Fecha de inicio</string>

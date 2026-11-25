@@ -142,6 +142,9 @@
     <string name="add_memory_error_date">इस याद के लिए तारीख़ चुनें।</string>
     <string name="add_memory_error_photo">इस याद के लिए फ़ोटो चुनें।</string>
     <string name="add_memory_error_read_photo">यह फ़ोटो पढ़ी नहीं जा सकी। इसे फिर से चुनें या कोई दूसरी फ़ोटो चुनें।</string>
+    <string name="add_memory_discard_title">यह याद छोड़ दें?</string>
+    <string name="add_memory_discard_message">आपके बदलाव सेव नहीं हुए हैं और खो जाएँगे।</string>
+    <string name="add_memory_discard_confirm">छोड़ें</string>
 
     <!-- Start date -->
     <string name="start_date_title">शुरुआती तारीख़</string>

@@ -7,13 +7,12 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentMemoryListBinding
+import com.example.lovetester.ui.common.collectOn
+import com.example.lovetester.ui.common.setScreenAnimations
+import com.example.lovetester.ui.common.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.data.local.database.MemoryEntity
@@ -21,10 +20,7 @@ import com.example.lovetester.data.local.database.MemoryEntity
 @AndroidEntryPoint
 class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
 
-    private var _binding: FragmentMemoryListBinding? = null
-
-    private val binding: FragmentMemoryListBinding
-        get() = requireNotNull(_binding)
+    private val binding by viewBinding(FragmentMemoryListBinding::bind)
 
     private val viewModel: MemoryViewModel by activityViewModels()
 
@@ -44,7 +40,6 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentMemoryListBinding.bind(view)
         openingAddMemory = false
 
         binding.rvMemories.apply {
@@ -61,15 +56,7 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
     }
 
     private fun observeUiState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(
-                Lifecycle.State.STARTED
-            ) {
-                viewModel.uiState.collect { state ->
-                    render(state)
-                }
-            }
-        }
+        viewModel.uiState.collectOn(viewLifecycleOwner, action = ::render)
     }
 
     private fun render(state: MemoryUiState) {
@@ -109,6 +96,7 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
         binding.btnAddMemory.isEnabled = false
         manager.beginTransaction()
             .setReorderingAllowed(true)
+            .setScreenAnimations()
             .replace(
                 id,
                 AddMemoryFragment()
@@ -133,7 +121,6 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
 
     override fun onDestroyView() {
         binding.rvMemories.adapter = null
-        _binding = null
         super.onDestroyView()
     }
 }

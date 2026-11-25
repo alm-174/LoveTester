@@ -13,12 +13,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import coil3.load
 import coil3.request.error
 import com.example.lovetester.R
+import com.example.lovetester.ui.common.collectOn
+import com.example.lovetester.ui.common.setScreenAnimations
 import com.example.lovetester.ui.common.showOnce
 import com.example.lovetester.data.local.model.Gender
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
@@ -32,7 +31,6 @@ import com.example.lovetester.ui.memory.MemoryListFragment
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.lovetester.ui.setting.SettingsActivity
 import com.example.lovetester.ui.startdate.StartDateFragment
-import kotlinx.coroutines.launch
 import java.io.File
 import java.time.LocalDate
 import java.time.Period
@@ -95,92 +93,56 @@ class HomeActivity : AppCompatActivity() {
             })
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.loveStartDate.collect { startDate ->
+        repository.loveStartDate.collectOn(this) { startDate ->
+            if (startDate == null) {
+                binding.tvLoveDays.text = getString(R.string.home_love_days_empty)
+            } else {
+                val days = ChronoUnit.DAYS.between(
+                    startDate,
+                    LocalDate.now()
+                ).coerceAtLeast(0)
 
-                    if (startDate == null) {
-                        binding.tvLoveDays.text = getString(R.string.home_love_days_empty)
-                    } else {
-                        val days = ChronoUnit.DAYS.between(
-                            startDate,
-                            LocalDate.now()
-                        ).coerceAtLeast(0)
+                binding.tvLoveDays.text = resources.getQuantityString(
+                    R.plurals.home_love_days,
+                    days.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+                    days
+                )
+            }
+        }
 
-                        binding.tvLoveDays.text = resources.getQuantityString(
-                            R.plurals.home_love_days,
-                            days.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
-                            days
-                        )
+        repository.selectedBackgroundId.collectOn(this) { id ->
+            when {
+                id?.startsWith("custom:") == true -> {
+                    val path = id.removePrefix("custom:")
+
+                    binding.ivHomeBackground.load(File(path))
+                }
+
+                else -> {
+                    val drawableRes = when (id) {
+                        "romantic_1" -> R.drawable.background_romantic_1
+                        "romantic_2" -> R.drawable.background_romantic_2
+                        "romantic_3" -> R.drawable.background_romantic_3
+                        else -> R.drawable.home_background
                     }
+
+                    binding.ivHomeBackground.load(drawableRes)
                 }
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.selectedBackgroundId.collect { id ->
-
-                    when {
-                        id?.startsWith("custom:") == true -> {
-                            val path = id.removePrefix("custom:")
-
-                            binding.ivHomeBackground.load(File(path))
-                        }
-
-                        else -> {
-                            val drawableRes = when (id) {
-                                "romantic_1" -> R.drawable.background_romantic_1
-                                "romantic_2" -> R.drawable.background_romantic_2
-                                "romantic_3" -> R.drawable.background_romantic_3
-                                else -> R.drawable.home_background
-                            }
-
-                            binding.ivHomeBackground.load(drawableRes)
-                        }
-                    }
-                }
-            }
+        repository.youInfo.collectOn(this) { info ->
+            binding.tvPersonOneName.text = info.name
+            binding.ivPersonOneGender.setImageResource(genderIcon(info.gender))
+            binding.tvPersonOneAge.text = calculateAge(info.birthday)
+            renderAvatar(binding.ivPersonOne, info.avatarPath, R.drawable.avatar_sasuke)
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.youInfo.collect { info ->
-                    binding.tvPersonOneName.text = info.name
-
-                    binding.ivPersonOneGender.setImageResource(
-                        genderIcon(info.gender)
-                    )
-
-                    binding.tvPersonOneAge.text = calculateAge(info.birthday)
-
-                    renderAvatar(
-                        binding.ivPersonOne,
-                        info.avatarPath,
-                        R.drawable.avatar_sasuke
-                    )
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.partnerInfo.collect { info ->
-                    binding.tvPersonTwoName.text = info.name
-
-                    binding.ivPersonTwoGender.setImageResource(
-                        genderIcon(info.gender)
-                    )
-
-                    binding.tvPersonTwoAge.text = calculateAge(info.birthday)
-
-                    renderAvatar(
-                        binding.ivPersonTwo,
-                        info.avatarPath,
-                        R.drawable.avatar_naruto
-                    )
-                }
-            }
+        repository.partnerInfo.collectOn(this) { info ->
+            binding.tvPersonTwoName.text = info.name
+            binding.ivPersonTwoGender.setImageResource(genderIcon(info.gender))
+            binding.tvPersonTwoAge.text = calculateAge(info.birthday)
+            renderAvatar(binding.ivPersonTwo, info.avatarPath, R.drawable.avatar_naruto)
         }
 
     }
@@ -218,6 +180,7 @@ class HomeActivity : AppCompatActivity() {
         tab.isEnabled = false
         manager.beginTransaction()
             .setReorderingAllowed(true)
+            .setScreenAnimations()
             .replace(R.id.homeMemoryContainer, MemoryListFragment())
             .addToBackStack("home_memory")
             .commit()
@@ -256,7 +219,7 @@ class HomeActivity : AppCompatActivity() {
         binding.layoutBottomNav.navHome.isSelected = current == null
 
         val selected = getColor(R.color.primary)
-        val unselected = Color.parseColor("#454954")
+        val unselected = getColor(R.color.tab_inactive)
         val homeColor = if (onMemory) unselected else selected
         val memoryColor = if (onMemory) selected else unselected
         binding.layoutBottomNav.ivNavHome.setColorFilter(homeColor)
@@ -334,6 +297,7 @@ class HomeActivity : AppCompatActivity() {
         binding.startDateContainer.visibility = View.VISIBLE
 
         manager.beginTransaction()
+            .setScreenAnimations()
             .replace(
                 R.id.startDateContainer,
                 StartDateFragment()

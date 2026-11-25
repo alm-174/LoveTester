@@ -4,18 +4,15 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import com.example.lovetester.R
 import com.example.lovetester.databinding.DialogAvatarOptionBinding
+import com.example.lovetester.ui.common.viewBinding
 
-class AvatarOptionDialog : DialogFragment() {
+class AvatarOptionDialog : DialogFragment(R.layout.dialog_avatar_option) {
 
-    private var _binding: DialogAvatarOptionBinding? = null
-
-    private val binding: DialogAvatarOptionBinding
-        get() = requireNotNull(_binding)
+    private val binding by viewBinding(DialogAvatarOptionBinding::bind)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(requireContext()).apply {
@@ -25,21 +22,6 @@ class AvatarOptionDialog : DialogFragment() {
 
             setCanceledOnTouchOutside(true)
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): android.view.View {
-
-        _binding = DialogAvatarOptionBinding.inflate(
-            inflater,
-            container,
-            false
-        )
-
-        return binding.root
     }
 
     override fun onViewCreated(
@@ -86,11 +68,6 @@ class AvatarOptionDialog : DialogFragment() {
 
             setDimAmount(0.4f)
         }
-    }
-
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
     }
 
     companion object {

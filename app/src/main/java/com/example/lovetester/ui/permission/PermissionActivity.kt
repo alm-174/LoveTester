@@ -15,9 +15,9 @@ import com.example.lovetester.R
 import com.example.lovetester.databinding.ActivityPermissionBinding
 import com.example.lovetester.ui.common.applySystemBarsPadding
 import com.example.lovetester.ui.common.enableLightEdgeToEdge
+import com.example.lovetester.ui.common.toast
 import android.provider.Settings
 import com.example.lovetester.ui.home.HomeActivity
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
 import com.example.lovetester.data.local.model.OnboardingStep
@@ -190,11 +190,7 @@ class PermissionActivity : AppCompatActivity(){
                 isNavigating = false
                 binding.btnContinue.isEnabled = true
 
-                Toast.makeText(
-                    this@PermissionActivity,
-                    getString(R.string.permission_save_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+                toast(R.string.permission_save_error)
             }
         }
     }
@@ -225,11 +221,7 @@ class PermissionActivity : AppCompatActivity(){
                 isNavigating = false
                 binding.btnContinue.isEnabled = true
 
-                Toast.makeText(
-                    this@PermissionActivity,
-                    getString(R.string.permission_back_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+                toast(R.string.permission_back_error)
             }
         }
     }

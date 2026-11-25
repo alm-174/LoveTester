@@ -143,6 +143,9 @@
     <string name="add_memory_error_date">Choisissez une date pour ce souvenir.</string>
     <string name="add_memory_error_photo">Choisissez une photo pour ce souvenir.</string>
     <string name="add_memory_error_read_photo">Impossible de lire cette photo. Choisissez-la à nouveau ou sélectionnez-en une autre.</string>
+    <string name="add_memory_discard_title">Abandonner ce souvenir ?</string>
+    <string name="add_memory_discard_message">Vos modifications n\'ont pas été enregistrées et seront perdues.</string>
+    <string name="add_memory_discard_confirm">Abandonner</string>
 
     <!-- Start date -->
     <string name="start_date_title">Date de début</string>

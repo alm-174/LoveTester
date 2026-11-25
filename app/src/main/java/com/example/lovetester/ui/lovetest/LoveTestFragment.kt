@@ -1,9 +1,7 @@
 package com.example.lovetester.ui.lovetest
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -12,28 +10,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentLoveTestBinding
 import com.example.lovetester.ui.common.safeNavigate
+import com.example.lovetester.ui.common.viewBinding
 
-class LoveTestFragment : Fragment() {
+class LoveTestFragment : Fragment(R.layout.fragment_love_test) {
 
-    private var _binding: FragmentLoveTestBinding? = null
-
-    private val binding: FragmentLoveTestBinding
-        get() = requireNotNull(_binding)
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-
-        _binding = FragmentLoveTestBinding.inflate(
-            inflater,
-            container,
-            false
-        )
-
-        return binding.root
-    }
+    private val binding by viewBinding(FragmentLoveTestBinding::bind)
 
     override fun onViewCreated(
         view: View,
@@ -76,8 +57,4 @@ class LoveTestFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
-    }
 }

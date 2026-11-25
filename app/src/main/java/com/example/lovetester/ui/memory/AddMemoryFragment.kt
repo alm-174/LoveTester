@@ -1,5 +1,6 @@
 package com.example.lovetester.ui.memory
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,11 +13,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentAddMemoryBinding
+import com.example.lovetester.ui.common.collectOn
 import com.example.lovetester.ui.common.hideKeyboard
 import com.example.lovetester.ui.common.onImeDone
+import com.example.lovetester.ui.common.viewBinding
 import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -27,12 +29,12 @@ import java.time.format.DateTimeFormatter
 @AndroidEntryPoint
 class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
 
-    private var _binding: FragmentAddMemoryBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private val binding by viewBinding(FragmentAddMemoryBinding::bind)
     private val viewModel: MemoryViewModel by activityViewModels()
     private var selectedImageUri: Uri? = null
     private var selectedDate: LocalDate? = null
     private var previewJob: Job? = null
+    private var discardDialog: AlertDialog? = null
     private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
     private val photoPickerLauncher =
@@ -44,7 +46,7 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
                     runCatching { resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
                 }
                 selectedImageUri = uri
-                if (_binding != null) {
+                if (view != null) {
                     showError(null)
                     renderPhoto()
                 }
@@ -59,7 +61,6 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentAddMemoryBinding.bind(view)
         binding.root.isClickable = true
         // EditText already restores its text using its stable XML ID.
         renderPhoto()
@@ -67,9 +68,9 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
         observeDatePickerResult()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            closeForm()
+            requestClose()
         }
-        binding.btnBack.setOnClickListener { closeForm() }
+        binding.btnBack.setOnClickListener { requestClose() }
         binding.cardMemoryPhoto.setOnClickListener {
             photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
@@ -87,19 +88,18 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
         }
 
         renderSaving(viewModel.saveState.value == MemorySaveState.Saving)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.saveState.collect { state ->
-                    renderSaving(state == MemorySaveState.Saving)
-                    when (state) {
-                        MemorySaveState.Idle, MemorySaveState.Saving -> Unit
-                        MemorySaveState.Error ->
-                            showError(getString(R.string.add_memory_error_save))
-                        MemorySaveState.Success -> binding.root.post {
-                            if (_binding != null && viewModel.saveState.value == MemorySaveState.Success) {
-                                closeForm()
-                            }
-                        }
+        viewModel.saveState.collectOn(viewLifecycleOwner, Lifecycle.State.RESUMED) { state ->
+            renderSaving(state == MemorySaveState.Saving)
+            when (state) {
+                MemorySaveState.Idle, MemorySaveState.Saving -> Unit
+                MemorySaveState.Error ->
+                    showError(getString(R.string.add_memory_error_save))
+                // Saved: close directly, there is nothing left to discard.
+                MemorySaveState.Success -> binding.root.post {
+                    if (this@AddMemoryFragment.view != null &&
+                        viewModel.saveState.value == MemorySaveState.Success
+                    ) {
+                        closeForm()
                     }
                 }
             }
@@ -183,11 +183,33 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
         binding.tvMemoryFormError.isVisible = message != null
         if (message != null) {
             binding.tvMemoryFormError.post {
-                _binding?.tvMemoryFormError?.let { error ->
-                    error.requestRectangleOnScreen(android.graphics.Rect(0, 0, error.width, error.height))
-                }
+                if (view == null) return@post
+                val error = binding.tvMemoryFormError
+                error.requestRectangleOnScreen(android.graphics.Rect(0, 0, error.width, error.height))
             }
         }
+    }
+
+    private fun hasUnsavedChanges(): Boolean =
+        binding.etMemoryTitle.text.isNotBlank() || selectedImageUri != null || selectedDate != null
+
+    /** Back / back arrow: asks first when the form holds something that would be lost. */
+    private fun requestClose() {
+        if (viewModel.saveState.value == MemorySaveState.Saving) return
+        if (!hasUnsavedChanges()) {
+            closeForm()
+            return
+        }
+        if (discardDialog?.isShowing == true) return
+
+        // shortcut: a plain AlertDialog is dropped on rotation (back just asks again);
+        // move to a DialogFragment if it must survive configuration changes.
+        discardDialog = AlertDialog.Builder(requireContext())
+            .setTitle(R.string.add_memory_discard_title)
+            .setMessage(R.string.add_memory_discard_message)
+            .setNegativeButton(R.string.common_cancel, null)
+            .setPositiveButton(R.string.add_memory_discard_confirm) { _, _ -> closeForm() }
+            .show()
     }
 
     private fun closeForm() {
@@ -224,7 +246,8 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
     override fun onDestroyView() {
         previewJob?.cancel()
         previewJob = null
-        _binding = null
+        discardDialog?.dismiss()
+        discardDialog = null
         super.onDestroyView()
     }
 

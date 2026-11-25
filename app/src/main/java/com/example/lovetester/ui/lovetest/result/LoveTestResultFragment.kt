@@ -11,23 +11,19 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentLoveTestResultBinding
+import com.example.lovetester.ui.common.viewBinding
 import com.example.lovetester.ui.lovetest.horoscope.ZodiacSign
 
 class LoveTestResultFragment :
     Fragment(R.layout.fragment_love_test_result) {
 
-    private var _binding: FragmentLoveTestResultBinding? = null
-
-    private val binding: FragmentLoveTestResultBinding
-        get() = requireNotNull(_binding)
+    private val binding by viewBinding(FragmentLoveTestResultBinding::bind)
 
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding = FragmentLoveTestResultBinding.bind(view)
 
         val args = requireArguments()
 
@@ -74,8 +70,9 @@ class LoveTestResultFragment :
         percentage: Int,
         message: String
     ) {
+        // Back leaves the whole test and returns to the test menu; Retry reopens the test form.
         binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().popBackStack(R.id.loveTestFragment, false)
         }
 
         binding.btnRetry.setOnClickListener {
@@ -142,8 +139,4 @@ class LoveTestResultFragment :
         const val TEST_TYPE_HOROSCOPE = "horoscope"
     }
 
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
-    }
 }

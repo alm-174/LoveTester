@@ -12,11 +12,19 @@
 
         <action
             android:id="@+id/action_loveTest_to_nameTest"
-            app:destination="@id/nameTestFragment" />
+            app:destination="@id/nameTestFragment"
+            app:enterAnim="@anim/screen_enter"
+            app:exitAnim="@anim/screen_exit"
+            app:popEnterAnim="@anim/screen_pop_enter"
+            app:popExitAnim="@anim/screen_pop_exit" />
 
         <action
             android:id="@+id/action_loveTest_to_horoscopeTest"
-            app:destination="@id/horoscopeTestFragment" />
+            app:destination="@id/horoscopeTestFragment"
+            app:enterAnim="@anim/screen_enter"
+            app:exitAnim="@anim/screen_exit"
+            app:popEnterAnim="@anim/screen_pop_enter"
+            app:popExitAnim="@anim/screen_pop_exit" />
 
     </fragment>
 
@@ -27,7 +35,11 @@
 
         <action
             android:id="@+id/action_nameTest_to_result"
-            app:destination="@id/loveTestResultFragment" />
+            app:destination="@id/loveTestResultFragment"
+            app:enterAnim="@anim/screen_enter"
+            app:exitAnim="@anim/screen_exit"
+            app:popEnterAnim="@anim/screen_pop_enter"
+            app:popExitAnim="@anim/screen_pop_exit" />
 
     </fragment>
 
@@ -38,7 +50,11 @@
 
         <action
             android:id="@+id/action_horoscopeTest_to_result"
-            app:destination="@id/loveTestResultFragment" />
+            app:destination="@id/loveTestResultFragment"
+            app:enterAnim="@anim/screen_enter"
+            app:exitAnim="@anim/screen_exit"
+            app:popEnterAnim="@anim/screen_pop_enter"
+            app:popExitAnim="@anim/screen_pop_exit" />
 
     </fragment>
 

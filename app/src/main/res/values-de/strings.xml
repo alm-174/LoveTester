@@ -142,6 +142,9 @@
     <string name="add_memory_error_date">Wähle ein Datum für diese Erinnerung aus.</string>
     <string name="add_memory_error_photo">Wähle ein Foto für diese Erinnerung aus.</string>
     <string name="add_memory_error_read_photo">Dieses Foto kann nicht gelesen werden. Wähle es erneut oder wähle ein anderes aus.</string>
+    <string name="add_memory_discard_title">Erinnerung verwerfen?</string>
+    <string name="add_memory_discard_message">Deine Änderungen wurden nicht gespeichert und gehen verloren.</string>
+    <string name="add_memory_discard_confirm">Verwerfen</string>
 
     <!-- Start date -->
     <string name="start_date_title">Startdatum</string>

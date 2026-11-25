@@ -151,6 +151,9 @@
     <string name="add_memory_error_date">Select a date for this memory.</string>
     <string name="add_memory_error_photo">Choose a photo for this memory.</string>
     <string name="add_memory_error_read_photo">Cannot read this photo. Choose it again or select another one.</string>
+    <string name="add_memory_discard_title">Discard this memory?</string>
+    <string name="add_memory_discard_message">Your changes haven\'t been saved and will be lost.</string>
+    <string name="add_memory_discard_confirm">Discard</string>
 
     <!-- Start date -->
     <string name="start_date_title">Start Date</string>

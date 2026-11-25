@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -18,6 +17,8 @@ import com.example.lovetester.R
 import com.example.lovetester.ui.common.hideKeyboard
 import com.example.lovetester.ui.common.onImeDone
 import com.example.lovetester.ui.common.showOnce
+import com.example.lovetester.ui.common.toast
+import com.example.lovetester.ui.common.viewBinding
 import com.example.lovetester.data.local.model.Gender
 import com.example.lovetester.data.local.model.PersonInfo
 import com.example.lovetester.data.local.model.MAX_NAME_LENGTH
@@ -47,10 +48,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
     @Inject
     lateinit var avatarStorage: AvatarStorage
 
-    private var _binding: BottomSheetInformationBinding? = null
-
-    private val binding: BottomSheetInformationBinding
-        get() = requireNotNull(_binding)
+    private val binding by viewBinding(BottomSheetInformationBinding::bind)
 
     private lateinit var personType: PersonType
 
@@ -70,9 +68,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
     private val birthdayFormatter =
         DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-    // =========================
-    // PHOTO PICKER
-    // =========================
+
 
     private val photoPickerLauncher =
         registerForActivityResult(
@@ -83,7 +79,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                 cleanupSelectedCameraFile()
 
                 selectedAvatarUri = uri
-                _binding?.ivAvatar?.load(uri)
+                if (view != null) binding.ivAvatar.load(uri)
             }
         }
 
@@ -109,7 +105,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                 selectedCameraPath = path
                 selectedAvatarUri = uri
 
-                _binding?.ivAvatar?.load(uri)
+                if (view != null) binding.ivAvatar.load(uri)
 
             } else {
 
@@ -160,16 +156,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-
-        _binding = BottomSheetInformationBinding.inflate(
-            inflater,
-            container,
-            false
-        )
-
-        return binding.root
-    }
+    ): View = inflater.inflate(R.layout.bottom_sheet_information, container, false)
 
     override fun onViewCreated(
         view: View,
@@ -427,11 +414,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                 photoFile?.absolutePath
             )
 
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.information_camera_error),
-                Toast.LENGTH_SHORT
-            ).show()
+            requireContext().toast(R.string.information_camera_error)
         }
     }
 
@@ -600,11 +583,6 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onDestroyView() {
-
-        _binding = null
-        super.onDestroyView()
-    }
 
     companion object {
 

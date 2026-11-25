@@ -4,18 +4,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentLanguageBinding
-import kotlinx.coroutines.launch
+import com.example.lovetester.ui.common.collectOn
+import com.example.lovetester.ui.common.viewBinding
 
 class LanguageFragment : Fragment(R.layout.fragment_language) {
 
-    private var _binding: FragmentLanguageBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private val binding by viewBinding(FragmentLanguageBinding::bind)
 
     private val viewModel: LanguageViewModel by viewModels()
 
@@ -24,8 +21,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding = FragmentLanguageBinding.bind(view)
 
         setupLanguages()
         setupListeners()
@@ -43,11 +38,7 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
         binding.rvLanguages.layoutManager = LinearLayoutManager(requireContext())
         binding.rvLanguages.adapter = adapter
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.selectedId.collect { adapter.selectedId = it }
-            }
-        }
+        viewModel.selectedId.collectOn(viewLifecycleOwner) { adapter.selectedId = it }
     }
 
     private fun setupListeners() {
@@ -67,7 +58,6 @@ class LanguageFragment : Fragment(R.layout.fragment_language) {
 
     override fun onDestroyView() {
         binding.rvLanguages.adapter = null
-        _binding = null
         super.onDestroyView()
     }
 }

@@ -4,14 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.data.local.model.OnboardingStep
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.ActivityLanguageBinding
 import com.example.lovetester.ui.common.applySystemBarsPadding
+import com.example.lovetester.ui.common.collectOn
 import com.example.lovetester.ui.common.enableLightEdgeToEdge
 import com.example.lovetester.ui.intro.IntroActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,11 +54,7 @@ class LanguageActivity : AppCompatActivity() {
         binding.rvLanguages.layoutManager = LinearLayoutManager(this)
         binding.rvLanguages.adapter = adapter
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.selectedId.collect { adapter.selectedId = it }
-            }
-        }
+        viewModel.selectedId.collectOn(this) { adapter.selectedId = it }
     }
 
     private fun setupConfirmButton() {
