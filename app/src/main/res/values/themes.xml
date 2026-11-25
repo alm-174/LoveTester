@@ -1,9 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.LoveTester" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <!-- Base application theme. Light only: the app is designed for a light UI (see report). -->
+    <style name="Base.Theme.LoveTester" parent="Theme.Material3.Light.NoActionBar">
+        <item name="materialButtonStyle">@style/Widget.LoveTester.Button.Filled</item>
+        <!-- Stop the system "force dark" from recolouring the (hard-coded light) screens. -->
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
     </style>
 
     <style name="Theme.LoveTester" parent="Base.Theme.LoveTester" />
+
 </resources>

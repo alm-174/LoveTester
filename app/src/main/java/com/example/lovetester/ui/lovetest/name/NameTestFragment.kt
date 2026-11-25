@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentNameTestBinding
+import com.example.lovetester.ui.common.safeNavigate
 import com.example.lovetester.ui.lovetest.domain.LoveTestCalculator
 
 class NameTestFragment : Fragment(R.layout.fragment_name_test) {
@@ -53,7 +54,7 @@ class NameTestFragment : Fragment(R.layout.fragment_name_test) {
                 putInt("percentage", percentage)
             }
 
-            findNavController().navigate(
+            findNavController().safeNavigate(
                 R.id.action_nameTest_to_result,
                 args
             )

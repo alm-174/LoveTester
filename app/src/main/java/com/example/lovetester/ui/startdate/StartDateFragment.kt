@@ -114,7 +114,7 @@ class StartDateFragment : Fragment(R.layout.fragment_start_date) {
     private fun updateSelectedDate() {
         binding.tvSelectedDate.text =
             selectedDate?.format(dateFormatter)
-                ?: "Select date"
+                ?: getString(R.string.common_select_date)
     }
 
     private fun saveAndFinish() {

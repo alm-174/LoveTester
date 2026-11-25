@@ -43,6 +43,9 @@
     <string name="common_gender_male">Pria</string>
     <string name="common_gender_female">Wanita</string>
 
+    <string name="common_gender_other">Lainnya</string>
+    <string name="common_saving">Menyimpan…</string>
+
     <!-- Bottom tabs -->
     <string name="nav_home">Beranda</string>
     <string name="nav_home_tab">Tab Beranda</string>
@@ -94,6 +97,7 @@
     <string name="information_name_hint">Masukkan nama</string>
     <string name="information_gender_label">Jenis kelamin</string>
     <string name="information_birthday_label">Tanggal lahir</string>
+    <string name="information_select_birthday">Pilih tanggal lahir</string>
     <string name="information_error_name_empty">Nama tidak boleh kosong</string>
     <string name="information_error_name_too_long">Nama maksimal 100 karakter</string>
     <string name="information_error_save">Tidak dapat menyimpan informasimu</string>

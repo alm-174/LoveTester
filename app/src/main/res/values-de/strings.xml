@@ -43,6 +43,9 @@
     <string name="common_gender_male">Männlich</string>
     <string name="common_gender_female">Weiblich</string>
 
+    <string name="common_gender_other">Divers</string>
+    <string name="common_saving">Wird gespeichert…</string>
+
     <!-- Bottom tabs -->
     <string name="nav_home">Start</string>
     <string name="nav_home_tab">Tab Start</string>
@@ -95,6 +98,7 @@
     <string name="information_name_hint">Namen eingeben</string>
     <string name="information_gender_label">Geschlecht</string>
     <string name="information_birthday_label">Geburtstag</string>
+    <string name="information_select_birthday">Geburtstag auswählen</string>
     <string name="information_error_name_empty">Der Name darf nicht leer sein</string>
     <string name="information_error_name_too_long">Der Name darf höchstens 100 Zeichen lang sein</string>
     <string name="information_error_save">Deine Informationen konnten nicht gespeichert werden</string>

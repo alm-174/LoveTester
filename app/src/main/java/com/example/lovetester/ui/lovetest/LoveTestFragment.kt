@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentLoveTestBinding
+import com.example.lovetester.ui.common.safeNavigate
 
 class LoveTestFragment : Fragment() {
 
@@ -41,38 +45,34 @@ class LoveTestFragment : Fragment() {
         setupCardClicks()
     }
 
+    /**
+     * Colours the LAST word of the (translated) title with the primary colour.
+     * A single-word title (e.g. German "Liebestest") stays one colour.
+     */
     private fun setupTitle() {
-        val text = "Love Test"
+        val title = getString(R.string.love_test_title)
+        val accentStart = title.lastIndexOf(' ') + 1
 
-        val spannable = android.text.SpannableString(text)
-
-        spannable.setSpan(
-            android.text.style.ForegroundColorSpan(
-                android.graphics.Color.parseColor("#FF0845")
-            ),
-            5,
-            text.length,
-            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        binding.tvLoveTestTitle.text = spannable
+        binding.tvLoveTestTitle.text = if (accentStart > 0) {
+            buildSpannedString {
+                append(title.substring(0, accentStart))
+                color(ContextCompat.getColor(requireContext(), R.color.primary)) {
+                    append(title.substring(accentStart))
+                }
+            }
+        } else {
+            title
+        }
     }
 
     private fun setupCardClicks() {
 
         binding.cardNameTest.setOnClickListener {
-            // Điều hướng tới NameTestFragment
-            findNavController().navigate(
-                R.id.action_loveTest_to_nameTest
-            )
+            findNavController().safeNavigate(R.id.action_loveTest_to_nameTest)
         }
 
         binding.cardHoroscopeTest.setOnClickListener {
-            // Điều hướng tới HoroscopeTestFragment
-
-            findNavController().navigate(
-                R.id.action_loveTest_to_horoscopeTest
-            )
+            findNavController().safeNavigate(R.id.action_loveTest_to_horoscopeTest)
         }
     }
 

@@ -52,6 +52,8 @@
     <string name="common_person_two_avatar">Person two avatar</string>
     <string name="common_gender_male">Male</string>
     <string name="common_gender_female">Female</string>
+    <string name="common_gender_other">Other</string>
+    <string name="common_saving">Saving…</string>
     <string name="percent_format" translatable="false">%1$d%%</string>
 
     <!-- Bottom tabs -->
@@ -106,6 +108,7 @@
     <string name="information_name_hint">Enter name</string>
     <string name="information_gender_label">Gender</string>
     <string name="information_birthday_label">Birthday</string>
+    <string name="information_select_birthday">Select birthday</string>
     <string name="information_error_name_empty">Name can\'t be empty</string>
     <string name="information_error_name_too_long">Name must be 100 characters or fewer</string>
     <string name="information_error_save">Couldn\'t save your information</string>

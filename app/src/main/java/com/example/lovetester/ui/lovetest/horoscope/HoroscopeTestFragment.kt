@@ -11,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentHoroscopeTestBinding
+import com.example.lovetester.ui.common.safeNavigate
 import com.example.lovetester.ui.lovetest.result.LoveTestResultFragment
 import kotlinx.coroutines.launch
 
@@ -55,7 +56,7 @@ class HoroscopeTestFragment :
         getString(HoroscopePickerBottomSheet.RESULT_SIGN)?.let { ZodiacSign.valueOf(it) }
 
     private fun setupClicks() {
-        binding.btnBack.setOnClickListener { requireActivity().finish() }
+        binding.btnBack.setOnClickListener { findNavController().navigateUp() }
 
         binding.layoutYourZodiac.setOnClickListener {
             openPicker(REQUEST_MY_SIGN, viewModel.uiState.value.mySign)
@@ -77,7 +78,7 @@ class HoroscopeTestFragment :
                 LoveTestResultFragment.ARG_SIGN_TWO to state.partnerSign.name
             )
 
-            findNavController().navigate(R.id.action_horoscopeTest_to_result, args)
+            findNavController().safeNavigate(R.id.action_horoscopeTest_to_result, args)
         }
     }
 

@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -41,7 +42,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var personType: PersonType
 
-    private var selectedGender: Gender = Gender.MALE
+    private var selectedGender: Gender? = null
     private var selectedBirthday: LocalDate? = null
 
     private var currentAvatarPath: String? = null
@@ -137,7 +138,9 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState
             ?.getString(KEY_SELECTED_GENDER)
             ?.let {
-                selectedGender = Gender.valueOf(it)
+                selectedGender = savedInstanceState
+                    ?.getString(KEY_SELECTED_GENDER)
+                    ?.let(Gender::valueOf)
             }
     }
 
@@ -204,10 +207,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
             selectedBirthday?.toString()
         )
 
-        outState.putString(
-            KEY_SELECTED_GENDER,
-            selectedGender.name
-        )
+        outState.putString(KEY_SELECTED_GENDER, selectedGender?.name)
     }
 
     // =========================
@@ -252,7 +252,9 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
                 selectedBirthday = info.birthday
             }
 
-            selectedGender = info.gender
+            if (selectedGender == null) {
+                selectedGender = info.gender
+            }
 
             renderGender()
             renderBirthday()
@@ -264,24 +266,15 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
     // =========================
 
     private fun setupGender() {
-
         binding.tvGender.setOnClickListener { view ->
-
             val popup = PopupMenu(requireContext(), view)
 
-            popup.menu.add("Male")
-            popup.menu.add("Female")
-            popup.menu.add("Other")
+            Gender.entries.forEachIndexed { index, gender ->
+                popup.menu.add(Menu.NONE, index, index, gender.labelRes())
+            }
 
             popup.setOnMenuItemClickListener { item ->
-
-                selectedGender = when (item.title.toString()) {
-                    "Male" -> Gender.MALE
-                    "Female" -> Gender.FEMALE
-                    "Other" -> Gender.OTHER
-                    else -> selectedGender
-                }
-
+                selectedGender = Gender.entries[item.itemId]
                 renderGender()
                 true
             }
@@ -291,12 +284,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun renderGender() {
-
-        binding.tvGender.text = when (selectedGender) {
-            Gender.MALE -> "Male"
-            Gender.FEMALE -> "Female"
-            Gender.OTHER -> "Other"
-        }
+        binding.tvGender.text = selectedGender?.let { getString(it.labelRes()) }.orEmpty()
     }
 
     // =========================
@@ -338,7 +326,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
 
         binding.tvBirthday.text =
             selectedBirthday?.format(birthdayFormatter)
-                ?: "Select birthday"
+                ?: getString(R.string.information_select_birthday)
     }
 
     // =========================
@@ -514,7 +502,7 @@ class InformationBottomSheet : BottomSheetDialogFragment() {
 
                     val info = PersonInfo(
                         name = name,
-                        gender = selectedGender,
+                        gender = selectedGender ?: Gender.MALE,
                         birthday = selectedBirthday,
                         avatarPath = avatarPath
                     )

@@ -167,7 +167,9 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
         binding.etMemoryTitle.isEnabled = !saving
         binding.cardMemoryPhoto.isEnabled = !saving
         binding.layoutMemoryDate.isEnabled = !saving
-        binding.btnSaveMemory.text = if (saving) "Saving…" else "Save"
+        binding.btnSaveMemory.setText(
+            if (saving) R.string.common_saving else R.string.common_save
+        )
     }
 
     private fun showError(message: String?) {

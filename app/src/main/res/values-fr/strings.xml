@@ -43,6 +43,9 @@
     <string name="common_gender_male">Homme</string>
     <string name="common_gender_female">Femme</string>
 
+    <string name="common_gender_other">Autre</string>
+    <string name="common_saving">Enregistrement…</string>
+
     <!-- Bottom tabs -->
     <string name="nav_home">Accueil</string>
     <string name="nav_home_tab">Onglet Accueil</string>
@@ -96,6 +99,7 @@
     <string name="information_name_hint">Saisissez le nom</string>
     <string name="information_gender_label">Genre</string>
     <string name="information_birthday_label">Anniversaire</string>
+    <string name="information_select_birthday">Choisir l\'anniversaire</string>
     <string name="information_error_name_empty">Le nom ne peut pas être vide</string>
     <string name="information_error_name_too_long">Le nom doit contenir 100 caractères maximum</string>
     <string name="information_error_save">Impossible d\'enregistrer vos informations</string>
