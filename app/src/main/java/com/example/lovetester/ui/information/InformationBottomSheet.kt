@@ -1,4 +1,3 @@
-
 package com.example.lovetester.ui.information
 
 import android.net.Uri

@@ -26,26 +26,31 @@ object ImageDownscaler {
     ) = withContext(Dispatchers.IO) {
         val resolver = context.contentResolver
 
-        // 1. Read only the size.
-        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+        // Mở stream ĐÚNG 1 LẦN duy nhất để tránh lỗi mất quyền đọc Uri ở lần mở thứ 2, 3
+        val imageBytes = resolver.openInputStream(uri)?.use { it.readBytes() }
             ?: error("Cannot open selected image")
+
+        check(imageBytes.isNotEmpty()) { "Selected image is empty" }
+
+        // 1. Read only the size từ byteArray
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size, bounds)
         check(bounds.outWidth > 0 && bounds.outHeight > 0) { "Selected file is not an image" }
 
-        // 2. Decode with a power-of-two sample that keeps the longest side >= maxEdge.
+        // 2. Decode with sample
         var sample = 1
         while (maxOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= maxEdge) sample *= 2
         val options = BitmapFactory.Options().apply { inSampleSize = sample }
-        val decoded = resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
+        val decoded = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size, options)
             ?: error("Cannot decode selected image")
 
-        // 3. EXIF rotation + exact downscale in one matrix.
-        val orientation = resolver.openInputStream(uri)?.use {
+        // 3. EXIF rotation từ byteArray
+        val orientation = imageBytes.inputStream().use {
             ExifInterface(it).getAttributeInt(
                 ExifInterface.TAG_ORIENTATION,
                 ExifInterface.ORIENTATION_NORMAL
             )
-        } ?: ExifInterface.ORIENTATION_NORMAL
+        }
 
         val scale = minOf(1f, maxEdge / maxOf(decoded.width, decoded.height).toFloat())
         val matrix = Matrix().apply {
@@ -55,7 +60,6 @@ object ImageDownscaler {
         val result = Bitmap.createBitmap(decoded, 0, 0, decoded.width, decoded.height, matrix, true)
 
         try {
-            // PNG keeps transparency; everything else is stored as JPEG.
             val format = if (result.hasAlpha()) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG
             destination.outputStream().use { out ->
                 check(result.compress(format, 90, out)) { "Cannot write image" }
