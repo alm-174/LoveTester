@@ -10,7 +10,7 @@ Tài liệu này được biên soạn dành cho lập trình viên mới học 
 - [x] **Phần 1**: Khởi động và Onboarding (Splash → Language → Intro → Permission → Home)
 - [x] **Phần 2**: Home – Vỏ 3 tab (HomeActivity, FragmentManager, show/hide, xoay màn hình)
 - [x] **Phần 3**: Tab Home (Dữ liệu ngày yêu, Avatar, Tên, BackgroundBottomSheet, InformationBottomSheet)
-- [ ] **Phần 4**: Start Date (HomeFragment → StartDateActivity → LoveDatePickerDialog)
+- [x] **Phần 4**: Start Date (HomeFragment → StartDateActivity → LoveDatePickerDialog)
 - [ ] **Phần 5**: Love Test (NameTestActivity, HoroscopeTestActivity, LoveTestCalculator, ResultActivity)
 - [ ] **Phần 6**: Memory (Room Database, Flow, MemoryViewModel, ConcatAdapter, AddMemoryActivity)
 - [ ] **Phần 7**: Cài đặt và Đa ngôn ngữ (SettingsActivity, LanguageActivity, AppCompatDelegate)
@@ -768,6 +768,193 @@ destination.outputStream().use { scaled.compress(Bitmap.CompressFormat.JPEG, 85,
 1. Khi người dùng đổi hình nền mới trong `BackgroundBottomSheet`, tại sao `HomeFragment` không cần viết hàm callback nào mà ảnh nền trên màn hình chính vẫn tự động cập nhật ngay lập tức?
 2. Nếu người dùng chọn chụp ảnh từ Camera trong `InformationBottomSheet`, ảnh tạm thời được lưu ở thư mục nào và được dọn dẹp vào những thời điểm nào?
 3. Tại sao trong `ImageDownscaler.kt`, việc đọc toàn bộ byte của Uri vào mảng `imageBytes` ngay từ đầu lại giải quyết được lỗi mất quyền truy cập (SecurityException / Permission Denial) trên Android?
+
+---
+
+# Phần 4: Start Date (HomeFragment → StartDateActivity → LoveDatePickerDialog)
+
+## a) Đọc file theo thứ tự
+1. `ui/home/HomeFragment.kt`: Lắng nghe sự kiện người dùng bấm vào khu vực đếm ngày (`layoutLoveDays`) để mở `StartDateActivity`, đồng thời quan sát luồng Flow `loveStartDate` để cập nhật số ngày yêu trên giao diện chính.
+2. `ui/startdate/StartDateActivity.kt`: Màn hình chỉnh sửa ngày bắt đầu yêu, hiển thị ngày đã chọn, mở dialog chọn ngày, nhận kết quả từ Fragment Result API và lưu vào DataStore.
+3. `ui/common/dialog/datepicker/LoveDatePickerDialog.kt`: Custom `DialogFragment` hiển thị bộ chọn ngày tháng năm dạng lưới lịch, giới hạn ngày tối đa là ngày hiện tại (`maximumDate`).
+4. `ui/common/dialog/datepicker/CalendarDay.kt`: Data class biểu diễn một ô ngày trên lịch (ngày, thuộc tháng hiện tại, đang được chọn, có được phép bấm hay không).
+5. `ui/common/dialog/datepicker/CalendarDayAdapter.kt`: `ListAdapter` hiển thị lưới lịch 7 cột (các ngày trong tuần từ Chủ Nhật đến Thứ Bảy).
+6. `ui/common/dialog/datepicker/CalendarYearAdapter.kt`: `ListAdapter` hiển thị lưới 4 cột chọn năm khi người dùng chạm vào thanh tiêu đề tháng/năm.
+7. `data/local/repository/LoveSettingsRepository.kt`: Nơi lưu trữ ngày bắt đầu yêu vào DataStore Preferences (`setLoveStartDate`) và phát ra luồng dữ liệu `loveStartDate: Flow<LocalDate?>`.
+
+---
+
+## b) Sơ đồ chuỗi gọi (Call Chain)
+
+```text
+Người dùng chạm vào ô đếm ngày trên HomeFragment (layoutLoveDays)
+  → HomeFragment.binding.layoutLoveDays.setOnClickListener()
+      → startActivity(Intent(requireContext(), StartDateActivity::class.java))
+  → StartDateActivity.onCreate()
+      → supportFragmentManager.setFragmentResultListener(LoveDatePickerDialog.REQUEST_KEY)
+      → StartDateActivity.loadSavedDate()
+          → LoveSettingsRepository.loveStartDate.first()   [đọc ngày lưu trong DataStore]
+          → StartDateActivity.updateSelectedDate()          [hiển thị định dạng dd/MM/yyyy]
+  → Người dùng chạm vào khung chọn ngày (layoutDateOfLove)
+      → StartDateActivity.showDatePicker()
+          → LoveDatePickerDialog.newInstance(selectedDate ?: LocalDate.now())
+          → supportFragmentManager.showOnce(dialog, "LoveDatePickerDialog")
+  → LoveDatePickerDialog.onViewCreated()
+      → LoveDatePickerDialog.setupCalendar()
+          → Cài đặt GridLayoutManager 7 cột cho CalendarDayAdapter
+          → Cài đặt GridLayoutManager 4 cột cho CalendarYearAdapter
+      → LoveDatePickerDialog.renderCalendar()
+          → LoveDatePickerDialog.buildCalendarDays()        [tính offset thứ trong tuần, tạo danh sách CalendarDay]
+          → dayAdapter.submitDays()                         [hiển thị các ngày lên lưới]
+  → Người dùng đổi tháng (bấm btnPreviousMonth / btnNextMonth) hoặc đổi năm (bấm tvCalendarMonth)
+      → Người dùng bấm chọn 1 ngày hợp lệ trên lưới
+          → dayAdapter.onDayClick(clickedDate)
+          → LoveDatePickerDialog.selectedDate = clickedDate
+          → LoveDatePickerDialog.renderCalendar()           [vẽ lại ô ngày được chọn]
+  → Người dùng bấm "Save" trên Dialog (btnSaveDate)
+      → LoveDatePickerDialog.binding.btnSaveDate.setOnClickListener()
+          → parentFragmentManager.setFragmentResult(REQUEST_KEY, bundle(RESULT_DATE = resultDate.toString()))
+          → LoveDatePickerDialog.dismiss()
+  → StartDateActivity nhận kết quả từ setFragmentResultListener
+      → StartDateActivity.selectedDate = LocalDate.parse(dateString)
+      → StartDateActivity.updateSelectedDate()              [cập nhật ngày mới lên TextView]
+  → Người dùng bấm "Done" (binding.btnDone)
+      → StartDateActivity.saveAndFinish()
+          → LoveSettingsRepository.setLoveStartDate(date)   [ghi ngày vào DataStore Preferences]
+          → StartDateActivity.finish()                      [đóng màn hình StartDateActivity]
+  → Quay trở lại HomeFragment
+      → LoveSettingsRepository.loveStartDate (Flow) tự động phát ra giá trị LocalDate mới
+      → HomeFragment.observeSettings() nhận ngày mới
+      → ChronoUnit.DAYS.between(startDate, LocalDate.now()) tính toán lại số ngày
+      → HomeFragment.binding.tvLoveDays.text cập nhật số ngày yêu mới ngay lập tức
+```
+
+---
+
+## c) Giải thích chi tiết từng bước
+
+1. **Khởi tạo và hiển thị ngày hiện tại trong `StartDateActivity`**:
+   - Khi người dùng bấm vào khu vực đếm ngày trên `HomeFragment`, `StartDateActivity` được khởi động.
+   - Trong `StartDateActivity.onCreate()`:
+     - Đăng ký `supportFragmentManager.setFragmentResultListener` với key `LoveDatePickerDialog.REQUEST_KEY` để sẵn sàng đón nhận ngày trả về từ dialog.
+     - Kiểm tra `savedInstanceState`: Nếu người dùng vừa xoay màn hình trong khi đang chọn dở, ngày tạm thời sẽ được khôi phục từ `KEY_PENDING_DATE`.
+     - Nếu mở mới hoàn toàn, hàm `loadSavedDate()` chạy một coroutine đọc giá trị từ DataStore: `repository.loveStartDate.first()`. Sau đó định dạng hiển thị thành chuỗi ngày tháng năm (`dd/MM/yyyy`) qua hàm `updateSelectedDate()`.
+
+2. **Cấu tạo và cơ chế hoạt động của `LoveDatePickerDialog`**:
+   - `LoveDatePickerDialog` là một custom `DialogFragment` hiển thị lịch dạng lưới, được mở qua hàm tĩnh `newInstance(initialDate: LocalDate)`.
+   - **Chặn chọn ngày tương lai (`maximumDate`)**:
+     - Biến `maximumDate` được gán bằng `LocalDate.now()`. Bất kỳ ngày nào nằm sau ngày hôm nay (`date.isAfter(maximumDate)`) sẽ có cờ `isEnabled = false`, chữ bị mờ đi và click listener bị vô hiệu hóa.
+   - **Thuật toán dựng lưới ngày (`buildCalendarDays`)**:
+     1. Lấy ngày đầu tiên của tháng: `firstDay = displayedMonth.atDay(1)`.
+     2. Xác định thứ trong tuần của ngày mùng 1: Java quy ước Monday = 1 đến Sunday = 7. Hàm đổi sang hệ Chủ Nhật = 0 bằng công thức: `val offset = firstDay.dayOfWeek.value % 7`.
+     3. Xác định ngày bắt đầu của cả khung lưới (có thể là những ngày cuối của tháng trước): `gridStartDate = firstDay.minusDays(offset.toLong())`.
+     4. Tính tổng số ô cần vẽ theo bội số của 7 cột: `totalCells = ((cells + 6) / 7) * 7`.
+     5. Dùng vòng lặp tạo ra danh sách đối tượng `CalendarDay`, đánh dấu ô nào thuộc tháng hiện tại (`isCurrentMonth`), ô nào đang được chọn (`isSelected`) và ô nào hợp lệ (`isEnabled`).
+
+3. **Chuyển đổi linh hoạt giữa chọn Ngày và chọn Năm**:
+   - Bình thường, lịch hiển thị lưới 7 cột ngày (`rvCalendarDays`).
+   - Khi người dùng chạm vào tiêu đề tháng năm (`tvCalendarMonth`), biến `isYearPickerVisible` đảo trạng thái từ `false` sang `true`.
+   - Hàm `renderCalendar()` sẽ ẩn `rvCalendarDays` và hiện `rvCalendarYears` (lưới 4 cột chọn năm).
+   - Danh sách năm được sinh từ năm 1 đến năm hiện tại (`1..maximumDate.year`). Khi người dùng chạm vào một năm trong `CalendarYearAdapter`, tháng hiển thị chuyển về năm đó, `isYearPickerVisible` được tắt lại về `false` và lưới ngày của tháng tương ứng được vẽ lại.
+
+4. **Giao tiếp giữa Dialog và Activity qua Fragment Result API**:
+   - Khi người dùng chọn ngày ưng ý và bấm nút "Save" (`btnSaveDate`) trong dialog:
+     ```kotlin
+     parentFragmentManager.setFragmentResult(
+         REQUEST_KEY,
+         Bundle().apply { putString(RESULT_DATE, resultDate.toString()) }
+     )
+     dismiss()
+     ```
+   - Không cần dùng interface callback hay ép kiểu Activity (`as? OnDateSelectedListener`), `StartDateActivity` tự động nhận Bundle qua `setFragmentResultListener` đã đăng ký trong `onCreate`, bóc tách chuỗi ISO (dạng `"2024-05-20"`), parse lại thành `LocalDate` và hiển thị lên màn hình.
+
+5. **Lưu trữ và cơ chế Reactive tự động cập nhật ở Home**:
+   - Khi người dùng bấm nút "Done" (`btnDone`), hàm `saveAndFinish()` được kích hoạt:
+     - Nút Done bị vô hiệu hóa tạm thời (`binding.btnDone.isEnabled = false`) để tránh gửi yêu cầu ghi trùng lặp.
+     - Gọi `repository.setLoveStartDate(date)`. Trong `LoveSettingsRepository.kt`, hàm này dùng `store.edit` để ghi đè chuỗi ngày vào key DataStore `LOVE_START_DATE`.
+     - Sau khi lưu xong, gọi `finish()` để đóng `StartDateActivity`.
+   - **Vì sao màn hình Home tự động đổi số ngày mà không cần code lắng nghe kết quả từ StartDateActivity?**:
+     - Trong `HomeFragment.kt`, hàm `observeSettings()` đang lắng nghe luồng `repository.loveStartDate.collectOn(viewLifecycleOwner)`.
+     - DataStore Preferences trong Android hoạt động dựa trên Kotlin `Flow`. Ngay khi `StartDateActivity` ghi giá trị mới xuống ổ cứng, DataStore sẽ tự động phát (emit) giá trị `LocalDate` mới này tới toàn bộ các nơi đang lắng nghe nó.
+     - Khối code trong `HomeFragment` lập tức nhận được ngày mới, thực hiện phép tính `ChronoUnit.DAYS.between(startDate, LocalDate.now())` và gán vào `tvLoveDays.text`. Mọi thứ diễn ra hoàn toàn tự động, phân tách trách nhiệm tuyệt đối.
+
+---
+
+## d) Vòng đời và Quản lý trạng thái (Lifecycle & State)
+
+- **`StartDateActivity`**:
+  - `onCreate()`: Đăng ký lắng nghe Fragment Result từ Dialog trước khi có bất kỳ sự kiện nào xảy ra; khôi phục ngày từ `savedInstanceState` (nếu có) hoặc tải từ DataStore.
+  - `onSaveInstanceState()`: Lưu `selectedDate` vào Bundle với key `KEY_PENDING_DATE`. Nhờ vậy, nếu người dùng đã chọn ngày mới trong dialog nhưng chưa kịp bấm "Done" mà xoay ngang màn hình, giá trị vừa chọn không bao giờ bị mất về ngày cũ.
+- **`LoveDatePickerDialog`**:
+  - `onSaveInstanceState()`: Lưu giữ 3 trạng thái gồm `STATE_SELECTED_DATE`, `STATE_DISPLAYED_MONTH`, và `STATE_YEAR_PICKER_VISIBLE`. Khi xoay màn hình trong lúc dialog đang mở, lịch phục hồi đúng tháng và chế độ xem (lưới năm hay lưới ngày).
+  - `onStart()`: Can thiệp vào `dialog?.window?.setLayout` để đặt chiều rộng dialog bằng 90% chiều rộng màn hình thiết bị (`widthPixels * 0.90f`), đảm bảo lịch hiển thị cân đối trên cả điện thoại màn hình nhỏ và màn hình lớn.
+  - `onDestroyView()`: Giải phóng adapter của 2 RecyclerView (`rvCalendarDays.adapter = null`, `rvCalendarYears.adapter = null`) để tránh rò rỉ bộ nhớ View.
+
+---
+
+## e) Đoạn code then chốt
+
+### Đoạn 1: Tính toán lưới ngày lịch trong `LoveDatePickerDialog.buildCalendarDays()`
+```kotlin
+// LoveDatePickerDialog.kt
+val firstDay = displayedMonth.atDay(1)
+val offset = firstDay.dayOfWeek.value % 7 // Monday=1..Sunday=7 đổi thành Sunday=0
+val gridStartDate = firstDay.minusDays(offset.toLong())
+val cells = offset + displayedMonth.lengthOfMonth()
+val totalCells = ((cells + 6) / 7) * 7
+return (0 until totalCells).map { index ->
+    val date = gridStartDate.plusDays(index.toLong())
+    CalendarDay(date = date, isCurrentMonth = YearMonth.from(date) == displayedMonth,
+        isSelected = date == selectedDate, isEnabled = !date.isAfter(maximumDate))
+}
+```
+*Giải thích*: Thuật toán tính toán chuẩn xác ngày bắt đầu của lưới (bao gồm các ngày cuối tháng trước để bù đủ tuần), xác định ô ngày hợp lệ (không vượt quá ngày hiện tại) và ô đang được chọn.
+
+### Đoạn 2: Truyền kết quả không phụ thuộc vòng đời qua Fragment Result API
+```kotlin
+// LoveDatePickerDialog.kt (Gửi kết quả)
+parentFragmentManager.setFragmentResult(
+    REQUEST_KEY,
+    Bundle().apply { putString(RESULT_DATE, resultDate.toString()) }
+)
+dismiss()
+
+// StartDateActivity.kt (Nhận kết quả trong onCreate)
+supportFragmentManager.setFragmentResultListener(LoveDatePickerDialog.REQUEST_KEY, this) { _, bundle ->
+    val dateString = bundle.getString(LoveDatePickerDialog.RESULT_DATE)
+    selectedDate = dateString?.let(LocalDate::parse)
+    updateSelectedDate()
+}
+```
+*Giải thích*: Cơ chế giao tiếp hiện đại giữa Fragment/Dialog và Activity, không gây rò rỉ tham chiếu (leak reference) và sống sót an toàn qua việc huỷ/tạo lại Activity khi xoay màn hình.
+
+### Đoạn 3: Lưu DataStore và kết thúc màn hình tại `StartDateActivity.saveAndFinish()`
+```kotlin
+// StartDateActivity.kt
+private fun saveAndFinish() {
+    val date = selectedDate ?: return
+    binding.btnDone.isEnabled = false
+    lifecycleScope.launch {
+        try {
+            repository.setLoveStartDate(date)
+            finish()
+        } catch (e: Exception) {
+            binding.btnDone.isEnabled = true
+            toast(R.string.start_date_save_error)
+        }
+    }
+}
+```
+*Giải thích*: Vô hiệu hóa nút bấm tránh spam click, ghi bất đồng bộ vào DataStore trên coroutine và đóng Activity để nhường quyền cập nhật tự động cho Flow ở HomeFragment.
+
+---
+
+## f) Tự kiểm tra (Self-Check)
+
+1. Trong `LoveDatePickerDialog.kt`, tại sao biến `maximumDate` lại được gán bằng `LocalDate.now()` và điều gì ngăn người dùng chọn một ngày trong tương lai?
+2. Tại sao `StartDateActivity` không cần truyền ngày mới qua `setResult()` hay `startActivityForResult` về cho `HomeFragment` mà `HomeFragment` vẫn biết để cập nhật số ngày yêu?
+3. Nếu người dùng mở `LoveDatePickerDialog`, chuyển sang xem danh sách chọn năm rồi xoay màn hình điện thoại, nhờ đoạn code nào mà dialog vẫn giữ nguyên chế độ xem danh sách năm sau khi xoay?
+
 
 
 
