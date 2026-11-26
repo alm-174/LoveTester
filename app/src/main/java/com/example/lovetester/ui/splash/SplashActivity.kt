@@ -113,7 +113,7 @@ class SplashActivity : AppCompatActivity() {
     private fun loadOnboardingStep() {
         lifecycleScope.launch {
             onboardingStep = try {
-                repository.onboardingStep.first()
+                repository.onboardingStep.first() //đọc dữ lieuj đầu tin Flow phát ra
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (_: Exception) {

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.data.local.database.MemoryEntity
 import android.content.Intent
+import com.example.lovetester.ui.common.applySystemBarsPadding
 
 @AndroidEntryPoint
 class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
@@ -46,6 +47,8 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.root.applySystemBarsPadding()
 
         openingAddMemory = false
 
@@ -127,6 +130,6 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
     }
 
     private companion object {
-        const val HEADER_ADD_THRESHOLD = 4
+        const val HEADER_ADD_THRESHOLD = 5
     }
 }

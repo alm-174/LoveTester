@@ -13,7 +13,7 @@ Tài liệu này được biên soạn dành cho lập trình viên mới học 
 - [x] **Phần 4**: Start Date (HomeFragment → StartDateActivity → LoveDatePickerDialog)
 - [x] **Phần 5**: Love Test (NameTestActivity, HoroscopeTestActivity, LoveTestCalculator, ResultActivity)
 - [x] **Phần 6**: Memory (Room Database, Flow, MemoryViewModel, ConcatAdapter, AddMemoryActivity)
-- [ ] **Phần 7**: Cài đặt và Đa ngôn ngữ (SettingsActivity, LanguageActivity, AppCompatDelegate)
+- [x] **Phần 7**: Cài đặt và Đa ngôn ngữ (SettingsActivity, LanguageActivity, AppCompatDelegate)
 - [ ] **Phần 8**: Hạ tầng dùng chung (UI Extensions, DataStore, Room, File Storage)
 - [ ] **Phần 9**: Phụ lục (Bảng tra cứu "Muốn sửa X mở file nào" & Thuật ngữ cốt lõi)
 
@@ -1387,6 +1387,173 @@ deleteActionId = ViewCompat.addAccessibilityAction(
 1. Tại sao trong `MemoryListFragment`, `MemoryViewModel` lại được khởi tạo bằng `by activityViewModels()` thay vì `by viewModels()`?
 2. Trong `MemoryRepository.addMemory()`, nếu quá trình chèn dữ liệu vào Room Database (`dao.insert`) bị lỗi thì khối `catch` thực hiện điều gì để bảo vệ bộ nhớ thiết bị?
 3. Khi danh sách kỷ niệm đạt từ 5 mục trở lên, nút thêm kỷ niệm ở cuối danh sách (Footer) sẽ biến mất và thay thế bằng nút nào trên giao diện?
+
+---
+
+# Phần 7: Cài đặt và Đa ngôn ngữ (SettingsActivity, LanguageActivity, AppCompatDelegate)
+
+## a) Đọc file theo thứ tự
+1. `ui/setting/SettingsActivity.kt`: Màn hình Cài đặt, điều hướng người dùng sang `LanguageActivity` kèm cờ `fromSettings = true`.
+2. `ui/language/LanguageActivity.kt`: Màn hình danh sách ngôn ngữ, phân nhánh xử lý giữa việc mở lần đầu (Onboarding) và mở từ màn hình Cài đặt.
+3. `ui/language/LanguageViewModel.kt`: ViewModel lưu mã ngôn ngữ đang được người dùng bấm chọn (`selectedId: StateFlow<String>`), lưu giữ an toàn qua `SavedStateHandle`.
+4. `ui/language/LanguageAdapter.kt`: `RecyclerView.Adapter` hiển thị danh sách 7 ngôn ngữ hỗ trợ kèm cờ quốc gia, cập nhật vị trí tick highlight.
+5. `ui/language/Language.kt`: Data class biểu diễn thông tin một ngôn ngữ gồm mã định danh `id`, tài nguyên tên `nameRes` và cờ quốc gia `flagRes`.
+6. `ui/language/SupportedLanguages.kt`: Singleton quản lý danh sách 7 ngôn ngữ hỗ trợ, phát hiện ngôn ngữ đang hiển thị (`current()`), và áp dụng ngôn ngữ toàn ứng dụng qua `AppCompatDelegate.setApplicationLocales()`.
+
+---
+
+## b) Sơ đồ chuỗi gọi (Call Chain)
+
+### Luồng 1: Mở LanguageActivity từ SettingsActivity và đổi ngôn ngữ
+```text
+Người dùng ở SettingsActivity chạm vào mục "Language" (layoutLanguage)
+  → SettingsActivity.binding.layoutLanguage.setOnClickListener()
+      → startActivity(LanguageActivity.newIntent(this, fromSettings = true))
+  → LanguageActivity.onCreate()
+      → setupHeader()
+          → fromSettings == true: nút btnBack hiển thị (binding.btnBack.isVisible = true)
+      → setupLanguageList()
+          → Lấy danh sách 7 ngôn ngữ từ SupportedLanguages.all
+          → Nạp vào LanguageAdapter với selectedId lấy từ viewModel.selectedId.value
+  → Người dùng chạm chọn một ngôn ngữ mới (ví dụ Tiếng Pháp "fr")
+      → LanguageAdapter.onClick(language)
+      → LanguageViewModel.select(language)
+          → savedStateHandle[KEY_SELECTED_ID] = "fr"
+          → viewModel.selectedId phát ra giá trị "fr"
+          → LanguageAdapter nhận giá trị mới qua collectOn(this) → dời icon tick xanh sang dòng Tiếng Pháp
+  → Người dùng chạm vào nút xác nhận tick ở góc trên bên phải (btnConfirmLanguage)
+      → LanguageActivity.binding.btnConfirmLanguage.setOnClickListener()
+          → Phát hiện fromSettings == true:
+              → LanguageActivity.finish()                   [đóng LanguageActivity trước]
+              → SupportedLanguages.apply(selectedLanguage)
+                  → AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("fr"))
+  → Hệ thống Android ghi nhận thay đổi cấu hình ngôn ngữ (Configuration Change - LocaleList)
+      → Mọi Activity đang mở trong stack (SettingsActivity, HomeActivity) tự động bị huỷ và tạo lại (Recreate)
+      → Khi SettingsActivity được tạo lại:
+          → Tự động nạp tài nguyên chuỗi từ thư mục res/values-fr/strings.xml
+          → Giao diện hiển thị hoàn toàn bằng Tiếng Pháp
+```
+
+### Luồng 2: Mở LanguageActivity lần đầu tiên trong luồng Onboarding
+```text
+Người dùng mở app lần đầu, sau khi SplashActivity kết thúc
+  → SplashActivity.navigateIfReady()
+      → startActivity(Intent(SplashActivity, LanguageActivity))
+  → LanguageActivity.onCreate()
+      → fromSettings == false: nút btnBack bị ẩn (binding.btnBack.isVisible = false)
+  → Người dùng chọn ngôn ngữ mong muốn và bấm nút tick xác nhận (btnConfirmLanguage)
+      → LanguageActivity.binding.btnConfirmLanguage.setOnClickListener()
+          → Phát hiện fromSettings == false:
+              → LoveSettingsRepository.setOnboardingStep(OnboardingStep.INTRO) [lưu bước tiếp theo vào DataStore]
+              → SupportedLanguages.apply(selectedLanguage)                    [áp dụng ngôn ngữ ngay trước khi rời đi]
+              → startActivity(Intent(this, IntroActivity::class.java))        [mở màn hình Intro]
+  → IntroActivity khởi tạo với Locale mới vừa được áp dụng
+```
+
+---
+
+## c) Giải thích chi tiết từng bước
+
+1. **Các mục trong `SettingsActivity`**:
+   - `btnBack`: Gọi `finish()` để quay trở lại tab Home (`HomeFragment`).
+   - `layoutLanguage`: Khởi chạy màn hình chọn ngôn ngữ thông qua `LanguageActivity.newIntent(this, fromSettings = true)`.
+   - Các dòng khác trên giao diện (`layoutRate`, `layoutShare`, `layoutFeedback`, `layoutPrivacyPolicy`): Là các hàng giao diện chuẩn bị sẵn cho việc đánh giá ứng dụng trên Play Store, chia sẻ link app, gửi email góp ý và xem chính sách quyền riêng tư.
+
+2. **Hai chế độ hoạt động của `LanguageActivity`**:
+   - Ứng dụng tái sử dụng duy nhất một `LanguageActivity` cho cả 2 tình huống nhờ cờ `EXTRA_FROM_SETTINGS`:
+     - **Chế độ Onboarding (`fromSettings = false`)**: Mở khi người dùng cài app lần đầu. Nút quay lại (`btnBack`) bị ẩn đi vì người dùng bắt buộc phải chọn một ngôn ngữ để tiếp tục. Khi xác nhận, ứng dụng lưu `OnboardingStep.INTRO` vào DataStore và khởi chạy `IntroActivity`.
+     - **Chế độ Cài đặt (`fromSettings = true`)**: Mở từ màn hình Settings. Nút quay lại (`btnBack`) được hiển thị rõ ràng để người dùng có thể huỷ bỏ nếu không muốn đổi.
+
+3. **Cơ chế lưu trữ và áp dụng ngôn ngữ qua `AppCompatDelegate`**:
+   - Trong `SupportedLanguages.kt`, hàm `apply(language)` gọi:
+     ```kotlin
+     AppCompatDelegate.setApplicationLocales(
+         LocaleListCompat.forLanguageTags(language.id)
+     )
+     ```
+   - **Cơ chế hoạt động**:
+     - Kể từ Android 13 (API 33), Google giới thiệu tính năng chọn ngôn ngữ riêng cho từng ứng dụng (**Per-app Language Preferences**). `AppCompatDelegate.setApplicationLocales` tự động uỷ quyền cho `android.app.LocaleManager` lưu trữ cấu hình này vào hệ thống của thiết bị (trong Settings của máy cũng sẽ thấy ngôn ngữ đã chọn cho ứng dụng này).
+     - Trên các phiên bản Android cũ hơn (Android 12 trở xuống), thư viện `androidx.appcompat` tự động lưu trữ cấu hình này vào file lưu trữ nội bộ riêng của nó và tự động áp dụng lại mỗi khi ứng dụng khởi động.
+
+4. **Tại sao Activity bị tạo lại (Activity Recreation)?**:
+   - Việc thay đổi Locale toàn ứng dụng là một sự kiện thay đổi cấu hình môi trường (**Configuration Change**) lớn, tương tự như khi xoay màn hình điện thoại hoặc chuyển đổi giao diện Dark/Light Mode.
+   - Để các văn bản trên giao diện chuyển sang ngôn ngữ mới, Android bắt buộc phải huỷ (`onDestroy`) và tạo lại (`onCreate`) các Activity trong ngăn xếp để các lời gọi `getString(R.string...)` và các thuộc tính `android:text="@string/..."` trong XML nạp lại tài nguyên từ thư mục tương ứng (ví dụ: `values-vi/strings.xml`, `values-fr/strings.xml`, `values-es/strings.xml`).
+   - **Kỹ thuật đóng màn trước, áp dụng ngôn ngữ sau**:
+     Trong `LanguageActivity.setupConfirmButton()`:
+     ```kotlin
+     if (fromSettings) {
+         finish()
+         SupportedLanguages.apply(selectedLanguage)
+         return@setOnClickListener
+     }
+     ```
+     Bằng cách gọi `finish()` trước, `LanguageActivity` sẽ đóng lại ngay lập tức mà không phải chịu ảnh hưởng của quá trình tái tạo. Khi lệnh `apply()` thực thi, chỉ có màn hình `SettingsActivity` bên dưới được tái tạo lại với ngôn ngữ mới, giúp giao diện chuyển đổi mượt mà, không bị hiện tượng giật màn hình (flicker).
+
+---
+
+## d) Vòng đời và Quản lý trạng thái (Lifecycle & State)
+
+- **`LanguageViewModel`**:
+  - `selectedId` được bọc bên trong `SavedStateHandle`:
+    `val selectedId: StateFlow<String> = savedStateHandle.getStateFlow(KEY_SELECTED_ID, SupportedLanguages.current().id)`
+  - Khi người dùng chạm vào một ngôn ngữ nhưng chưa bấm tick xác nhận, nếu họ xoay ngang màn hình (Configuration Change), `SavedStateHandle` sẽ khôi phục lại chính xác mục vừa được chọn mà không bị trả về ngôn ngữ mặc định.
+- **`LanguageActivity`**:
+  - `setupHeader()`: Ẩn/hiện nút Back dựa trên `fromSettings`.
+  - `setupLanguageList()`: Dùng extension `viewModel.selectedId.collectOn(this)` để lắng nghe và đổi vị trí icon tick xanh trên RecyclerView tức thì.
+
+---
+
+## e) Đoạn code then chốt
+
+### Đoạn 1: Áp dụng ngôn ngữ cấp hệ thống tại `SupportedLanguages.apply()`
+```kotlin
+// SupportedLanguages.kt
+fun apply(language: Language) {
+    AppCompatDelegate.setApplicationLocales(
+        LocaleListCompat.forLanguageTags(language.id)
+    )
+}
+```
+*Giải thích*: Tận dụng API chuẩn của AndroidX để thiết lập Locale cho toàn ứng dụng, tự động tương thích với Per-app Language của Android 13+ và lưu trữ tự động trên Android cũ.
+
+### Đoạn 2: Phân nhánh xử lý Onboarding và Settings tại `LanguageActivity.setupConfirmButton()`
+```kotlin
+// LanguageActivity.kt
+if (fromSettings) {
+    finish()
+    SupportedLanguages.apply(selectedLanguage)
+    return@setOnClickListener
+}
+lifecycleScope.launch {
+    repository.setOnboardingStep(OnboardingStep.INTRO)
+    SupportedLanguages.apply(selectedLanguage)
+    startActivity(Intent(this@LanguageActivity, IntroActivity::class.java))
+}
+```
+*Giải thích*: Nếu mở từ Settings thì đóng Activity trước rồi áp dụng ngôn ngữ để SettingsActivity tạo lại mượt mà; nếu là Onboarding thì lưu bước `INTRO` vào DataStore rồi mới chuyển sang `IntroActivity`.
+
+### Đoạn 3: Lưu trạng thái highlight bằng `SavedStateHandle` tại `LanguageViewModel`
+```kotlin
+// LanguageViewModel.kt
+class LanguageViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+    val selectedId: StateFlow<String> = savedStateHandle.getStateFlow(
+        KEY_SELECTED_ID, SupportedLanguages.current().id
+    )
+    fun select(language: Language) {
+        savedStateHandle[KEY_SELECTED_ID] = language.id
+    }
+}
+```
+*Giải thích*: Lưu trữ ID ngôn ngữ đang highlight vào `SavedStateHandle`, giúp giữ nguyên mục đã tick ngay cả khi người dùng xoay màn hình điện thoại.
+
+---
+
+## f) Tự kiểm tra (Self-Check)
+
+1. Tại sao khi mở `LanguageActivity` từ `SettingsActivity`, trong sự kiện click của nút xác nhận lại gọi `finish()` trước khi gọi `SupportedLanguages.apply(selectedLanguage)`?
+2. Tại sao khi gọi `AppCompatDelegate.setApplicationLocales()` thì các Activity đang hiển thị lại bị huỷ và khởi tạo lại (`recreate`)?
+3. Trong `LanguageViewModel`, nhờ vào lớp nào mà giá trị `selectedId` có thể sống sót qua cả quá trình xoay màn hình lẫn trường hợp Activity bị hệ thống thu hồi bộ nhớ (Process Death)?
+
 
 
 
