@@ -10,12 +10,12 @@ import androidx.fragment.app.activityViewModels
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentMemoryListBinding
 import com.example.lovetester.ui.common.collectOn
-import com.example.lovetester.ui.common.setScreenAnimations
 import com.example.lovetester.ui.common.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.data.local.database.MemoryEntity
+import android.content.Intent
 
 @AndroidEntryPoint
 class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
@@ -33,6 +33,12 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
     private val footerAdapter = MemoryFooterAdapter(::openAddMemory)
     private val listAdapter = ConcatAdapter(memoryAdapter, footerAdapter)
     private var openingAddMemory = false
+
+    override fun onResume() {
+        super.onResume()
+        openingAddMemory = false
+        binding.btnAddMemory.isEnabled = true
+    }
 
     override fun onViewCreated(
         view: View,
@@ -90,19 +96,10 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
     }
 
     private fun openAddMemory() {
-        val manager = parentFragmentManager
-        if (openingAddMemory || manager.isStateSaved || manager.findFragmentById(id) !== this) return
+        if (openingAddMemory) return
         openingAddMemory = true
         binding.btnAddMemory.isEnabled = false
-        manager.beginTransaction()
-            .setReorderingAllowed(true)
-            .setScreenAnimations()
-            .replace(
-                id,
-                AddMemoryFragment()
-            )
-            .addToBackStack(null)
-            .commit()
+        startActivity(Intent(requireContext(), AddMemoryActivity::class.java))
     }
 
     private fun confirmDelete(memory : MemoryEntity){

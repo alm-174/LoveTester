@@ -1,9 +1,11 @@
 package com.example.lovetester.ui.language
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.data.local.model.OnboardingStep
@@ -30,6 +32,9 @@ class LanguageActivity : AppCompatActivity() {
 
     private var isNavigating = false
 
+    private val fromSettings: Boolean
+        get() = intent.getBooleanExtra(EXTRA_FROM_SETTINGS, false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,8 +43,16 @@ class LanguageActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.root.applySystemBarsPadding()
 
+        setupHeader()
         setupLanguageList()
         setupConfirmButton()
+    }
+
+    private fun setupHeader() {
+        binding.btnBack.isVisible = fromSettings
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     private fun setupLanguageList() {
@@ -62,9 +75,15 @@ class LanguageActivity : AppCompatActivity() {
             if (isNavigating) return@setOnClickListener
 
             val selectedLanguage = viewModel.selected
-
             isNavigating = true
             binding.btnConfirmLanguage.isEnabled = false
+
+            if (fromSettings) {
+                // Rời màn trước, áp dụng ngôn ngữ sau để SettingsActivity được tạo lại với ngôn ngữ mới.
+                finish()
+                SupportedLanguages.apply(selectedLanguage)
+                return@setOnClickListener
+            }
 
             lifecycleScope.launch {
                 try {
@@ -80,9 +99,16 @@ class LanguageActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     isNavigating = false
                     binding.btnConfirmLanguage.isEnabled = true
-                    // TODO: Hiển thị thông báo không thể lưu trạng thái
                 }
             }
         }
+    }
+
+    companion object {
+        private const val EXTRA_FROM_SETTINGS = "com.example.lovetester.extra.FROM_SETTINGS"
+
+        fun newIntent(context: Context, fromSettings: Boolean) =
+            Intent(context, LanguageActivity::class.java)
+                .putExtra(EXTRA_FROM_SETTINGS, fromSettings)
     }
 }

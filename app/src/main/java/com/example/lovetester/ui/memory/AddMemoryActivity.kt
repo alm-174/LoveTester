@@ -4,22 +4,22 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.lovetester.R
-import com.example.lovetester.databinding.FragmentAddMemoryBinding
+import com.example.lovetester.databinding.ActivityAddMemoryBinding
+import com.example.lovetester.ui.common.applySystemBarsAndImePadding
 import com.example.lovetester.ui.common.collectOn
+import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
+import com.example.lovetester.ui.common.enableLightEdgeToEdge
 import com.example.lovetester.ui.common.hideKeyboard
 import com.example.lovetester.ui.common.onImeDone
-import com.example.lovetester.ui.common.viewBinding
-import com.example.lovetester.ui.common.dialog.datepicker.LoveDatePickerDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -27,10 +27,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
-class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
+class AddMemoryActivity : AppCompatActivity() {
 
-    private val binding by viewBinding(FragmentAddMemoryBinding::bind)
-    private val viewModel: MemoryViewModel by activityViewModels()
+    private lateinit var binding: ActivityAddMemoryBinding
+    private val viewModel: MemoryViewModel by viewModels()
+
     private var selectedImageUri: Uri? = null
     private var selectedDate: LocalDate? = null
     private var previewJob: Job? = null
@@ -40,46 +41,50 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
     private val photoPickerLauncher =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                val resolver = requireContext().contentResolver
                 if (uri != selectedImageUri) {
                     releaseImagePermission()
-                    runCatching { resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+                    runCatching {
+                        contentResolver.takePersistableUriPermission(
+                            uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        )
+                    }
                 }
                 selectedImageUri = uri
-                if (view != null) {
-                    showError(null)
-                    renderPhoto()
-                }
+                showError(null)
+                renderPhoto()
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableLightEdgeToEdge()
+        binding = ActivityAddMemoryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.root.applySystemBarsAndImePadding()
+
         selectedImageUri = savedInstanceState?.getString(KEY_IMAGE)?.let(Uri::parse)
         selectedDate = savedInstanceState?.getString(KEY_DATE)?.let(LocalDate::parse)
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.root.isClickable = true
-        // EditText already restores its text using its stable XML ID.
         renderPhoto()
         renderDate()
         observeDatePickerResult()
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+        onBackPressedDispatcher.addCallback(this) {
             requestClose()
         }
         binding.btnBack.setOnClickListener { requestClose() }
         binding.cardMemoryPhoto.setOnClickListener {
-            photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            photoPickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
         }
         binding.layoutMemoryDate.setOnClickListener {
-            if (childFragmentManager.isStateSaved ||
-                childFragmentManager.findFragmentByTag(DATE_PICKER_TAG) != null
+            if (supportFragmentManager.isStateSaved ||
+                supportFragmentManager.findFragmentByTag(DATE_PICKER_TAG) != null
             ) return@setOnClickListener
             LoveDatePickerDialog.newInstance(selectedDate ?: LocalDate.now())
-                .showNow(childFragmentManager, DATE_PICKER_TAG)
+                .showNow(supportFragmentManager, DATE_PICKER_TAG)
         }
         binding.etMemoryTitle.onImeDone()
         binding.btnSaveMemory.setOnClickListener {
@@ -88,17 +93,14 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
         }
 
         renderSaving(viewModel.saveState.value == MemorySaveState.Saving)
-        viewModel.saveState.collectOn(viewLifecycleOwner, Lifecycle.State.RESUMED) { state ->
+        viewModel.saveState.collectOn(this, Lifecycle.State.RESUMED) { state ->
             renderSaving(state == MemorySaveState.Saving)
             when (state) {
                 MemorySaveState.Idle, MemorySaveState.Saving -> Unit
                 MemorySaveState.Error ->
                     showError(getString(R.string.add_memory_error_save))
-                // Saved: close directly, there is nothing left to discard.
                 MemorySaveState.Success -> binding.root.post {
-                    if (this@AddMemoryFragment.view != null &&
-                        viewModel.saveState.value == MemorySaveState.Success
-                    ) {
+                    if (!isFinishing && viewModel.saveState.value == MemorySaveState.Success) {
                         closeForm()
                     }
                 }
@@ -132,9 +134,9 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
     }
 
     private fun observeDatePickerResult() {
-        childFragmentManager.setFragmentResultListener(
+        supportFragmentManager.setFragmentResultListener(
             LoveDatePickerDialog.REQUEST_KEY,
-            viewLifecycleOwner
+            this
         ) { _, bundle ->
             val date = bundle.getString(LoveDatePickerDialog.RESULT_DATE)
                 ?: return@setFragmentResultListener
@@ -153,9 +155,8 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
         binding.ivMemoryPreview.setImageDrawable(null)
         binding.layoutAddPhoto.isVisible = true
         val uri = selectedImageUri ?: return
-        val resolver = requireContext().contentResolver
-        previewJob = viewLifecycleOwner.lifecycleScope.launch {
-            val bitmap = decodeMemoryBitmap(resolver, uri)
+        previewJob = lifecycleScope.launch {
+            val bitmap = decodeMemoryBitmap(contentResolver, uri)
             if (bitmap == null) {
                 releaseImagePermission()
                 selectedImageUri = null
@@ -183,9 +184,10 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
         binding.tvMemoryFormError.isVisible = message != null
         if (message != null) {
             binding.tvMemoryFormError.post {
-                if (view == null) return@post
                 val error = binding.tvMemoryFormError
-                error.requestRectangleOnScreen(android.graphics.Rect(0, 0, error.width, error.height))
+                error.requestRectangleOnScreen(
+                    android.graphics.Rect(0, 0, error.width, error.height)
+                )
             }
         }
     }
@@ -193,7 +195,6 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
     private fun hasUnsavedChanges(): Boolean =
         binding.etMemoryTitle.text.isNotBlank() || selectedImageUri != null || selectedDate != null
 
-    /** Back / back arrow: asks first when the form holds something that would be lost. */
     private fun requestClose() {
         if (viewModel.saveState.value == MemorySaveState.Saving) return
         if (!hasUnsavedChanges()) {
@@ -202,9 +203,7 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
         }
         if (discardDialog?.isShowing == true) return
 
-        // shortcut: a plain AlertDialog is dropped on rotation (back just asks again);
-        // move to a DialogFragment if it must survive configuration changes.
-        discardDialog = AlertDialog.Builder(requireContext())
+        discardDialog = AlertDialog.Builder(this)
             .setTitle(R.string.add_memory_discard_title)
             .setMessage(R.string.add_memory_discard_message)
             .setNegativeButton(R.string.common_cancel, null)
@@ -213,27 +212,20 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
     }
 
     private fun closeForm() {
-        val manager = parentFragmentManager
-        if (viewModel.saveState.value == MemorySaveState.Saving ||
-            manager.isStateSaved || manager.findFragmentById(id) !== this
-        ) return
+        if (viewModel.saveState.value == MemorySaveState.Saving || isFinishing) return
 
-        val resolver = requireContext().contentResolver
-        val uri = selectedImageUri
-        if (manager.popBackStackImmediate()) {
-            if (uri != null) {
-                runCatching {
-                    resolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                }
-            }
-            viewModel.clearSaveResult()
-        }
+        releaseImagePermission()
+        viewModel.clearSaveResult()
+        finish()
     }
 
     private fun releaseImagePermission() {
         val uri = selectedImageUri ?: return
         runCatching {
-            requireContext().contentResolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            contentResolver.releasePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
         }
     }
 
@@ -243,12 +235,12 @@ class AddMemoryFragment : Fragment(R.layout.fragment_add_memory) {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onDestroyView() {
+    override fun onDestroy() {
         previewJob?.cancel()
         previewJob = null
         discardDialog?.dismiss()
         discardDialog = null
-        super.onDestroyView()
+        super.onDestroy()
     }
 
     private companion object {

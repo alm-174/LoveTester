@@ -41,3 +41,26 @@ fun View.applySystemBarsPadding() {
     }
     ViewCompat.requestApplyInsets(this)
 }
+
+fun View.applySystemBarsAndImePadding() {
+    val startLeft = paddingLeft
+    val startTop = paddingTop
+    val startRight = paddingRight
+    val startBottom = paddingBottom
+
+    ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
+        val safe = windowInsets.getInsets(
+            WindowInsetsCompat.Type.systemBars() or
+                    WindowInsetsCompat.Type.displayCutout() or
+                    WindowInsetsCompat.Type.ime()
+        )
+        view.setPadding(
+            startLeft + safe.left,
+            startTop + safe.top,
+            startRight + safe.right,
+            startBottom + safe.bottom
+        )
+        windowInsets
+    }
+    ViewCompat.requestApplyInsets(this)
+}

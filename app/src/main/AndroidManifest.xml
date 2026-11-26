@@ -50,8 +50,26 @@
         <activity
             android:name=".ui.setting.SettingsActivity"
             android:exported="false" />
+
+
         <activity
-            android:name=".ui.lovetest.LoveTestActivity"
+            android:name=".ui.lovetest.name.NameTestActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.lovetest.result.ResultActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.lovetest.horoscope.HoroscopeTestActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.startdate.StartDateActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.memory.AddMemoryActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 

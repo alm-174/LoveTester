@@ -1,17 +1,16 @@
 package com.example.lovetester.ui.setting
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.lovetester.R
 import com.example.lovetester.databinding.ActivitySettingsBinding
 import com.example.lovetester.ui.common.applySystemBarsPadding
 import com.example.lovetester.ui.common.enableLightEdgeToEdge
-import com.example.lovetester.ui.language.LanguageFragment
+import com.example.lovetester.ui.language.LanguageActivity
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
+    private var isNavigating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,18 +20,12 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.root.applySystemBarsPadding()
 
-        supportFragmentManager.addOnBackStackChangedListener {
-            updateScreen(
-                supportFragmentManager.backStackEntryCount > 0
-            )
-        }
-
-        updateScreen(
-            supportFragmentManager.backStackEntryCount > 0
-        )
         setupListeners()
+    }
 
-
+    override fun onResume() {
+        super.onResume()
+        isNavigating = false
     }
 
     private fun setupListeners() {
@@ -41,37 +34,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.layoutLanguage.setOnClickListener {
-            openLanguageFragment()
+            if (isNavigating) return@setOnClickListener
+            isNavigating = true
+            startActivity(LanguageActivity.newIntent(this, fromSettings = true))
         }
-
-    }
-
-    private fun openLanguageFragment() {
-
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            return
-        }
-
-        updateScreen(true)
-
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.settingsFragmentContainer,
-                LanguageFragment()
-            )
-            .addToBackStack(null)
-            .commit()
-    }
-
-    private fun updateScreen(isLanguageOpen: Boolean) {
-
-        binding.layoutSettingsHeader.visibility =
-            if (isLanguageOpen) View.GONE else View.VISIBLE
-
-        binding.layoutSettingsOptions.visibility =
-            if (isLanguageOpen) View.GONE else View.VISIBLE
-
-        binding.settingsFragmentContainer.visibility =
-            if (isLanguageOpen) View.VISIBLE else View.GONE
     }
 }

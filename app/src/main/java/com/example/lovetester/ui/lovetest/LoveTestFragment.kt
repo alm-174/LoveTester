@@ -1,20 +1,30 @@
 package com.example.lovetester.ui.lovetest
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.lovetester.R
 import com.example.lovetester.databinding.FragmentLoveTestBinding
-import com.example.lovetester.ui.common.safeNavigate
 import com.example.lovetester.ui.common.viewBinding
+import com.example.lovetester.ui.lovetest.horoscope.HoroscopeTestActivity
+import com.example.lovetester.ui.lovetest.name.NameTestActivity
 
 class LoveTestFragment : Fragment(R.layout.fragment_love_test) {
 
     private val binding by viewBinding(FragmentLoveTestBinding::bind)
+
+    private var isNavigating = false
+
+    override fun onResume() {
+        super.onResume()
+        isNavigating = false
+    }
+
+
 
     override fun onViewCreated(
         view: View,
@@ -47,13 +57,16 @@ class LoveTestFragment : Fragment(R.layout.fragment_love_test) {
     }
 
     private fun setupCardClicks() {
-
         binding.cardNameTest.setOnClickListener {
-            findNavController().safeNavigate(R.id.action_loveTest_to_nameTest)
+            if (isNavigating) return@setOnClickListener
+            isNavigating = true
+            startActivity(Intent(requireContext(), NameTestActivity::class.java))
         }
 
         binding.cardHoroscopeTest.setOnClickListener {
-            findNavController().safeNavigate(R.id.action_loveTest_to_horoscopeTest)
+            if (isNavigating) return@setOnClickListener
+            isNavigating = true
+            startActivity(Intent(requireContext(), HoroscopeTestActivity::class.java))
         }
     }
 
