@@ -127,7 +127,6 @@
     <string name="memory_list_empty_title">Aucun anniversaire</string>
     <string name="memory_list_empty_description">Conservez ici vos anniversaires inoubliables !</string>
     <string name="memory_error_load">Impossible de charger les souvenirs</string>
-    <string name="memory_add">Ajouter un souvenir</string>
     <string name="memory_delete_button">Supprimer</string>
     <string name="memory_delete_title">Supprimer le souvenir</string>
     <string name="memory_delete_message">Voulez-vous vraiment supprimer le souvenir \'%1$s\' ?</string>

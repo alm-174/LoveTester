@@ -126,7 +126,6 @@
     <string name="memory_list_empty_title">Kein Jahrestag</string>
     <string name="memory_list_empty_description">Bewahre hier deine unvergesslichen Jahrestage auf!</string>
     <string name="memory_error_load">Erinnerungen konnten nicht geladen werden</string>
-    <string name="memory_add">Erinnerung hinzufügen</string>
     <string name="memory_delete_button">Löschen</string>
     <string name="memory_delete_title">Erinnerung löschen</string>
     <string name="memory_delete_message">Möchtest du die Erinnerung \'%1$s\' wirklich löschen?</string>

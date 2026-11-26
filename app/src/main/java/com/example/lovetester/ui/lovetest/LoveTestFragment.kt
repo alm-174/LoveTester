@@ -12,7 +12,6 @@ import com.example.lovetester.databinding.FragmentLoveTestBinding
 import com.example.lovetester.ui.common.viewBinding
 import com.example.lovetester.ui.lovetest.horoscope.HoroscopeTestActivity
 import com.example.lovetester.ui.lovetest.name.NameTestActivity
-import com.example.lovetester.ui.common.applySystemBarsPadding
 
 class LoveTestFragment : Fragment(R.layout.fragment_love_test) {
 
@@ -33,7 +32,6 @@ class LoveTestFragment : Fragment(R.layout.fragment_love_test) {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.root.applySystemBarsPadding()
         setupTitle()
         setupCardClicks()
     }

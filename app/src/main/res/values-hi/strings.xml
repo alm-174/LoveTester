@@ -126,7 +126,6 @@
     <string name="memory_list_empty_title">कोई सालगिरह नहीं</string>
     <string name="memory_list_empty_description">अपनी यादगार सालगिरह यहाँ सहेजें!</string>
     <string name="memory_error_load">यादें लोड नहीं हो सकीं</string>
-    <string name="memory_add">याद जोड़ें</string>
     <string name="memory_delete_button">हटाएँ</string>
     <string name="memory_delete_title">याद हटाएँ</string>
     <string name="memory_delete_message">क्या आप सच में \'%1$s\' याद को हटाना चाहते हैं?</string>
