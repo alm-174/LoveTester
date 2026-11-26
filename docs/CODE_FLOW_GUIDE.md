@@ -12,7 +12,7 @@ Tài liệu này được biên soạn dành cho lập trình viên mới học 
 - [x] **Phần 3**: Tab Home (Dữ liệu ngày yêu, Avatar, Tên, BackgroundBottomSheet, InformationBottomSheet)
 - [x] **Phần 4**: Start Date (HomeFragment → StartDateActivity → LoveDatePickerDialog)
 - [x] **Phần 5**: Love Test (NameTestActivity, HoroscopeTestActivity, LoveTestCalculator, ResultActivity)
-- [ ] **Phần 6**: Memory (Room Database, Flow, MemoryViewModel, ConcatAdapter, AddMemoryActivity)
+- [x] **Phần 6**: Memory (Room Database, Flow, MemoryViewModel, ConcatAdapter, AddMemoryActivity)
 - [ ] **Phần 7**: Cài đặt và Đa ngôn ngữ (SettingsActivity, LanguageActivity, AppCompatDelegate)
 - [ ] **Phần 8**: Hạ tầng dùng chung (UI Extensions, DataStore, Room, File Storage)
 - [ ] **Phần 9**: Phụ lục (Bảng tra cứu "Muốn sửa X mở file nào" & Thuật ngữ cốt lõi)
@@ -1158,6 +1158,236 @@ private fun navigateToTestMenu() {
 1. Tại sao trong `LoveTestCalculator.kt`, danh sách hai tên người dùng bắt buộc phải được gọi `.sorted()` trước khi đưa vào hàm băm SHA-256?
 2. Khi người dùng bấm nút "Retry" trên `ResultActivity`, tại sao phương thức chỉ cần gọi `finish()` là đủ để đưa người dùng về lại màn hình nhập liệu trước đó với dữ liệu cũ vẫn còn?
 3. Trong `HoroscopeTestActivity.kt`, hàm `viewModel.calculatePercent()` đã tận dụng lại thuật toán bói tên như thế nào mà không cần phải viết thêm một thuật toán riêng cho cung hoàng đạo?
+
+---
+
+# Phần 6: Memory (Room Database, Flow, MemoryViewModel, ConcatAdapter, AddMemoryActivity)
+
+## a) Đọc file theo thứ tự
+1. `data/local/database/MemoryEntity.kt`: Room Entity định nghĩa cấu trúc bảng `memories` (khoá chính `id`, tiêu đề `title`, ngày kỷ niệm `date`, đường dẫn ảnh `imagePath`).
+2. `data/local/database/MemoryDao.kt`: Data Access Object cung cấp hàm truy vấn reactive `observeAll(): Flow<List<MemoryEntity>>`, hàm chèn `insert()`, tìm kiếm `findById()` và hàm xoá `delete()`.
+3. `data/local/storage/MemoryImageStorage.kt`: Quản lý việc lưu ảnh kỷ niệm vào thư mục nội bộ `context.filesDir/memories` và xoá file an toàn khỏi ổ đĩa.
+4. `data/local/repository/MemoryRepository.kt`: Repository trung gian điều phối giữa Room Database và `MemoryImageStorage` trên luồng `Dispatchers.IO`.
+5. `ui/memory/MemoryViewModel.kt`: Hilt ViewModel quản lý trạng thái tải danh sách (`MemoryUiState.Loading / Success / Error`) qua `StateFlow` kèm cơ chế tải lại (`retry`), và trạng thái lưu (`MemorySaveState`).
+6. `ui/memory/MemoryListFragment.kt`: Fragment nội dung của Tab 3, sử dụng `ConcatAdapter` kết hợp danh sách và chân trang, quản lý hiển thị các trạng thái UI và điều khiển vị trí nút thêm (+).
+7. `ui/memory/MemoryAdapter.kt`: `ListAdapter` hiển thị danh sách các thẻ kỷ niệm, xử lý thao tác xoá qua nhấn giữ lâu (Long-press) và hỗ trợ hành động tiếp cận (Accessibility Action) cho TalkBack.
+8. `ui/memory/MemoryFooterAdapter.kt`: Adapter chân trang chứa nút thêm kỷ niệm khi danh sách có từ 1 đến 4 mục.
+9. `ui/memory/AddMemoryActivity.kt`: Màn hình tạo kỷ niệm mới (chọn ảnh, tiêu đề, ngày), hiển thị hộp thoại xác nhận huỷ bỏ khi bấm Back nếu có thay đổi chưa lưu.
+10. `ui/memory/MemoryBitmap.kt`: Hàm tiện ích `decodeMemoryBitmap` giải mã ảnh xem trước nhanh chóng, thu nhỏ kích thước cạnh dài tối đa 1024px để chống tràn bộ nhớ (OOM).
+
+---
+
+## b) Sơ đồ chuỗi gọi (Call Chain)
+
+### Luồng 1: Tải và hiển thị danh sách kỷ niệm từ Room Database
+```text
+Người dùng mở Tab Memory trên HomeActivity
+  → MemoryListFragment.onViewCreated()
+      → MemoryViewModel.uiState.collectOn(viewLifecycleOwner, action = ::render)
+          → MemoryViewModel.retryTrigger.flatMapLatest { ... }
+          → MemoryRepository.observeMemories()
+          → MemoryDao.observeAll()                          [Room SQLite phát ra luồng Flow<List<MemoryEntity>>]
+          → MemoryViewModel phát trạng thái:
+              1. onStart { emit(MemoryUiState.Loading) }    [khi đang nạp]
+              2. emit(MemoryUiState.Success(memories))      [khi đã có dữ liệu từ SQLite]
+  → MemoryListFragment.render(state)
+      → Nếu state là Loading: hiện ProgressBar progressMemories, ẩn danh sách và rỗng
+      → Nếu state là Error: hiện layoutErrorState và nút Thử lại (btnRetryMemories)
+      → Nếu state là Success:
+          → Nếu danh sách rỗng (isEmpty):
+              → Hiện layoutEmptyState (chứa nút + chính giữa)
+              → Ẩn RecyclerView rvMemories
+          → Nếu có dữ liệu:
+              → Hiện RecyclerView rvMemories, ẩn layoutEmptyState
+              → memoryAdapter.submitList(state.memories)
+                  → Nếu count in 1..4: footerAdapter.setVisible(true), ẩn btnAddMemoryHeader
+                  → Nếu count >= 5: footerAdapter.setVisible(false), hiện btnAddMemoryHeader (nút + trên góc)
+              → MemoryAdapter.onBindViewHolder()
+                  → Gán title, date
+                  → Coil tải ảnh từ đĩa: binding.ivMemoryPhoto.load(File(memory.imagePath))
+```
+
+### Luồng 2: Thêm một kỷ niệm mới (AddMemoryActivity)
+```text
+Người dùng chạm vào nút "+" (btnAddMemory / btnAddMemoryHeader / btnAddMemoryFooter)
+  → MemoryListFragment.openAddMemory()
+      → startActivity(Intent(requireContext(), AddMemoryActivity::class.java))
+  → AddMemoryActivity.onCreate()
+      → Người dùng chạm vào khung chọn ảnh (cardMemoryPhoto)
+          → photoPickerLauncher.launch(PickVisualMediaRequest(ImageOnly))
+          → Người dùng chọn 1 bức ảnh từ bộ sưu tập
+          → AddMemoryActivity.renderPhoto()
+              → decodeMemoryBitmap(contentResolver, uri)   [thu nhỏ ảnh preview <= 1024px trên Dispatchers.IO]
+              → binding.ivMemoryPreview.setImageBitmap(bitmap)
+      → Người dùng chạm vào khung chọn ngày (layoutMemoryDate)
+          → LoveDatePickerDialog.newInstance(selectedDate ?: LocalDate.now()).showNow(...)
+          → Người dùng chọn ngày và bấm Save trên Dialog
+          → AddMemoryActivity.observeDatePickerResult() nhận kết quả và hiển thị
+      → Người dùng nhập tiêu đề kỷ niệm vào etMemoryTitle
+      → Người dùng bấm nút "Save" (btnSaveMemory)
+          → AddMemoryActivity.saveMemory()
+              → Kiểm tra hợp lệ: tiêu đề không rỗng, <= 100 ký tự; ngày != null; ảnh != null
+              → MemoryViewModel.saveMemory(title, date.toString(), image)
+                  → MemoryViewModel._saveState.value = MemorySaveState.Saving
+                  → MemoryRepository.addMemory(title, date, imageUri) [chạy trên Dispatchers.IO]
+                      → MemoryImageStorage.saveImage(imageUri)
+                          → Ghi file ảnh vào context.filesDir/memories/{UUID}.img
+                      → MemoryDao.insert(MemoryEntity(title, date, imagePath))
+                          → Chèn 1 dòng mới vào bảng memories của SQLite
+                  → MemoryViewModel._saveState.value = MemorySaveState.Success
+          → AddMemoryActivity lắng nghe viewModel.saveState
+              → Thấy trạng thái là MemorySaveState.Success
+              → AddMemoryActivity.closeForm() → finish()     [đóng form thêm kỷ niệm]
+  → Dữ liệu trong bảng Room "memories" thay đổi
+      → MemoryDao.observeAll() tự động phát ra danh sách mới
+      → MemoryListFragment nhận danh sách mới và cập nhật giao diện ngay lập tức
+```
+
+### Luồng 3: Người dùng bấm Back khi đang nhập dở kỷ niệm
+```text
+Người dùng bấm nút Back trên thanh tiêu đề hoặc cử chỉ Back của Android
+  → AddMemoryActivity.requestClose()
+      → Kiểm tra hasUnsavedChanges(): (có tiêu đề HOẶC đã chọn ảnh HOẶC đã chọn ngày)
+      → Nếu KHÔNG có thay đổi: closeForm() → finish() ngay lập tức
+      → Nếu CÓ thay đổi dở dang:
+          → Hiển thị AlertDialog (R.string.add_memory_discard_title, R.string.add_memory_discard_message)
+          → Người dùng bấm "Discard": gọi closeForm() → finish() đóng màn hình
+          → Người dùng bấm "Cancel": đóng Dialog, giữ nguyên dữ liệu đang nhập dở
+```
+
+### Luồng 4: Xoá một kỷ niệm (Long-press & Accessibility Action)
+```text
+Người dùng nhấn giữ lâu (Long-press) vào 1 thẻ kỷ niệm hoặc dùng TalkBack kích hoạt action xoá
+  → MemoryAdapter.binding.root.setOnLongClickListener()
+      → MemoryAdapter.onDeleteRequest(memory)
+          → MemoryListFragment.confirmDelete(memory)
+              → Hiển thị AlertDialog hỏi xác nhận: "Delete memory [title]?"
+              → Người dùng chọn "Delete" (R.string.memory_delete_button)
+                  → MemoryViewModel.delete(memory)
+                      → MemoryRepository.deleteMemory(memory.id) [chạy trên Dispatchers.IO]
+                          → MemoryDao.delete(memory)       [xoá dòng khỏi bảng SQLite]
+                          → MemoryImageStorage.deleteImage(memory.imagePath) [xoá file ảnh vật lý trên đĩa]
+  → Room Database phát ra danh sách mới không còn item vừa xoá
+      → ListAdapter DiffUtil tính toán và chạy animation xoá mục đó khỏi RecyclerView
+```
+
+---
+
+## c) Giải thích chi tiết từng bước
+
+1. **Kiến trúc Reactive Stream từ Room Database đến UI**:
+   - `MemoryDao.observeAll()` trả về một luồng `Flow<List<MemoryEntity>>`. Trong Room, mỗi khi có câu lệnh INSERT, UPDATE hoặc DELETE tác động lên bảng `memories`, Room sẽ tự động truy vấn lại và phát danh sách mới nhất vào luồng Flow này.
+   - Trong `MemoryViewModel`:
+     - Luồng được biến đổi qua toán tử `.map { MemoryUiState.Success(it) }`.
+     - Toán tử `.onStart { emit(MemoryUiState.Loading) }` đảm bảo giao diện hiển thị vòng quay tải dữ liệu khi bắt đầu nạp.
+     - Toán tử `.catch { emit(MemoryUiState.Error(...)) }` bắt các ngoại lệ cơ sở dữ liệu nếu có và chuyển sang trạng thái lỗi.
+     - Sử dụng biến kích hoạt `retryTrigger = MutableStateFlow(0)` kết hợp `flatMapLatest`: khi gặp lỗi kết nối hoặc đọc đĩa, người dùng bấm nút "Retry", hàm `viewModel.retry()` sẽ tăng giá trị `retryTrigger.value++`, khiến toàn bộ chuỗi quan sát được khởi động lại một cách thanh lịch.
+     - Hàm `.stateIn(...)` biến luồng thành `StateFlow` với chế độ `SharingStarted.WhileSubscribed(5000)`. Khi người dùng tạm thời xoay màn hình hoặc chuyển tab dưới 5 giây, kết nối với Room vẫn được duy trì, không bị ngắt quãng vô ích.
+
+2. **Cơ chế chuyển đổi vị trí nút "+" linh hoạt (`HEADER_ADD_THRESHOLD = 5`)**:
+   - Để mang lại trải nghiệm người dùng tốt nhất, ứng dụng áp dụng kỹ thuật hiển thị nút "+" thông minh dựa trên số lượng kỷ niệm hiện có:
+     - **Trường hợp 0 kỷ niệm (`isEmpty`)**: Ẩn danh sách, hiện giao diện rỗng (`layoutEmptyState`) với một nút bấm lớn chính giữa mời gọi người dùng tạo kỷ niệm đầu tiên.
+     - **Trường hợp từ 1 đến 4 kỷ niệm**: Nút "+" xuất hiện ở cuối danh sách dưới dạng một item Footer (`ItemMemoryFooterBinding`) nhờ lớp ghép nối `ConcatAdapter(memoryAdapter, footerAdapter)`. Ở số lượng ít, người dùng dễ dàng nhìn thấy nút bấm ở ngay đáy danh sách.
+     - **Trường hợp từ 5 kỷ niệm trở lên**: Lúc này danh sách đã dài và người dùng phải cuộn trang. Việc để nút "+" ở tận đáy sẽ gây bất tiện. Ứng dụng tự động ẩn nút ở chân trang (`footerAdapter.setVisible(false)`) và làm xuất hiện nút "+" cố định trên thanh tiêu đề phía trên (`binding.btnAddMemoryHeader.isVisible = true`).
+
+3. **Quy trình thêm kỷ niệm tại `AddMemoryActivity`**:
+   - **Xử lý ảnh và tối ưu bộ nhớ**:
+     - Khi người dùng chọn ảnh qua `ActivityResultContracts.PickVisualMedia()`, Activity yêu cầu cấp quyền đọc bền vững: `contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)`.
+     - Ảnh xem trước (Preview) được giải mã bất đồng bộ qua hàm `decodeMemoryBitmap(contentResolver, uri)`. Hàm này kiểm tra phiên bản Android (từ API 28 trở lên dùng `ImageDecoder`, cũ hơn dùng `BitmapFactory.Options.inSampleSize`) để thu nhỏ ảnh sao cho cạnh dài nhất không quá 1024px. Nhờ đó, ảnh chụp từ camera dung lượng hàng chục Megapixel không bao giờ gây đơ giao diện hay tràn bộ nhớ RAM (OOM).
+   - **Lưu trữ nguyên tử (Atomic Persistence)**:
+     - Khi người dùng bấm "Save", `MemoryRepository.addMemory` thực hiện tuần tự: (1) Sao chép file ảnh từ Uri vào thư mục nội bộ `filesDir/memories/{UUID}.img`, (2) Thêm bản ghi vào Room SQLite.
+     - Nếu câu lệnh chèn vào database thất bại, khối `catch` sẽ lập tức gọi `imageStorage.deleteImage(imagePath)` để xoá file ảnh vừa sao chép, không bao giờ để lại file mồ côi (rác) trên máy người dùng.
+
+4. **Xử lý phím Back và chống mất dữ liệu (Discard Dialog)**:
+   - Trong `AddMemoryActivity`, hàm `hasUnsavedChanges()` kiểm tra:
+     `binding.etMemoryTitle.text.isNotBlank() || selectedImageUri != null || selectedDate != null`
+   - Nếu người dùng đã nhập bất kỳ thông tin nào mà vô tình bấm nút Back (của Activity hoặc cử chỉ vuốt của hệ thống), `onBackPressedDispatcher.addCallback` sẽ chặn lại và hiển thị một `AlertDialog` cảnh báo: *"Discard changes? Any unsaved changes will be lost."* Người dùng phải bấm xác nhận huỷ ("Discard") thì form mới đóng lại.
+
+5. **Thao tác xoá an toàn và hỗ trợ người khiếm thị (Accessibility)**:
+   - Trong `MemoryAdapter.kt`, mỗi item được gán sự kiện nhấn giữ lâu:
+     `binding.root.setOnLongClickListener { onDeleteRequest(memory); true }`
+   - **Hỗ trợ TalkBack**: Người dùng bật chế độ trợ năng TalkBack trên Android không thể thực hiện thao tác nhấn giữ bình thường. Do đó, adapter tích hợp thêm một hành động ngữ cảnh tùy chỉnh:
+     ```kotlin
+     ViewCompat.addAccessibilityAction(
+         binding.root,
+         binding.root.context.getString(R.string.memory_delete_button)
+     ) { _, _ -> onDeleteRequest(memory); true }
+     ```
+   - Khi được kích hoạt, `MemoryListFragment.confirmDelete()` hiển thị hộp thoại xác nhận tên kỷ niệm cần xoá. Khi xác nhận, `viewModel.delete(memory)` chạy trên background thread, vừa xoá dữ liệu trong Room Database vừa xoá file ảnh tương ứng trong thư mục `filesDir/memories`.
+
+---
+
+## d) Vòng đời và Quản lý trạng thái (Lifecycle & State)
+
+- **`MemoryViewModel`**:
+  - Được khởi tạo ở phạm vi Activity bằng `activityViewModels()` bên trong `MemoryListFragment`. Nhờ vậy, khi người dùng chuyển qua lại giữa các tab (Home, Love Test, Memory), `MemoryViewModel` không bị tạo lại, danh sách kỷ niệm được giữ nguyên vẹn trong bộ nhớ đệm.
+- **`MemoryListFragment`**:
+  - `onResume()`: Luôn đặt lại `openingAddMemory = false` và bật lại khả năng bấm cho nút thêm (+), ngăn chặn việc mở đúp màn hình.
+  - `onDestroyView()`: Huỷ liên kết `binding.rvMemories.adapter = null` để chống rò rỉ bộ nhớ View của RecyclerView.
+- **`AddMemoryActivity`**:
+  - `onSaveInstanceState()`: Lưu giữ chuỗi Uri của ảnh đã chọn (`KEY_IMAGE`) và ngày đã chọn (`KEY_DATE`). Nếu người dùng xoay ngang điện thoại khi đang nhập dữ liệu, ảnh preview và ngày vẫn được hiển thị nguyên vẹn.
+  - `onDestroy()`: Huỷ coroutine `previewJob?.cancel()` và đóng hộp thoại `discardDialog?.dismiss()` để tránh crash lỗi rò rỉ cửa sổ (Activity window leak).
+
+---
+
+## e) Đoạn code then chốt
+
+### Đoạn 1: Quản lý luồng dữ liệu Room với cơ chế Retry tại `MemoryViewModel`
+```kotlin
+// MemoryViewModel.kt
+val uiState: StateFlow<MemoryUiState> = retryTrigger.flatMapLatest {
+    repository.observeMemories()
+        .map<List<MemoryEntity>, MemoryUiState> { memories -> MemoryUiState.Success(memories) }
+        .onStart { emit(MemoryUiState.Loading) }
+        .catch { exception ->
+            Log.e("MemoryViewModel", "Load memories failed", exception)
+            emit(MemoryUiState.Error(R.string.memory_error_load))
+        }
+}.stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = MemoryUiState.Loading)
+```
+*Giải thích*: Biến đổi luồng dữ liệu reactive từ Room thành `StateFlow` chứa 3 trạng thái rõ ràng (Loading, Success, Error), duy trì 5 giây khi đổi cấu hình và cho phép thử lại dễ dàng bằng cách tăng `retryTrigger`.
+
+### Đoạn 2: Điều khiển vị trí nút thêm (+) theo số lượng tại `MemoryListFragment.render()`
+```kotlin
+// MemoryListFragment.kt
+is MemoryUiState.Success -> {
+    val isEmpty = state.memories.isEmpty()
+    val count = state.memories.size
+    binding.layoutEmptyState.isVisible = isEmpty
+    binding.rvMemories.isVisible = !isEmpty
+    memoryAdapter.submitList(state.memories) {
+        footerAdapter.setVisible(count in 1 until HEADER_ADD_THRESHOLD)
+        binding.btnAddMemoryHeader.isVisible = count >= HEADER_ADD_THRESHOLD
+    }
+}
+```
+*Giải thích*: Tự động hiển thị nút thêm ở vị trí tối ưu: ở giữa màn hình khi rỗng, ở chân trang khi có 1–4 mục, và đưa lên thanh tiêu đề khi có từ 5 mục trở lên.
+
+### Đoạn 3: Kết hợp Long-press và Trợ năng TalkBack tại `MemoryAdapter.MemoryViewHolder.bind()`
+```kotlin
+// MemoryAdapter.kt
+binding.root.setOnLongClickListener {
+    onDeleteRequest(memory)
+    true
+}
+deleteActionId = ViewCompat.addAccessibilityAction(
+    binding.root,
+    binding.root.context.getString(R.string.memory_delete_button)
+) { _, _ ->
+    onDeleteRequest(memory)
+    true
+}
+```
+*Giải thích*: Cho phép người dùng bình thường nhấn giữ để xoá, đồng thời đăng ký hành động trợ năng riêng để người dùng khiếm thị dùng TalkBack vẫn có thể gọi lệnh xoá một cách thuận tiện.
+
+---
+
+## f) Tự kiểm tra (Self-Check)
+
+1. Tại sao trong `MemoryListFragment`, `MemoryViewModel` lại được khởi tạo bằng `by activityViewModels()` thay vì `by viewModels()`?
+2. Trong `MemoryRepository.addMemory()`, nếu quá trình chèn dữ liệu vào Room Database (`dao.insert`) bị lỗi thì khối `catch` thực hiện điều gì để bảo vệ bộ nhớ thiết bị?
+3. Khi danh sách kỷ niệm đạt từ 5 mục trở lên, nút thêm kỷ niệm ở cuối danh sách (Footer) sẽ biến mất và thay thế bằng nút nào trên giao diện?
+
 
 
 
