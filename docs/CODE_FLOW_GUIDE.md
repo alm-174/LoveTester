@@ -8,7 +8,7 @@ Tài liệu này được biên soạn dành cho lập trình viên mới học 
 
 - [x] **Phần 0**: Tổng quan kiến trúc, Hilt DI, cây màn hình, bản đồ thư mục và thứ tự đọc
 - [x] **Phần 1**: Khởi động và Onboarding (Splash → Language → Intro → Permission → Home)
-- [ ] **Phần 2**: Home – Vỏ 3 tab (HomeActivity, FragmentManager, show/hide, xoay màn hình)
+- [x] **Phần 2**: Home – Vỏ 3 tab (HomeActivity, FragmentManager, show/hide, xoay màn hình)
 - [ ] **Phần 3**: Tab Home (Dữ liệu ngày yêu, Avatar, Tên, BackgroundBottomSheet, InformationBottomSheet)
 - [ ] **Phần 4**: Start Date (HomeFragment → StartDateActivity → LoveDatePickerDialog)
 - [ ] **Phần 5**: Love Test (NameTestActivity, HoroscopeTestActivity, LoveTestCalculator, ResultActivity)
@@ -378,4 +378,190 @@ lifecycleScope.launch {
 1. Nếu người dùng đang ở `IntroActivity` trang thứ 2 và nhấn nút Back của điện thoại, sự kiện gì sẽ xảy ra và hàm nào trong `IntroActivity.kt` điều khiển việc đó?
 2. Giả sử người dùng đang ở `PermissionActivity` và bấm nút "Home" để ra ngoài Cài đặt của Android rồi tắt quyền Camera, khi mở lại app thì hàm nào đảm bảo công tắc Switch hiển thị đúng trạng thái tắt?
 3. Tại sao ở `PermissionActivity.navigateToHome()` lại bắt buộc phải dùng cờ `Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK` khi chuyển sang `HomeActivity`?
+
+---
+
+# Phần 2: Home – Vỏ 3 Tab (HomeActivity, FragmentManager, show/hide, xoay màn hình)
+
+## a) Đọc file theo thứ tự
+1. `ui/home/HomeActivity.kt`: Lớp vỏ trung tâm quản lý 3 tab điều hướng (Home, Love Test, Memory) bằng FragmentManager theo cơ chế add/show/hide, xử lý nút Back quay về tab Home, khôi phục tab khi xoay màn hình và nhận `onNewIntent`.
+2. `ui/home/HomeFragment.kt`: Fragment nội dung của Tab 1 (`Tab.HOME`, tag `"tab_home"`), hiển thị đồng hồ đếm ngày yêu và ảnh đôi bạn.
+3. `ui/lovetest/LoveTestFragment.kt`: Fragment nội dung của Tab 2 (`Tab.LOVE_TEST`, tag `"tab_love_test"`), hiển thị các tùy chọn bói tình yêu.
+4. `ui/memory/MemoryListFragment.kt`: Fragment nội dung của Tab 3 (`Tab.MEMORY`, tag `"tab_memory"`), hiển thị danh sách nhật ký kỷ niệm.
+5. `ui/lovetest/result/ResultActivity.kt`: Màn hình kết quả kiểm tra, nơi minh họa cơ chế gửi `Intent` chứa `HomeActivity.EXTRA_TAB` kèm cờ `SINGLE_TOP` để quay trở lại tab Love Test của `HomeActivity`.
+
+---
+
+## b) Sơ đồ chuỗi gọi (Call Chain)
+
+### Luồng 1: Người dùng chuyển tab từ Tab Home sang Tab Love Test
+```text
+Người dùng chạm vào mục "Love Test" trên Bottom Navigation
+  → HomeActivity.binding.layoutBottomNav.navLoveTest.setOnClickListener()
+      → HomeActivity.selectTab(Tab.LOVE_TEST)
+          → supportFragmentManager.beginTransaction()
+          → supportFragmentManager.findFragmentByTag("tab_love_test")  [null ở lần đầu bấm]
+          → FragmentTransaction.add(R.id.homeTabContainer, LoveTestFragment(), "tab_love_test")
+          → FragmentTransaction.hide(HomeFragment)                      [ẩn tab Home đang hiển thị]
+          → FragmentTransaction.commit()
+          → HomeActivity.currentTab = Tab.LOVE_TEST
+          → HomeActivity.backToHomeCallback.isEnabled = true            [bật chặn phím Back]
+          → HomeActivity.renderTabs()
+              → Đổi màu icon/text của tab Love Test thành R.color.primary (hồng đậm)
+              → Đổi màu icon/text tab Home thành R.color.tab_inactive
+              → Đổi nền layoutBottomNav thành Color.WHITE
+              → Bật biểu tượng thanh trạng thái tối màu: isAppearanceLightStatusBars = true
+```
+
+### Luồng 2: Người dùng nhấn nút Back khi đang ở Tab Love Test hoặc Tab Memory
+```text
+Người dùng nhấn nút Back của điện thoại (hệ thống)
+  → HomeActivity.backToHomeCallback.handleOnBackPressed()  [vì backToHomeCallback.isEnabled == true]
+      → HomeActivity.selectTab(Tab.HOME)
+          → supportFragmentManager.beginTransaction()
+          → supportFragmentManager.findFragmentByTag("tab_home")  [đã tồn tại trong FragmentManager]
+          → FragmentTransaction.show(HomeFragment)                 [hiển thị lại Tab Home]
+          → FragmentTransaction.hide(LoveTestFragment)            [ẩn Tab Love Test đi]
+          → FragmentTransaction.commit()
+          → HomeActivity.currentTab = Tab.HOME
+          → HomeActivity.backToHomeCallback.isEnabled = false   [tắt chặn phím Back]
+          → HomeActivity.renderTabs()
+              → Đổi màu icon/text tab Home thành hồng đậm
+              → Đổi nền layoutBottomNav thành Color.TRANSPARENT
+              → Tắt biểu tượng thanh trạng thái tối màu: isAppearanceLightStatusBars = false
+```
+
+### Luồng 3: Màn hình ResultActivity điều hướng quay về Tab Love Test qua Intent
+```text
+Người dùng ở ResultActivity bấm nút Home hoặc nút Back
+  → ResultActivity.navigateToTestMenu()
+      → startActivity(Intent(ResultActivity, HomeActivity) với cờ CLEAR_TOP | SINGLE_TOP, extra: EXTRA_TAB = TAB_LOVE_TEST)
+      → ResultActivity.finish()
+  → Android kích hoạt lại HomeActivity hiện có trên đỉnh task (không tạo Activity mới)
+  → HomeActivity.onNewIntent(intent)
+      → HomeActivity.setIntent(intent)
+      → HomeActivity.tabFromIntent(intent)  [đọc extra EXTRA_TAB và khớp ra Tab.LOVE_TEST]
+      → HomeActivity.selectTab(Tab.LOVE_TEST)
+```
+
+---
+
+## c) Giải thích chi tiết từng bước
+
+1. **Khởi tạo và cấu hình vỏ chứa 3 tab**:
+   - `HomeActivity` không sử dụng `ViewPager2` hay lệnh `replace()` thông thường vì cách đó sẽ huỷ giao diện (`onDestroyView`) của các Fragment mỗi lần chuyển tab, làm mất trạng thái cuộn và phải tải lại dữ liệu.
+   - Thay vào đó, `HomeActivity` định nghĩa `private enum class Tab(val tag: String)` với 3 giá trị:
+     - `HOME("tab_home")`
+     - `LOVE_TEST("tab_love_test")`
+     - `MEMORY("tab_memory")`
+   - Mỗi giá trị có hàm `createFragment()` tạo đúng lớp Fragment tương ứng.
+
+2. **Cơ chế chọn tab thông minh `selectTab(tab: Tab)`**:
+   - Bước an toàn: Nếu `supportFragmentManager.isStateSaved == true` (Activity đã đi vào nền và lưu trạng thái), hàm sẽ `return` ngay lập tức để tránh lỗi crash nổi tiếng `IllegalStateException: Can not perform this action after onSaveInstanceState`.
+   - Bắt đầu transaction với `setReorderingAllowed(true)` để tối ưu hiệu năng hiển thị fragment.
+   - Duyệt qua tất cả các tab (`Tab.entries.forEach`):
+     - Dùng `supportFragmentManager.findFragmentByTag(t.tag)` để kiểm tra Fragment đã từng được thêm vào container hay chưa.
+     - Nếu tab đó là tab muốn chọn (`t == tab`) và **chưa từng được tạo** (`fragment == null`): gọi `tx.add(R.id.homeTabContainer, t.createFragment(), t.tag)`.
+     - Nếu tab đó là tab muốn chọn (`t == tab`) và **đã có sẵn**: gọi `tx.show(fragment)`.
+     - Nếu tab đó là các tab còn lại và đã tồn tại: gọi `tx.hide(fragment)` để ẩn đi mà **không huỷ View hay huỷ Fragment**.
+   - Sau khi commit transaction, cập nhật biến `currentTab = tab` và gọi `renderTabs()` để làm mới giao diện.
+
+3. **Cập nhật giao diện điều hướng và thanh trạng thái (`renderTabs`)**:
+   - Tô màu hồng (`R.color.primary`) cho icon và text của tab đang kích hoạt, các tab còn lại dùng màu xám nhạt (`R.color.tab_inactive`).
+   - Riêng Tab Home có hình nền tràn viền (Edge-to-edge), do đó nền của Bottom Navigation bar được đặt là trong suốt (`Color.TRANSPARENT`) và chữ trên status bar màu trắng.
+   - Khi ở Tab Love Test hoặc Tab Memory, nền của Bottom Navigation bar chuyển sang màu trắng (`Color.WHITE`), đồng thời bật chữ status bar màu tối (`isAppearanceLightStatusBars = true`) để người dùng dễ đọc chữ trên nền sáng.
+
+4. **Xử lý phím Back quay về Tab Home**:
+   - Sử dụng `OnBackPressedCallback` với giá trị ban đầu là `false`:
+     ```kotlin
+     private val backToHomeCallback = object : OnBackPressedCallback(false) {
+         override fun handleOnBackPressed() = selectTab(Tab.HOME)
+     }
+     ```
+   - Trong `selectTab(tab: Tab)`, trạng thái bật/tắt của callback được quyết định bởi:
+     `backToHomeCallback.isEnabled = tab != Tab.HOME`
+   - Khi người dùng đang ở Tab Love Test hoặc Memory: bấm Back sẽ không đóng app mà kích hoạt callback chuyển về `Tab.HOME`.
+   - Khi đã ở `Tab.HOME`: callback bị vô hiệu hóa (`isEnabled = false`), nếu người dùng tiếp tục bấm Back thì hệ thống sẽ đóng `HomeActivity` và thoát app ra ngoài màn hình chính.
+
+5. **Giữ nguyên Tab khi xoay màn hình (Configuration Changes)**:
+   - Khi thiết bị xoay ngang/dọc, Android huỷ và tạo lại `HomeActivity`.
+   - Trước khi bị huỷ, hàm `onSaveInstanceState(outState: Bundle)` được gọi và lưu lại tên tab: `outState.putString(KEY_CURRENT_TAB, currentTab.name)`.
+   - Khi `onCreate` chạy lại, nó kiểm tra:
+     ```kotlin
+     currentTab = savedInstanceState?.getString(KEY_CURRENT_TAB)?.let(Tab::valueOf)
+         ?: tabFromIntent(intent)
+         ?: Tab.HOME
+     ```
+   - Quan trọng: `FragmentManager` của Android tự động lưu và khôi phục các Fragment đã thêm theo `tag`. Vì vậy trong `selectTab()`, lệnh `findFragmentByTag` tìm thấy ngay các Fragment cũ, chỉ cần gọi `show`/`hide` mà không tạo mới lại, giữ nguyên 100% dữ liệu và trạng thái của người dùng.
+
+6. **Xử lý `onNewIntent` nhận `EXTRA_TAB`**:
+   - `HomeActivity` được cấu hình mở với chế độ điều hướng giữ nguyên instance đơn (`SINGLE_TOP`).
+   - Khi `ResultActivity` gọi `navigateToTestMenu()`, nó đính kèm `putExtra(HomeActivity.EXTRA_TAB, HomeActivity.TAB_LOVE_TEST)`.
+   - Android kích hoạt hàm `onNewIntent(intent: Intent)`. Tại đây, `HomeActivity` gọi `setIntent(intent)` để cập nhật intent mới nhất, sau đó hàm `tabFromIntent(intent)` bóc tách giá trị chuỗi (`TAB_LOVE_TEST` -> `Tab.LOVE_TEST`) và kích hoạt `selectTab(Tab.LOVE_TEST)` đưa người dùng quay lại đúng tab bói tình yêu.
+
+---
+
+## d) Vòng đời và Quản lý trạng thái (Lifecycle & State)
+
+- **`HomeActivity.onCreate()`**:
+  - `enableEdgeToEdge()`: Kích hoạt hiển thị tràn viền hệ thống.
+  - `applyBottomNavInsets()`: Lắng nghe `WindowInsetsCompat.Type.navigationBars()`, tự động cộng thêm phần lề đáy (`navInsets.bottom`) vào `layoutBottomNav.root` để thanh điều hướng 3 tab không bị che khuất bởi thanh cử chỉ hoặc 3 phím điều hướng ảo của điện thoại.
+  - Đăng ký `backToHomeCallback` vào `onBackPressedDispatcher`.
+  - Khôi phục `currentTab` từ `savedInstanceState` (nếu xoay) hoặc `intent` (nếu mở từ ngoài), sau đó gọi `selectTab(currentTab)`.
+- **`HomeActivity.onNewIntent()`**:
+  - Chạy khi Activity đã tồn tại dưới backstack và nhận được một `Intent` mới.
+  - Gọi `setIntent(intent)` đảm bảo intent của Activity luôn mang dữ liệu mới nhất.
+- **`HomeActivity.onSaveInstanceState()`**:
+  - Lưu trữ `currentTab.name` với key `KEY_CURRENT_TAB`.
+
+---
+
+## e) Đoạn code then chốt
+
+### Đoạn 1: Cơ chế Add/Show/Hide 3 Tab tại `HomeActivity.selectTab()`
+```kotlin
+// HomeActivity.kt
+val tx = fm.beginTransaction().setReorderingAllowed(true)
+Tab.entries.forEach { t ->
+    val fragment = fm.findFragmentByTag(t.tag)
+    when {
+        t == tab && fragment == null -> tx.add(R.id.homeTabContainer, t.createFragment(), t.tag)
+        t == tab -> tx.show(fragment!!)
+        fragment != null -> tx.hide(fragment)
+    }
+}
+tx.commit()
+```
+*Giải thích*: Duyệt qua 3 tab, chỉ tạo và thêm mới Fragment nếu chưa tồn tại; nếu đã có thì dùng `show` cho tab được chọn và `hide` cho các tab khác, bảo toàn trạng thái UI và tránh huỷ View.
+
+### Đoạn 2: Xử lý phím Back thông minh về tab Home
+```kotlin
+// HomeActivity.kt
+private val backToHomeCallback = object : OnBackPressedCallback(false) {
+    override fun handleOnBackPressed() = selectTab(Tab.HOME)
+}
+// Được kích hoạt/vô hiệu hóa linh hoạt bên trong selectTab:
+backToHomeCallback.isEnabled = tab != Tab.HOME
+```
+*Giải thích*: Khi ở tab con (Love Test hoặc Memory) thì bật chặn Back để quay về tab chính (Home); khi đã ở tab Home thì tắt chặn để người dùng thoát ứng dụng tự nhiên.
+
+### Đoạn 3: Nhận Intent chuyển tab từ màn hình khác tại `HomeActivity.onNewIntent()`
+```kotlin
+// HomeActivity.kt
+override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    setIntent(intent)
+    tabFromIntent(intent)?.let(::selectTab)
+}
+```
+*Giải thích*: Cập nhật intent mới nhất khi Activity được gọi lại với `FLAG_ACTIVITY_SINGLE_TOP`, bóc tách `EXTRA_TAB` và tự động chuyển về đúng tab mà màn hình gọi mong muốn.
+
+---
+
+## f) Tự kiểm tra (Self-Check)
+
+1. Tại sao `HomeActivity` lại dùng `tx.show()` và `tx.hide()` thay vì dùng `tx.replace(R.id.homeTabContainer, ...)` mỗi lần người dùng chuyển tab?
+2. Khi người dùng đang ở Tab Memory và xoay ngang điện thoại, nhờ cơ chế nào mà Tab Memory vẫn tiếp tục hiển thị sau khi Activity bị tạo lại?
+3. Nếu xóa dòng `setIntent(intent)` trong hàm `HomeActivity.onNewIntent(intent)` thì điều gì có thể xảy ra khi Activity đọc lại `intent` sau đó?
+
 
