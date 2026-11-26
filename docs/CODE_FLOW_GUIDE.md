@@ -9,7 +9,7 @@ Tài liệu này được biên soạn dành cho lập trình viên mới học 
 - [x] **Phần 0**: Tổng quan kiến trúc, Hilt DI, cây màn hình, bản đồ thư mục và thứ tự đọc
 - [x] **Phần 1**: Khởi động và Onboarding (Splash → Language → Intro → Permission → Home)
 - [x] **Phần 2**: Home – Vỏ 3 tab (HomeActivity, FragmentManager, show/hide, xoay màn hình)
-- [ ] **Phần 3**: Tab Home (Dữ liệu ngày yêu, Avatar, Tên, BackgroundBottomSheet, InformationBottomSheet)
+- [x] **Phần 3**: Tab Home (Dữ liệu ngày yêu, Avatar, Tên, BackgroundBottomSheet, InformationBottomSheet)
 - [ ] **Phần 4**: Start Date (HomeFragment → StartDateActivity → LoveDatePickerDialog)
 - [ ] **Phần 5**: Love Test (NameTestActivity, HoroscopeTestActivity, LoveTestCalculator, ResultActivity)
 - [ ] **Phần 6**: Memory (Room Database, Flow, MemoryViewModel, ConcatAdapter, AddMemoryActivity)
@@ -563,5 +563,211 @@ override fun onNewIntent(intent: Intent) {
 1. Tại sao `HomeActivity` lại dùng `tx.show()` và `tx.hide()` thay vì dùng `tx.replace(R.id.homeTabContainer, ...)` mỗi lần người dùng chuyển tab?
 2. Khi người dùng đang ở Tab Memory và xoay ngang điện thoại, nhờ cơ chế nào mà Tab Memory vẫn tiếp tục hiển thị sau khi Activity bị tạo lại?
 3. Nếu xóa dòng `setIntent(intent)` trong hàm `HomeActivity.onNewIntent(intent)` thì điều gì có thể xảy ra khi Activity đọc lại `intent` sau đó?
+
+---
+
+# Phần 3: Tab Home (Dữ liệu ngày yêu, Avatar, Tên, BackgroundBottomSheet, InformationBottomSheet)
+
+## a) Đọc file theo thứ tự
+1. `ui/home/HomeFragment.kt`: Fragment hiển thị màn hình chính (đếm ngày yêu, tên, tuổi, giới tính, avatar đôi bạn, ảnh nền); quan sát DataStore qua Flow để tự cập nhật giao diện.
+2. `data/local/repository/LoveSettingsRepository.kt`: Nguồn dữ liệu duy nhất (Single Source of Truth) cung cấp Flow và hàm cập nhật cho ngày yêu, thông tin người dùng, ảnh đại diện và hình nền.
+3. `ui/background/BackgroundBottomSheet.kt`: BottomSheet chọn hình nền (ảnh có sẵn hoặc chọn ảnh từ máy qua PhotoPicker), thu nhỏ và lưu đường dẫn vào DataStore.
+4. `ui/background/BackgroundAdapter.kt`: Adapter hiển thị danh sách hình nền dạng lưới 2 cột.
+5. `data/local/storage/BackgroundImageStorage.kt`: Lưu ảnh nền vào thư mục `context.filesDir/backgrounds`, dùng `ImageDownscaler` nén tối đa 1440px.
+6. `ui/information/InformationBottomSheet.kt`: BottomSheet chỉnh sửa hồ sơ (tên, giới tính, ngày sinh, avatar), điều phối Camera/Gallery, xác thực dữ liệu và dọn rác ảnh cũ.
+7. `ui/common/dialog/avataroption/AvatarOptionDialog.kt`: Dialog cho phép chọn chụp ảnh mới (Camera) hoặc chọn ảnh từ thư viện (Gallery) qua Fragment Result API.
+8. `data/local/storage/AvatarStorage.kt`: Lưu avatar vào thư mục `context.filesDir/avatars` và xóa avatar cũ an toàn.
+9. `data/local/storage/ImageDownscaler.kt`: Đối tượng tiện ích tối ưu hóa kích thước ảnh xuống tối đa 1440px trên `Dispatchers.IO` trước khi ghi xuống đĩa để chống OOM.
+
+---
+
+## b) Sơ đồ chuỗi gọi (Call Chain)
+
+### Luồng 1: Người dùng đổi hình nền từ bộ sưu tập điện thoại
+```text
+Người dùng chạm vào nút Gallery (btnGallery) trên HomeFragment
+  → HomeFragment.binding.btnGallery.setOnClickListener()
+      → childFragmentManager.showOnce(BackgroundBottomSheet(), "home_sheet")
+  → BackgroundBottomSheet.onViewCreated()
+      → BackgroundBottomSheet.setupBackgroundList()
+          → storage.getSavedImages()                        [quét thư mục context.filesDir/backgrounds]
+          → BackgroundAdapter hiển thị danh sách ảnh
+  → Người dùng chạm vào ô "Add Photo" (BackgroundItem.AddPhoto)
+      → photoPickerLauncher.launch(PickVisualMediaRequest(ImageOnly))
+  → Người dùng chọn 1 bức ảnh từ hệ thống Android
+      → BackgroundBottomSheet.handleSelectedPhoto(uri)
+          → BackgroundImageStorage.saveImage(uri)
+              → ImageDownscaler.saveDownscaled()            [thu nhỏ <= 1440px, lưu vào filesDir/backgrounds/{UUID}.img]
+          → LoveSettingsRepository.setSelectedBackgroundId("custom:$path")
+          → BackgroundBottomSheet.dismiss()
+  → Dữ liệu DataStore thay đổi
+      → LoveSettingsRepository.selectedBackgroundId (Flow) phát giá trị mới
+      → HomeFragment.observeSettings() nhận giá trị "custom:/path/to/img"
+      → HomeFragment.binding.ivHomeBackground.load(File(path))  [Coil tải và hiển thị ảnh nền mới]
+```
+
+### Luồng 2: Người dùng chỉnh sửa hồ sơ và chụp ảnh đại diện mới
+```text
+Người dùng chạm vào khung avatar/tên của mình (layoutPersonOne)
+  → HomeFragment.openInformation(PersonType.YOU)
+      → childFragmentManager.showOnce(InformationBottomSheet.newInstance(PersonType.YOU), "home_sheet")
+  → InformationBottomSheet.onViewCreated()
+      → InformationBottomSheet.setupInformation()
+          → LoveSettingsRepository.youInfo.first()           [nạp thông tin hiện tại vào View]
+  → Người dùng chạm vào avatar (binding.ivAvatar)
+      → childFragmentManager.showOnce(AvatarOptionDialog(), "avatar_option_dialog")
+  → Người dùng chọn "Take Photo"
+      → AvatarOptionDialog.sendResult(OPTION_CAMERA)
+  → InformationBottomSheet.setupAvatarOptionResult() nhận kết quả
+      → InformationBottomSheet.openCamera()
+          → Tạo file tạm tại context.cacheDir/avatar_camera/avatar_{UUID}.jpg
+          → Lấy Uri tạm thời qua FileProvider.getUriForFile()
+          → cameraLauncher.launch(uri)
+  → Người dùng chụp ảnh và bấm tick xác nhận trong Camera
+      → cameraLauncher trả về success = true
+      → InformationBottomSheet.binding.ivAvatar.load(uri)   [xem trước ảnh vừa chụp]
+  → Người dùng nhập tên mới, chọn giới tính từ PopupMenu, chọn ngày sinh từ LoveDatePickerDialog
+  → Người dùng bấm "Save" (binding.btnSave)
+      → InformationBottomSheet.setupSave()
+          → InformationBottomSheet.validateName(rawName)    [kiểm tra không rỗng, độ dài <= 20]
+          → AvatarStorage.saveAvatar(selectedAvatarUri)
+              → ImageDownscaler.saveDownscaled()            [lưu ảnh vĩnh viễn vào filesDir/avatars/{UUID}.img]
+          → LoveSettingsRepository.saveYouInfo(info)        [ghi dữ liệu mới vào DataStore]
+          → AvatarStorage.deleteAvatar(oldPath)             [xoá file avatar cũ trên ổ cứng để tiết kiệm bộ nhớ]
+          → InformationBottomSheet.cleanupSelectedCameraFile() [xoá file tạm trong cacheDir]
+          → InformationBottomSheet.dismiss()
+  → Dữ liệu DataStore thay đổi
+      → LoveSettingsRepository.youInfo (Flow) phát PersonInfo mới
+      → HomeFragment.observeSettings() nhận giá trị mới
+      → HomeFragment cập nhật: tên, icon giới tính, tuổi (calculateAge), Coil nạp ảnh avatar mới
+```
+
+---
+
+## c) Giải thích chi tiết từng bước
+
+1. **HomeFragment lấy dữ liệu từ đâu?**:
+   - `HomeFragment` không lưu dữ liệu trong bộ nhớ tạm thời mà lắng nghe trực tiếp từ `LoveSettingsRepository` (Single Source of Truth) thông qua 4 luồng `Flow`:
+     - `loveStartDate: Flow<LocalDate?>`: Ngày bắt đầu yêu.
+     - `selectedBackgroundId: Flow<String?>`: ID hình nền (mã string hoặc tiền tố `custom:`).
+     - `youInfo: Flow<PersonInfo>`: Tên, giới tính, ngày sinh, đường dẫn avatar của người dùng.
+     - `partnerInfo: Flow<PersonInfo>`: Tên, giới tính, ngày sinh, đường dẫn avatar của đối phương.
+   - Việc lắng nghe được bọc trong extension `collectOn(viewLifecycleOwner)` (chạy trong `Lifecycle.State.STARTED`), đảm bảo UI chỉ nhận dữ liệu khi màn hình đang hiển thị và tự động ngừng khi View bị huỷ.
+
+2. **Cách tính số ngày yêu và tuổi**:
+   - **Số ngày yêu**:
+     ```kotlin
+     val days = ChronoUnit.DAYS.between(startDate, LocalDate.now()).coerceAtLeast(0)
+     ```
+     - Dùng `ChronoUnit.DAYS.between` từ thư viện `java.time` chuẩn. Hàm `coerceAtLeast(0)` đảm bảo nếu người dùng chọn ngày trong tương lai thì số ngày hiển thị tối thiểu vẫn là 0 chứ không bị số âm.
+     - Định dạng bằng chuỗi số nhiều (Plural string) `resources.getQuantityString(R.plurals.home_love_days, days.toInt(), days)`. Nếu chưa chọn ngày (`startDate == null`), hiển thị chữ mời gọi "Start your story".
+   - **Số tuổi**:
+     - Hàm `HomeFragment.calculateAge(birthday: LocalDate?)`:
+     - Nếu ngày sinh là `null` hoặc ngày sinh lớn hơn ngày hiện tại (`birthday.isAfter(today)`), trả về `"--"`.
+     - Ngược lại, tính số năm chênh lệch chính xác qua `Period.between(birthday, today).years.toString()`.
+
+3. **Cơ chế đổi hình nền (`BackgroundBottomSheet`)**:
+   - Hiển thị danh sách kết hợp giữa các ảnh tĩnh có sẵn trong ứng dụng (`romantic_1`, `romantic_2`, `romantic_3`) và các ảnh người dùng đã từng chọn được lưu trong thư mục `filesDir/backgrounds` (lấy qua hàm `storage.getSavedImages()`).
+   - Khi người dùng bấm "Add Photo": Khởi chạy `photoPickerLauncher` dùng PhotoPicker chuẩn của Android (`PickVisualMediaRequest`).
+   - Khi nhận được `Uri`: Hàm `BackgroundImageStorage.saveImage(uri)` được gọi trên `Dispatchers.IO`. Hàm này chuyển qua `ImageDownscaler.saveDownscaled()`, đọc `ExifInterface` để xoay đúng chiều, nén ảnh sao cho cạnh dài nhất không quá 1440px và lưu vào `context.filesDir/backgrounds/{UUID}.img`.
+   - Lưu chuỗi `"custom:" + path` vào DataStore.
+   - Khi DataStore cập nhật, `HomeFragment.observeSettings()` bắt được giá trị mới: nhận diện tiền tố `"custom:"`, lấy đường dẫn file và dùng thư viện **Coil** nạp ảnh: `binding.ivHomeBackground.load(File(path))`.
+
+4. **Cơ chế chỉnh sửa hồ sơ (`InformationBottomSheet`)**:
+   - Màn hình nhận diện đối tượng đang chỉnh sửa qua argument `personType` (`PersonType.YOU` hoặc `PersonType.PARTNER`).
+   - **Chọn Avatar (Camera / Gallery)**:
+     - Bấm vào avatar sẽ mở `AvatarOptionDialog`. Dialog này trả về kết quả qua `FragmentResultListener` với key `AvatarOptionDialog.REQUEST_KEY`.
+     - Nếu chọn Gallery: Khởi chạy PhotoPicker chuẩn.
+     - Nếu chọn Camera: Tạo một file tạm trong `context.cacheDir/avatar_camera/avatar_{UUID}.jpg`, lấy Uri bảo mật qua `FileProvider.getUriForFile` và mở camera hệ thống qua `ActivityResultContracts.TakePicture()`.
+   - **Chọn Giới tính**: Bấm vào ô giới tính sẽ mở một `PopupMenu` của Android với 3 lựa chọn: Nam (`Gender.MALE`), Nữ (`Gender.FEMALE`), Khác (`Gender.OTHER`).
+   - **Chọn Ngày sinh**: Mở `LoveDatePickerDialog` và lắng nghe kết quả qua `FragmentResultListener`.
+   - **Kiểm tra hợp lệ tên người dùng**:
+     - Trước khi lưu, hàm `validateName()` kiểm tra chuỗi nhập vào: nếu rỗng sẽ báo lỗi `R.string.information_error_name_empty`, nếu dài quá 20 ký tự sẽ báo lỗi `R.string.information_error_name_too_long`.
+
+5. **Quy trình lưu Avatar và dọn dẹp bộ nhớ an toàn (Atomic Save & Clean)**:
+   - Khi người dùng bấm "Save":
+     1. Nén và lưu avatar mới vào thư mục vĩnh viễn: `avatarStorage.saveAvatar(selectedAvatarUri)` -> file được lưu tại `context.filesDir/avatars/{UUID}.img`.
+     2. Ghi đè đối tượng `PersonInfo` mới vào DataStore Preferences (`saveYouInfo` hoặc `savePartnerInfo`).
+     3. Đánh dấu `savedToDataStore = true`.
+     4. **Xóa avatar cũ**: Gọi `avatarStorage.deleteAvatar(oldPath)`. Nhờ đó, máy người dùng không bị phình to dung lượng bởi hàng loạt ảnh đại diện cũ không còn dùng.
+     5. **Xóa file tạm**: Gọi `cleanupSelectedCameraFile()` để xóa sạch ảnh chụp tạm thời trong `cacheDir/avatar_camera`.
+     6. Khối `finally`: Nếu quá trình lưu vào DataStore thất bại (`savedToDataStore == false`), file avatar mới tạo sẽ lập tức bị xóa bỏ để tránh để lại rác trên ổ cứng.
+
+---
+
+## d) Vòng đời và Quản lý trạng thái (Lifecycle & State)
+
+- **`HomeFragment`**:
+  - `onViewCreated()`: Thiết lập lề trên với thanh trạng thái qua `applyTopInsets()`, gán listener cho các nút và bắt đầu lắng nghe `observeSettings()`.
+  - `onResume()`: Luôn đặt lại `isNavigating = false` để kích hoạt lại khả năng bấm mở màn hình tiếp theo, phòng ngừa trường hợp người dùng bấm liên tục gây mở đúp màn hình.
+- **`BackgroundBottomSheet`**:
+  - `onStart()`: Gọi `expandWithMaxHeight(R.dimen.sheet_max_height_background)` để mở rộng chiều cao BottomSheet tối đa theo kích thước chuẩn.
+  - `onDestroyView()`: Hủy gắn kết `binding.rvBackgrounds.adapter = null` để giải phóng bộ nhớ View.
+- **`InformationBottomSheet`**:
+  - `onSaveInstanceState()`: Lưu giữ toàn bộ trạng thái tạm thời vào Bundle gồm: `pendingCameraUri`, `pendingCameraPath`, `selectedAvatarUri`, `selectedCameraPath`, `selectedBirthday`, `selectedGender`.
+  - Khi người dùng chụp ảnh bằng ứng dụng Camera của hệ thống, Android có thể tạm thời huỷ Activity/BottomSheet ở nền do thiếu RAM. Nhờ cơ chế `onSaveInstanceState` và phục hồi lại trong `onCreate()`, toàn bộ dữ liệu đang nhập dở và ảnh chụp xong không bao giờ bị mất.
+
+---
+
+## e) Đoạn code then chốt
+
+### Đoạn 1: Tính số ngày yêu và tải hình nền tại `HomeFragment.observeSettings()`
+```kotlin
+// HomeFragment.kt
+repository.loveStartDate.collectOn(viewLifecycleOwner) { startDate ->
+    if (startDate == null) {
+        binding.tvLoveDays.text = getString(R.string.home_love_days_empty)
+    } else {
+        val days = ChronoUnit.DAYS.between(startDate, LocalDate.now()).coerceAtLeast(0)
+        binding.tvLoveDays.text = resources.getQuantityString(
+            R.plurals.home_love_days, days.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(), days
+        )
+    }
+}
+```
+*Giải thích*: Lắng nghe Flow ngày yêu từ DataStore, tính toán chênh lệch ngày bằng `ChronoUnit.DAYS` và tự động cập nhật text dạng số nhiều (plurals) theo thời gian thực.
+
+### Đoạn 2: Xử lý lưu avatar và dọn rác ảnh cũ tại `InformationBottomSheet.setupSave()`
+```kotlin
+// InformationBottomSheet.kt
+val avatarPath = selectedAvatarUri?.let { uri ->
+    avatarStorage.saveAvatar(uri)
+} ?: currentAvatarPath
+
+val info = PersonInfo(name = name, gender = selectedGender ?: Gender.MALE, birthday = selectedBirthday, avatarPath = avatarPath)
+if (personType == PersonType.YOU) repository.saveYouInfo(info) else repository.savePartnerInfo(info)
+savedToDataStore = true
+
+val oldPath = currentAvatarPath
+if (newAvatarPath != null && oldPath != null && oldPath != newAvatarPath) {
+    avatarStorage.deleteAvatar(oldPath)
+}
+cleanupSelectedCameraFile()
+```
+*Giải thích*: Đảm bảo tính toàn vẹn dữ liệu: chỉ xoá ảnh cũ và dọn cache tạm sau khi ảnh mới đã được lưu thành công vào DataStore Preferences.
+
+### Đoạn 3: Nén ảnh và xoay EXIF chống OOM tại `ImageDownscaler.saveDownscaled()`
+```kotlin
+// ImageDownscaler.kt
+// Mở stream ĐÚNG 1 LẦN duy nhất để tránh lỗi mất quyền đọc Uri ở lần mở thứ 2, 3
+val imageBytes = resolver.openInputStream(uri)?.use { it.readBytes() } ?: return@withContext false
+val bounds = decodeBounds(imageBytes) ?: return@withContext false
+val sampleSize = calculateInSampleSize(bounds.width, bounds.height, maxEdge)
+val bitmap = decodeSampled(imageBytes, sampleSize) ?: return@withContext false
+val orientation = readExifOrientation(imageBytes)
+val rotated = rotateBitmap(bitmap, orientation)
+val scaled = scaleDown(rotated, maxEdge)
+destination.outputStream().use { scaled.compress(Bitmap.CompressFormat.JPEG, 85, it) }
+```
+*Giải thích*: Đọc byte mảng đúng 1 lần từ Uri, giải mã theo kích thước mẫu (`inSampleSize`), xoay theo chiều EXIF gốc và nén JPEG chất lượng 85% để ảnh luôn nhỏ gọn (<= 1440px), không bao giờ gây tràn RAM (OutOfMemory).
+
+---
+
+## f) Tự kiểm tra (Self-Check)
+
+1. Khi người dùng đổi hình nền mới trong `BackgroundBottomSheet`, tại sao `HomeFragment` không cần viết hàm callback nào mà ảnh nền trên màn hình chính vẫn tự động cập nhật ngay lập tức?
+2. Nếu người dùng chọn chụp ảnh từ Camera trong `InformationBottomSheet`, ảnh tạm thời được lưu ở thư mục nào và được dọn dẹp vào những thời điểm nào?
+3. Tại sao trong `ImageDownscaler.kt`, việc đọc toàn bộ byte của Uri vào mảng `imageBytes` ngay từ đầu lại giải quyết được lỗi mất quyền truy cập (SecurityException / Permission Denial) trên Android?
+
 
 
