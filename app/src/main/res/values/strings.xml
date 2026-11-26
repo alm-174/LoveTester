@@ -135,6 +135,7 @@
     <string name="memory_list_empty_title">No anniversary</string>
     <string name="memory_list_empty_description">Preserve your unforgettable anniversary here!</string>
     <string name="memory_error_load">Couldn\'t load memories</string>
+    <string name="memory_add">Add memory</string>
     <string name="memory_delete_button">Delete</string>
     <string name="memory_delete_title">Delete Memory</string>
     <string name="memory_delete_message">Are you sure you want to delete the memory \'%1$s\'?</string>

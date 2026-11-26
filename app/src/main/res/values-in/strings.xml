@@ -125,6 +125,7 @@
     <string name="memory_list_empty_title">Belum ada hari jadi</string>
     <string name="memory_list_empty_description">Simpan hari jadi tak terlupakanmu di sini!</string>
     <string name="memory_error_load">Tidak dapat memuat kenangan</string>
+    <string name="memory_add">Tambah kenangan</string>
     <string name="memory_delete_button">Hapus</string>
     <string name="memory_delete_title">Hapus Kenangan</string>
     <string name="memory_delete_message">Yakin ingin menghapus kenangan \'%1$s\'?</string>

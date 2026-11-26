@@ -19,6 +19,7 @@
     <dimen name="radius_button">8dp</dimen>
     <dimen name="radius_card">16dp</dimen>
     <dimen name="radius_item">12dp</dimen>         <!-- Selectable grid/list item -->
+    <dimen name="memory_item_height">160dp</dimen>
 
     <dimen name="height_button">48dp</dimen>
 

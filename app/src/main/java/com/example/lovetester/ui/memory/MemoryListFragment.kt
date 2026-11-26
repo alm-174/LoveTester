@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lovetester.data.local.database.MemoryEntity
 import android.content.Intent
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 @AndroidEntryPoint
 class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
@@ -30,8 +32,8 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
         }
     )
 
-    private val footerAdapter = MemoryFooterAdapter(::openAddMemory)
-    private val listAdapter = ConcatAdapter(memoryAdapter, footerAdapter)
+    private val addMemoryAdapter = AddMemoryAdapter(::openAddMemory)
+    private val listAdapter = ConcatAdapter(memoryAdapter, addMemoryAdapter)
     private var openingAddMemory = false
 
     override fun onResume() {
@@ -54,6 +56,8 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
         }
 
         observeUiState()
+
+        applyInsets()
 
         val addMemory = View.OnClickListener { openAddMemory() }
         binding.btnAddMemory.setOnClickListener(addMemory)
@@ -83,7 +87,7 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
                 binding.rvMemories.isVisible = !isEmpty
 
                 memoryAdapter.submitList(state.memories) {
-                    footerAdapter.setVisible(memoryAdapter.currentList.isNotEmpty())
+                    addMemoryAdapter.isShown = memoryAdapter.currentList.isNotEmpty()
                 }
             }
 
@@ -95,6 +99,40 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
         }
     }
 
+    private fun applyInsets() {
+        val rootStartLeft = binding.root.paddingLeft
+        val rootStartTop = binding.root.paddingTop
+        val rootStartRight = binding.root.paddingRight
+        val rvStartBottom = binding.rvMemories.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val statusBars = insets.getInsets(
+                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            val navBars = insets.getInsets(
+                WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+
+            // Đẩy tiêu đề "Memory" và nút "+" xuống dưới thanh trạng thái (nền bg_splash vẫn tràn lên trên)
+            view.setPadding(
+                rootStartLeft + statusBars.left,
+                rootStartTop + statusBars.top,
+                rootStartRight + statusBars.right,
+                view.paddingBottom
+            )
+
+            // Cộng thêm chiều cao thanh điều hướng hệ thống vào đáy danh sách
+            binding.rvMemories.setPadding(
+                binding.rvMemories.paddingLeft,
+                binding.rvMemories.paddingTop,
+                binding.rvMemories.paddingRight,
+                rvStartBottom + navBars.bottom
+            )
+
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
+    }
     private fun openAddMemory() {
         if (openingAddMemory) return
         openingAddMemory = true
