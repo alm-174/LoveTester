@@ -11,7 +11,7 @@ Tài liệu này được biên soạn dành cho lập trình viên mới học 
 - [x] **Phần 2**: Home – Vỏ 3 tab (HomeActivity, FragmentManager, show/hide, xoay màn hình)
 - [x] **Phần 3**: Tab Home (Dữ liệu ngày yêu, Avatar, Tên, BackgroundBottomSheet, InformationBottomSheet)
 - [x] **Phần 4**: Start Date (HomeFragment → StartDateActivity → LoveDatePickerDialog)
-- [ ] **Phần 5**: Love Test (NameTestActivity, HoroscopeTestActivity, LoveTestCalculator, ResultActivity)
+- [x] **Phần 5**: Love Test (NameTestActivity, HoroscopeTestActivity, LoveTestCalculator, ResultActivity)
 - [ ] **Phần 6**: Memory (Room Database, Flow, MemoryViewModel, ConcatAdapter, AddMemoryActivity)
 - [ ] **Phần 7**: Cài đặt và Đa ngôn ngữ (SettingsActivity, LanguageActivity, AppCompatDelegate)
 - [ ] **Phần 8**: Hạ tầng dùng chung (UI Extensions, DataStore, Room, File Storage)
@@ -954,6 +954,211 @@ private fun saveAndFinish() {
 1. Trong `LoveDatePickerDialog.kt`, tại sao biến `maximumDate` lại được gán bằng `LocalDate.now()` và điều gì ngăn người dùng chọn một ngày trong tương lai?
 2. Tại sao `StartDateActivity` không cần truyền ngày mới qua `setResult()` hay `startActivityForResult` về cho `HomeFragment` mà `HomeFragment` vẫn biết để cập nhật số ngày yêu?
 3. Nếu người dùng mở `LoveDatePickerDialog`, chuyển sang xem danh sách chọn năm rồi xoay màn hình điện thoại, nhờ đoạn code nào mà dialog vẫn giữ nguyên chế độ xem danh sách năm sau khi xoay?
+
+---
+
+# Phần 5: Love Test (NameTestActivity, HoroscopeTestActivity, LoveTestCalculator, ResultActivity)
+
+## a) Đọc file theo thứ tự
+1. `ui/lovetest/LoveTestFragment.kt`: Tab 2 trên `HomeActivity`, hiển thị 2 thẻ chọn kiểm tra tình yêu: theo Tên (`cardNameTest`) và theo Cung hoàng đạo (`cardHoroscopeTest`).
+2. `ui/lovetest/name/NameTestActivity.kt`: Màn hình bói tình yêu bằng cách nhập 2 tên, kiểm tra rỗng, tính điểm và chuyển sang `ResultActivity`.
+3. `ui/lovetest/domain/LoveTestCalculator.kt`: Thuật toán băm SHA-256 kết hợp chuẩn hoá và sắp xếp tên, sinh điểm phần trăm (0–100%) mang tính tất định (cùng 2 đối tượng luôn cho ra cùng kết quả).
+4. `ui/lovetest/horoscope/HoroscopeTestActivity.kt`: Màn hình bói cung hoàng đạo, hiển thị 2 cung hoàng đạo đã chọn, mở BottomSheet chọn cung và chuyển tiếp sang `ResultActivity`.
+5. `ui/lovetest/horoscope/HoroscopeTestViewModel.kt`: `ViewModel` lưu trữ trạng thái 2 cung hoàng đạo (`HoroscopeUiState`), tính toán phần trăm tương thích qua `LoveTestCalculator`.
+6. `ui/lovetest/horoscope/HoroscopePickerBottomSheet.kt`: BottomSheet hiển thị lưới danh sách 12 cung hoàng đạo để người dùng chọn, trả kết quả qua Fragment Result API.
+7. `ui/lovetest/horoscope/ZodiacSign.kt`: Enum 12 cung hoàng đạo kèm tài nguyên chuỗi tên (`nameRes`) và icon đại diện (`iconRes`).
+8. `ui/lovetest/horoscope/ZodiacAdapter.kt`: Adapter lưới 2 cột hiển thị các cung và đánh dấu cung đang được chọn.
+9. `ui/lovetest/result/ResultActivity.kt`: Màn hình hiển thị kết quả kiểm tra (điểm %, thông điệp theo bậc điểm, icon cung hoàng đạo, các nút Thử lại, Chia sẻ và Quay về tab Love Test).
+
+---
+
+## b) Sơ đồ chuỗi gọi (Call Chain)
+
+### Luồng 1: Bói tình yêu theo Tên (Name Test)
+```text
+Người dùng ở LoveTestFragment chạm vào thẻ "Name Test" (cardNameTest)
+  → LoveTestFragment.setupCardClicks()
+      → startActivity(Intent(requireContext(), NameTestActivity::class.java))
+  → NameTestActivity.onCreate()
+      → Người dùng nhập tên bạn vào etYourName, tên người ấy vào etPartnerName
+      → Người dùng chạm vào nút "Love Test" (btnLoveTest)
+          → NameTestActivity.binding.btnLoveTest.setOnClickListener()
+              → Kiểm tra rỗng: yourName.isBlank() hoặc partnerName.isBlank()
+              → LoveTestCalculator.calculateNameTest(yourName, partnerName)
+                  → Chuẩn hóa chữ thường, sắp xếp thứ tự A-Z (đảm bảo tính giao hoán)
+                  → Băm SHA-256 chuỗi "${len1}:${name1}|${len2}:${name2}"
+                  → Lấy 2 byte đầu tiên chuyển thành số nguyên: (byte[0] shl 8 or byte[1]) % 101 -> kết quả 0..100
+              → ResultActivity.newNameTestIntent(this, yourName, partnerName, percentage)
+              → NameTestActivity.startActivity(intent)
+  → ResultActivity.onCreate()
+      → Đọc extras: EXTRA_PERSON_ONE, EXTRA_PERSON_TWO, EXTRA_PERCENTAGE
+      → Nhận diện isHoroscope = false (do không có EXTRA_SIGN_ONE)
+      → Lấy thông điệp qua getNameTestMessageRes(percentage) (4 bậc điểm)
+      → Hiển thị tên 2 người, điểm số % và thông điệp tương ứng
+```
+
+### Luồng 2: Bói tình yêu theo Cung hoàng đạo (Horoscope Test)
+```text
+Người dùng ở LoveTestFragment chạm vào thẻ "Horoscope Test" (cardHoroscopeTest)
+  → LoveTestFragment.setupCardClicks()
+      → startActivity(Intent(requireContext(), HoroscopeTestActivity::class.java))
+  → HoroscopeTestActivity.onCreate()
+      → HoroscopeTestActivity.setupResultListeners() (đăng ký REQUEST_MY_SIGN, REQUEST_PARTNER_SIGN)
+      → HoroscopeTestActivity.observeState() (lắng nghe viewModel.uiState qua collectOn)
+  → Người dùng chạm vào khung cung của mình (layoutYourZodiac)
+      → HoroscopeTestActivity.openPicker(REQUEST_MY_SIGN, viewModel.uiState.value.mySign)
+          → supportFragmentManager.showOnce(HoroscopePickerBottomSheet.newInstance(...), TAG)
+  → HoroscopePickerBottomSheet.onViewCreated()
+      → Người dùng chọn 1 cung trong lưới 12 cung (ZodiacAdapter)
+          → setFragmentResult(requestKey, bundleOf(RESULT_SIGN to sign.name))
+          → HoroscopePickerBottomSheet.dismiss()
+  → HoroscopeTestActivity nhận kết quả từ Fragment Result
+      → viewModel.setMySign(sign)
+      → HoroscopeTestViewModel cập nhật _uiState
+      → HoroscopeTestActivity.observeState() nhận state mới → cập nhật icon và tên cung trên giao diện
+  → Người dùng chạm vào nút "Love Test" (btnLoveTest)
+      → HoroscopeTestActivity.binding.btnLoveTest.setOnClickListener()
+          → viewModel.calculatePercent()
+              → LoveTestCalculator.calculateNameTest("zodiac:${mySign.name}", "zodiac:${partnerSign.name}")
+          → ResultActivity.newHoroscopeIntent(this, mySign, partnerSign, percentage)
+          → HoroscopeTestActivity.startActivity(intent)
+  → ResultActivity.onCreate()
+      → Đọc extras: EXTRA_SIGN_ONE, EXTRA_SIGN_TWO, EXTRA_PERCENTAGE
+      → Nhận diện isHoroscope = true
+      → bindZodiacIcons(signOne, signTwo) (nạp icon 2 cung và đổi sang màu hồng R.color.primary)
+      → Lấy thông điệp qua getHoroscopeMessageRes(percentage) (7 bậc điểm chi tiết)
+      → Hiển thị tên 2 cung hoàng đạo, điểm số % và thông điệp tương ứng
+```
+
+### Luồng 3: Các thao tác trên màn hình kết quả ResultActivity (Share, Retry, Back)
+```text
+- Người dùng bấm "Share" (btnShare):
+    → Chuẩn bị nội dung chuỗi: "$personOne ❤ $personTwo: $percentText\n\n$message"
+    → Tạo Intent(Intent.ACTION_SEND) với kiểu "text/plain"
+    → Mở hộp thoại chia sẻ của hệ thống Android: startActivity(Intent.createChooser(intent, ...))
+
+- Người dùng bấm "Retry" (btnRetry):
+    → ResultActivity.finish()
+    → Đóng ResultActivity, màn hình tự động quay lại NameTestActivity hoặc HoroscopeTestActivity
+    → Người dùng có thể chỉnh sửa tên hoặc đổi cung và thử lại ngay lập tức
+
+- Người dùng bấm nút "Back" (btnBack trên giao diện hoặc phím Back hệ thống):
+    → ResultActivity.navigateToTestMenu()
+    → Khởi chạy HomeActivity với cờ FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_SINGLE_TOP
+      kèm Extra: EXTRA_TAB = TAB_LOVE_TEST
+    → ResultActivity.finish()
+    → HomeActivity nhận onNewIntent và tự động hiển thị tab Love Test
+```
+
+---
+
+## c) Giải thích chi tiết từng bước
+
+1. **Thuật toán tính điểm tất định tại `LoveTestCalculator`**:
+   - `LoveTestCalculator` là một Singleton `object`, cung cấp hàm `calculateNameTest(firstName: String, secondName: String): Int`.
+   - **Tính giao hoán (Commutative)**: Người dùng nhập `A` và `B` hay nhập `B` và `A` thì kết quả bắt buộc phải giống hệt nhau. Để đạt được điều này, danh sách 2 tên được chuyển thành chữ thường (`lowercase(Locale.ROOT)`) và sắp xếp theo thứ tự bảng chữ cái (`.sorted()`).
+   - **Tính tất định (Deterministic)**: Dự án không sử dụng hàm sinh số ngẫu nhiên `Random.nextInt()`, vì nếu cùng một cặp tên mà mỗi lần bấm ra một số khác nhau thì ứng dụng sẽ mất độ tin cậy. Thay vào đó, chuỗi kết hợp `"${it.length}:$it"` được băm bằng thuật toán mật mã `SHA-256`. Hai byte đầu của mã băm được ghép thành một số nguyên 16-bit rồi lấy dư cho 101 (`% 101`). Điểm số sinh ra luôn nằm trong khoảng từ 0% đến 100% và cố định vĩnh viễn với cùng một cặp tên/cung.
+
+2. **Luồng kiểm tra tên (`NameTestActivity`)**:
+   - Giao diện có 2 ô nhập văn bản: `etYourName` và `etPartnerName`. Ô thứ hai được gắn extension `onImeDone()` để khi người dùng bấm nút Done trên bàn phím thì bàn phím sẽ tự động ẩn đi.
+   - Khi bấm nút `btnLoveTest`:
+     - Kiểm tra nếu một trong hai tên bị bỏ trống (`isBlank()`), gán thuộc tính `.error` trên ô tương ứng (`R.string.name_test_error_empty_name`) và dừng lại.
+     - Nếu hợp lệ, gọi `LoveTestCalculator.calculateNameTest(yourName, partnerName)`.
+     - Đóng gói dữ liệu vào Intent qua hàm tiện ích tĩnh `ResultActivity.newNameTestIntent(...)` và khởi chạy `ResultActivity`.
+
+3. **Luồng kiểm tra cung hoàng đạo (`HoroscopeTestActivity` + `HoroscopeTestViewModel`)**:
+   - Trạng thái 2 cung hoàng đạo được giữ trong `HoroscopeTestViewModel` với `MutableStateFlow<HoroscopeUiState>` (mặc định ban đầu cả hai đều là `ZodiacSign.ARIES` - Bạch Dương).
+   - Hàm `observeState()` lắng nghe luồng `viewModel.uiState` qua `collectOn(this)` và tự động cập nhật icon và tên của cả 2 cung hoàng đạo lên giao diện.
+   - Khi bấm vào khung chọn của một bên:
+     - Gọi `openPicker()` mở `HoroscopePickerBottomSheet` kèm theo `requestKey` tương ứng (`REQUEST_MY_SIGN` hoặc `REQUEST_PARTNER_SIGN`).
+     - Người dùng chọn 1 trong 12 cung trong `ZodiacAdapter`: BottomSheet gọi `setFragmentResult(requestKey, ...)` rồi đóng lại.
+     - `HoroscopeTestActivity` nhận kết quả qua `supportFragmentManager.setFragmentResultListener` và cập nhật lại ViewModel (`setMySign` hoặc `setPartnerSign`).
+   - Khi bấm nút `btnLoveTest`:
+     - Hàm `viewModel.calculatePercent()` tái sử dụng thuật toán `LoveTestCalculator.calculateNameTest` bằng cách truyền vào 2 chuỗi định danh `"zodiac:${mySign.name}"` và `"zodiac:${partnerSign.name}"`.
+     - Mở `ResultActivity` qua Intent `ResultActivity.newHoroscopeIntent(...)`.
+
+4. **Trình bày kết quả thông minh trên `ResultActivity`**:
+   - `ResultActivity` tự động nhận diện chế độ kiểm tra:
+     ```kotlin
+     val isHoroscope = signOne != null && signTwo != null
+     ```
+   - Nếu là Horoscope: Icon của 2 bên hiển thị hình cung hoàng đạo tương ứng (`ivPersonOne.setImageResource(signOne.iconRes)`) và được phủ màu hồng (`imageTintList = pink`).
+   - Nếu là Name Test: Icon giữ mặc định của giao diện XML.
+   - **Phân bậc thông điệp kết quả**:
+     - *Name Test* có 4 bậc thông điệp (`getNameTestMessageRes`):
+       - 0–20%: `name_test_message_0_20`
+       - 21–50%: `name_test_message_21_50`
+       - 51–80%: `name_test_message_51_80`
+       - 81–100%: `name_test_message_81_100`
+     - *Horoscope Test* có 7 bậc thông điệp chi tiết (`getHoroscopeMessageRes`):
+       - 0–5%, 6–20%, 21–35%, 36–50%, 51–70%, 71–90%, 91–100%.
+
+5. **Cơ chế các nút điều hướng (Retry, Share, Back)**:
+   - **Nút Thử lại (`btnRetry`)**: Đơn giản chỉ gọi `finish()`. Thao tác này sẽ đóng `ResultActivity`, đưa người dùng quay lại Activity trước đó (`NameTestActivity` hoặc `HoroscopeTestActivity`) với dữ liệu cũ vẫn còn nguyên vẹn trên màn hình để họ tiện đổi tên hoặc đổi cung.
+   - **Nút Chia sẻ (`btnShare`)**: Định dạng chuỗi gồm tên hai người, số điểm và lời nhắn, sau đó mở `Intent.createChooser` giúp người dùng chia sẻ lên Zalo, Messenger, Facebook, v.v.
+   - **Nút Quay lại (`btnBack` và phím Back hệ thống)**: Gọi `navigateToTestMenu()`. Hàm này tạo `Intent` trỏ về `HomeActivity` kèm 2 cờ: `FLAG_ACTIVITY_CLEAR_TOP` (xoá sạch các màn hình test trung gian khỏi stack) và `FLAG_ACTIVITY_SINGLE_TOP` (gọi lại `HomeActivity` hiện có mà không tạo mới). Đồng thời truyền `EXTRA_TAB = TAB_LOVE_TEST` để Home tự động mở lại đúng tab bói tình yêu.
+
+---
+
+## d) Vòng đời và Quản lý trạng thái (Lifecycle & State)
+
+- **`LoveTestFragment` / `NameTestActivity` / `HoroscopeTestActivity`**:
+  - Đều có biến cờ `isNavigating` và được đặt lại `false` trong `onResume()`. Điều này triệt tiêu hoàn toàn lỗi người dùng click liên tiếp vào nút khiến app mở 2 màn hình cùng lúc.
+- **`HoroscopeTestViewModel`**:
+  - Lưu trữ `HoroscopeUiState` trên ViewModel độc lập với vòng đời của Activity. Khi người dùng xoay ngang điện thoại, `HoroscopeTestActivity` bị tạo lại nhưng 2 cung hoàng đạo đã chọn vẫn được bảo toàn nguyên vẹn từ ViewModel.
+- **`ResultActivity`**:
+  - Toàn bộ dữ liệu hiển thị (tên, cung, điểm số) đều nằm trong `Intent Extras`. Theo cơ chế của Android, khi xoay màn hình, `Intent` của Activity luôn được lưu giữ nguyên trạng. Do đó màn hình kết quả không cần dùng ViewModel hay Database mà vẫn hiển thị hoàn hảo sau khi xoay.
+
+---
+
+## e) Đoạn code then chốt
+
+### Đoạn 1: Thuật toán tính điểm giao hoán và tất định tại `LoveTestCalculator.calculateNameTest()`
+```kotlin
+// LoveTestCalculator.kt
+val names = listOf(firstName.trim().lowercase(Locale.ROOT), secondName.trim().lowercase(Locale.ROOT)).sorted()
+val input = names.joinToString("|") { "${it.length}:$it" }
+val digest = MessageDigest.getInstance("SHA-256").digest(input.toByteArray(StandardCharsets.UTF_8))
+val value = ((digest[0].toInt() and 0xFF) shl 8) or (digest[1].toInt() and 0xFF)
+return value % 101
+```
+*Giải thích*: Sắp xếp 2 tên để đảm bảo tính giao hoán (A+B hay B+A đều cùng input), băm SHA-256 và lấy modulo 101 để sinh điểm số 0–100% cố định, không phụ thuộc vào thời gian hay tính ngẫu nhiên.
+
+### Đoạn 2: Mở Picker và nhận kết quả qua Fragment Result API tại `HoroscopeTestActivity`
+```kotlin
+// HoroscopeTestActivity.kt
+supportFragmentManager.setFragmentResultListener(REQUEST_MY_SIGN, this) { _, bundle ->
+    bundle.toZodiacSign()?.let { viewModel.setMySign(it) }
+}
+private fun openPicker(requestKey: String, current: ZodiacSign) {
+    supportFragmentManager.showOnce(HoroscopePickerBottomSheet.newInstance(requestKey, current), HoroscopePickerBottomSheet.TAG)
+}
+```
+*Giải thích*: Tách biệt việc chọn cung hoàng đạo của mình và của đối phương bằng 2 `requestKey` độc lập, nhận kết quả an toàn không lo rò rỉ bộ nhớ.
+
+### Đoạn 3: Quay về Tab Love Test sạch sẽ tại `ResultActivity.navigateToTestMenu()`
+```kotlin
+// ResultActivity.kt
+private fun navigateToTestMenu() {
+    startActivity(
+        Intent(this, HomeActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            putExtra(HomeActivity.EXTRA_TAB, HomeActivity.TAB_LOVE_TEST)
+        }
+    )
+    finish()
+}
+```
+*Giải thích*: Kết hợp `CLEAR_TOP` và `SINGLE_TOP` để dọn sạch toàn bộ các Activity kiểm tra khỏi ngăn xếp và đưa người dùng quay lại instance `HomeActivity` duy nhất với tab Love Test được chọn tự động qua `onNewIntent`.
+
+---
+
+## f) Tự kiểm tra (Self-Check)
+
+1. Tại sao trong `LoveTestCalculator.kt`, danh sách hai tên người dùng bắt buộc phải được gọi `.sorted()` trước khi đưa vào hàm băm SHA-256?
+2. Khi người dùng bấm nút "Retry" trên `ResultActivity`, tại sao phương thức chỉ cần gọi `finish()` là đủ để đưa người dùng về lại màn hình nhập liệu trước đó với dữ liệu cũ vẫn còn?
+3. Trong `HoroscopeTestActivity.kt`, hàm `viewModel.calculatePercent()` đã tận dụng lại thuật toán bói tên như thế nào mà không cần phải viết thêm một thuật toán riêng cho cung hoàng đạo?
+
 
 
 
