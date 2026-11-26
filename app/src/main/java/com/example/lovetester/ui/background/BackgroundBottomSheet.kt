@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.lovetester.R
-import com.example.lovetester.data.local.BackgroundImageStorage
+import com.example.lovetester.data.local.storage.BackgroundImageStorage
 import com.example.lovetester.data.local.repository.LoveSettingsRepository
 import com.example.lovetester.databinding.BottomSheetBackgroundBinding
 import com.example.lovetester.ui.common.GridSpacingDecoration

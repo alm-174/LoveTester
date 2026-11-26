@@ -1,8 +1,7 @@
-package com.example.lovetester.data.local
+package com.example.lovetester.data.local.storage
 
 import android.content.Context
 import android.net.Uri
-import com.example.lovetester.data.local.storage.ImageDownscaler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
