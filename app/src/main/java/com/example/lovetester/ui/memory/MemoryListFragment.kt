@@ -38,6 +38,7 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
         super.onResume()
         openingAddMemory = false
         binding.btnAddMemory.isEnabled = true
+        binding.btnAddMemoryHeader.isEnabled = true
     }
 
     override fun onViewCreated(
@@ -57,6 +58,7 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
 
         val addMemory = View.OnClickListener { openAddMemory() }
         binding.btnAddMemory.setOnClickListener(addMemory)
+        binding.btnAddMemoryHeader.setOnClickListener(addMemory)
         binding.root.isClickable = true
         binding.btnRetryMemories.setOnClickListener { viewModel.retry() }
     }
@@ -78,12 +80,14 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
 
             is MemoryUiState.Success -> {
                 val isEmpty = state.memories.isEmpty()
+                val count = state.memories.size
 
                 binding.layoutEmptyState.isVisible = isEmpty
                 binding.rvMemories.isVisible = !isEmpty
 
                 memoryAdapter.submitList(state.memories) {
-                    footerAdapter.setVisible(memoryAdapter.currentList.isNotEmpty())
+                    footerAdapter.setVisible(count in 1 until HEADER_ADD_THRESHOLD)
+                    binding.btnAddMemoryHeader.isVisible = count >= HEADER_ADD_THRESHOLD
                 }
             }
 
@@ -99,6 +103,7 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
         if (openingAddMemory) return
         openingAddMemory = true
         binding.btnAddMemory.isEnabled = false
+        binding.btnAddMemoryHeader.isEnabled = false
         startActivity(Intent(requireContext(), AddMemoryActivity::class.java))
     }
 
@@ -119,5 +124,9 @@ class MemoryListFragment : Fragment(R.layout.fragment_memory_list) {
     override fun onDestroyView() {
         binding.rvMemories.adapter = null
         super.onDestroyView()
+    }
+
+    private companion object {
+        const val HEADER_ADD_THRESHOLD = 4
     }
 }
